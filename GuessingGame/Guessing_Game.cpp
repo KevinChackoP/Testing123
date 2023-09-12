@@ -18,15 +18,25 @@
 /*
   I got a lot of help with learning c++ for this project from the "Introduction to C++: Video Tutorials" module
 
-  WRITE DOWN ANY MORE RESOURCES THAT YOU USED TO HELP YOU IN THIS PROJECT!
+  I also got help from the GeeksforGeeks article on "rand() and srand() in C++" to help me get my random number which the player would have to guess for.
 */
 
 #include <iostream>
 
 using namespace std;
 
+//start of main function
 int main() {
-
+  //Generate random number and random number seed
+  srand(time(NULL));
+  /*
+    I got help with making a random number that would be within a range of 0 to 100 inclusive from a Geeksforgeeks article called "rand() and srand() in C++".
+    URL: https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/#
+    This taught me how srand and rand work, and then gave an example function for how to create a random number between and upper and lower bound including both boundaries in the "implementation of the rand() function to get a value from Upper_Bound to Lower_Bound" section on the webpage. Understanding this function helped me use the rand() function to get a random number within my desired value range. 
+  */
+  int randNum = rand() % 101;
+  cout << randNum << endl;
+ 
   //If nothing went wrong, return 0
   return 0;
 }
