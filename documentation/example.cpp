@@ -1,5 +1,6 @@
 #include <iostream>
 #include<math.h>
+#include<cstring>
 
 using namespace std;
 
@@ -152,6 +153,74 @@ int main() {
     cout << "In for loop: " << input13 << endl;
   }
   //Remember that the variable in the for loop if initialized there will go after the for loop. If its defined before just set a value to it before the loop.
+
+  cout << endl;
+  char ch = 'a';
+  cout << "This is a char variable: " << ch << endl;
+
+  cout << endl;
+  char str[5];
+  cout << "Please enter a 5 letter or less string" << endl;
+  cin >> str;
+  cout << "You entered: " << str << endl;
+  //Keep in mind the C++ doesn't recognize out of bounds errors and will keep going through a string until it finds '\0'. This can ruin your data.
+  //Thankfully cin will automatically do this for you
+
+  //This is something to be careful of when looking at inputs
+  cout << endl;
+  char str2[20];
+  char str3[20];
+  cout << "Please enter two words with a space between them" << endl;
+  cin >> str2;
+  cin >> str3;
+  cout << "Variable 1: " << str2 << endl;
+  cout << "Variable 2: " << str3 << endl;
+  //Basically cin ends at the first white space, which in this case is a space
+
+  //To include spaces in your string, use cin.get, and to prevent cin from just getting skipped over make sure to ignore enters
+  cout << endl;
+  char str4[20];
+  cout << "Please enter two words with a space between." << endl;
+  /*
+    To see how this works check out the tutorialspoint article "What is the use of cin.ignore() in C++"
+    URL: https://www.tutorialspoint.com/what-is-the-use-of-cin-ignore-in-cplusplus
+   */
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  cin.get(str4, 20);
+  cin.get(); //Here to get rid of return character at end
+  cout << "The one output for the one input: " << str4 << endl;
+
+  //For string comparisons use <cstring> and strcmp
+  cout << endl;
+  char str5[20];
+  char str6[20];
+  cout << "Enter one string for comparison." << endl;
+  cin.get(str5, 20);
+  cin.get();
+  cout << "Enter another string for comparison." << endl;
+  cin.get(str6, 20);
+  cin.get();
+  if(strcmp(str5, str6) == 0) {
+    cout << "The two strings are the same!" << endl;
+  } else {
+    cout << "The two strings are not the same!" << endl;
+  }
+
+  //For copying one string into another use strcpy
+  //DO NOT DO str1 = str2, that will make str1 point to str2 always and it is equal to str2 always, even when str2 changes
+  char str7[20];
+  char str8[20];
+  cout << "Please input two strings seperately." << endl;
+  cin.get(str7, 20);
+  cin.get();
+  cin.get(str8, 20);
+  cin.get();
+  cout << "Your first string: " << str7 << endl;
+  cout << "Your second string: " << str8 << endl;
+  cout << "Now lets copy the second one into the first one!" << endl;
+  strcpy(str7, str8);
+  cout << "Your first string: " << str7 << endl;
+  cout << "Your second string: " << str8 << endl;
   
   //end code if everything worked
   return 0;
