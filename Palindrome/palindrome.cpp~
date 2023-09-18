@@ -1,0 +1,19 @@
+/* 
+   This project... WRITE MORE ABOUT WHAT THIS PROJECT DOES HERE!
+   Author: Kevin Chacko
+   Last Updated: WRITE END DATE HERE
+   Period 6, C++ / Data Structures
+*/
+
+/*
+  I got a lot of help with learning c++ for this project from the 
+  "CStrings and Arrays" module
+
+  ADD MORE SOURCE HERE IF NEEDED
+*/
+
+#include <iostream>
+
+using namespace std;
+
+//start of main function
