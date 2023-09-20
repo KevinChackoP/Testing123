@@ -15,8 +15,6 @@
 #include <iostream>
 #include <cstring>
 #include <cctype>
-#include <ios>
-#include <limits>
 
 using namespace std;
 
@@ -46,13 +44,20 @@ int main() {
   while(inUse) {
     //Ask for and get text input from user
     cout << "Please enter text that you want to see is a palindrome or not. " << endl;
+    /*
+      I got help from the tutorialspoint article "What is the use of 
+      cin.ignore() in C++" by Nishtha Thakur.
+      URL: https://www.tutorialspoint.com/what-is-the-use-of-cin-ignore-in-cplusplus
+      This helps ignore past enters in the input buffer so that the cin isn't skipped over.
+     */
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin.get(input, 80);
     cout << "Your input: " << endl;
     cout << input << endl;
     cout << endl;
 
     //Process input by getting rid of punctuation and spaces
-    for(int i = 0; i < strlen(input) + 1; i++) {
+    for(int i = 0; i < strlen(input); i++) {
       /*
 	I got help with isalnum from cplusplus.com's "isalnum" article.
 	URL: https://cplusplus.com/reference/cctype/isalnum/
@@ -60,29 +65,21 @@ int main() {
 	program and it will basically check if a character is a number or an 
 	alphabetical letter. I need this to clean my input.
        */
-      if(isalnum(input[i]) || input[i] == '\0') {
-	cleanInput[counter] = toupper(input[i]);
+      if(isalnum(input[i])) {
+	cleanInput[counter] = input[i];
 	counter++;
       }
     }
-    cout << "Your cleaned up input: " << cleanInput << endl;
+    cout << "Your cleaned up input: " << endl;
     cout << endl;
 
     //Reverse the cleaned input
-    for(int i = 1; i < strlen(cleanInput) + 1; i++) {
-      reverseInput[i - 1] = cleanInput[strlen(cleanInput) - i];
+    for(int i = strlen(cleanInput) - 1; i >= 0; i--) {
+      
     }
-    reverseInput[strlen(reverseInput)] = '\0';
-    cout << "Your cleaned up input reversed: " << reverseInput << endl;
-    cout << endl;
-    
+
     //check if cleaned input is the same as it is when reversed
-    if(strcmp(cleanInput, reverseInput) == 0) {
-      cout << "Your input was a PALINDROME!!! Cool!" << endl;
-    } else {
-      cout << "Your input was NOT a PALINDROME. Aww." << endl;
-    }
-    cout << endl;
+    
 
     //Ask the user if they'd like to continue entering text
     cout << "Now that you've checked some text, would you like to continue " << endl;
@@ -108,21 +105,13 @@ int main() {
       continueInput = 0;
       counter = 0;
       for(int i = 0; i < 80; i++) {
-	input[i] = '\0';
-	cleanInput[i] = '\0';
-	reverseInput[i] = '\0';
+	input[i] == NULL;
+	cleanInput[i] == NULL;
+	reverseInput[i] == NULL;
       }
-      /*
-      I got help from the tutorialspoint article "What is the use of 
-      cin.ignore() in C++" by Nishtha Thakur.
-      URL: https://www.tutorialspoint.com/what-is-the-use-of-cin-ignore-in-cplusplus
-      This helps ignore past enters in the input buffer so that the cin isn't skipped over. For this I needed to include <ios> and <limits>.
-     */
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
       
     } else if(continueInput == 'n') {
       //if the don't want to continue using the program, exit the while loop
-      cout << "Ok, I hope this program helped!" << endl;
       inUse = false;
       
     }
