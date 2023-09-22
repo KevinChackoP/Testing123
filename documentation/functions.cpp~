@@ -1,0 +1,14 @@
+#include <iostream>
+#include <math.h>
+#include <cstring>
+#include <cctype>
+
+using namespace std;
+
+//start of main function
+int main() {
+  
+
+  //If nothing went bad, return 0
+  return 0;
+}
