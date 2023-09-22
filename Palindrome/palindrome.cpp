@@ -1,7 +1,21 @@
 /* 
-   This project... WRITE MORE ABOUT WHAT THIS PROJECT DOES HERE!
+   This project creates an app within the user's terminal that can check their 
+   inputted text (up to 80 characters in size) to see if it is a palindrome. 
+   It starts by telling the user the instructions for this app, then it will 
+   prompt the user for a text input. After the user inputs their text the 
+   program will filter out all non-alphanumeric characters from the user's 
+   input and puts all the letters to the same casing so that these things 
+   can't interfere with the program's check. Then it reverses the input in 
+   another cstring to check against the non-reversed and cleaned input. In 
+   between these two actions, the program will also report their results to 
+   the user so they can cross check the result themselves. If the two cstrings 
+   are the same the input will be declared as a palindrome, otherwise the 
+   program will say that it isn't a palindrome. Afterwards, the program will 
+   ask the user if they'd like to continue using the program, and based on the 
+   response it will either close the program or reset everything to be ready 
+   for use again. 
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 9/22/2023
    Period 6, C++ / Data Structures
 */
 
@@ -9,7 +23,18 @@
   I got a lot of help with learning c++ for this project from the 
   "CStrings and Arrays" module
 
-  ADD MORE SOURCE HERE IF NEEDED
+  I got a lot of help with cleaning up my input for the palindrome comparison 
+  check from cplusplus.com's documentation on the cctype library.
+  URL: https://cplusplus.com/reference/cctype/
+  From this I was able to find isalnum() and toupper() since they both can be 
+  used to clean and filter the user's input up from punctionation, spaces, 
+  and different cased letters.
+
+  I got help from the tutorialspoint article "What is the use of 
+  cin.ignore() in C++" by Nishtha Thakur.
+  URL: https://www.tutorialspoint.com/what-is-the-use-of-cin-ignore-in-cplusplus
+  This helps ignore past enters in the input buffer so that the cin isn't 
+  skipped over. For this I needed to include <ios> and <limits>.
 */
 
 #include <iostream>
@@ -25,10 +50,15 @@ int main() {
   //Variable initializations
   bool inUse = true;
   char continueInput = 0;
-  char input[80];
+  char input[81];
   int counter = 0;
-  char cleanInput[80];
-  char reverseInput[80];
+  char cleanInput[81];
+  char reverseInput[81];
+  for(int i = 0; i < 81; i++) {
+    input[i] = '\0';
+    cleanInput[i] = '\0';
+    reverseInput[i] = '\0';
+  }
 
   //Tell the user what this program does
   cout << "Hello!" << endl;
@@ -46,19 +76,25 @@ int main() {
   while(inUse) {
     //Ask for and get text input from user
     cout << "Please enter text that you want to see is a palindrome or not. " << endl;
-    cin.get(input, 80);
+    cin.get(input, 81);
     cout << "Your input: " << endl;
     cout << input << endl;
     cout << endl;
 
-    //Process input by getting rid of punctuation and spaces
+    //Process input by getting rid of punctuation and spaces and making everything uppercase
     for(int i = 0; i < strlen(input) + 1; i++) {
       /*
-	I got help with isalnum from cplusplus.com's "isalnum" article.
+	I got help with isalnum and toupper from cplusplus.com's "isalnum" and 
+	"toupper" articles.
 	URL: https://cplusplus.com/reference/cctype/isalnum/
-	This requires the <cctype> library which I included at the start of my 
-	program and it will basically check if a character is a number or an 
-	alphabetical letter. I need this to clean my input.
+	URL: https://cplusplus.com/reference/cctype/toupper/
+	These both require the <cctype> library which I included at the start 
+	of my program. isalnum() will basically check if a character is a 
+	number or an alphabetical letter. I need this to clean my input so 
+	that only numerical and alphabetical characters can be passed in.
+	toupper() will basically convert any alphabetical characters that are 
+	lowercase into uppercase characters, and I need this to make sure there
+	aren't any problems with casing while comparing my strings.
        */
       if(isalnum(input[i]) || input[i] == '\0') {
 	cleanInput[counter] = toupper(input[i]);
@@ -84,7 +120,7 @@ int main() {
     }
     cout << endl;
 
-    //Ask the user if they'd like to continue entering text
+    //Ask the user if they'd like to continue entering text to check for palindroms
     cout << "Now that you've checked some text, would you like to continue " << endl;
     cout << "using this program to check text to see if it is a palindrome? " << endl;
     cout << "(type just 'y' for yes or just 'n' for no) " << endl;
@@ -107,7 +143,7 @@ int main() {
 
       continueInput = 0;
       counter = 0;
-      for(int i = 0; i < 80; i++) {
+      for(int i = 0; i < 81; i++) {
 	input[i] = '\0';
 	cleanInput[i] = '\0';
 	reverseInput[i] = '\0';
@@ -116,7 +152,8 @@ int main() {
       I got help from the tutorialspoint article "What is the use of 
       cin.ignore() in C++" by Nishtha Thakur.
       URL: https://www.tutorialspoint.com/what-is-the-use-of-cin-ignore-in-cplusplus
-      This helps ignore past enters in the input buffer so that the cin isn't skipped over. For this I needed to include <ios> and <limits>.
+      This helps ignore past enters in the input buffer so that the cin isn't 
+      skipped over. For this I needed to include <ios> and <limits>.
      */
       cin.ignore(numeric_limits<streamsize>::max(), '\n');
       
