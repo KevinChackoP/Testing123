@@ -1,0 +1,20 @@
+/* 
+   This project creates an app within the user's terminal that can check their 
+   inputted text (up to 80 characters in size) to see if it is a palindrome. 
+   It starts by telling the user the instructions for this app, then it will 
+   prompt the user for a text input. After the user inputs their text the 
+   program will filter out all non-alphanumeric characters from the user's 
+   input and puts all the letters to the same casing so that these things 
+   can't interfere with the program's check. Then it reverses the input in 
+   another cstring to check against the non-reversed and cleaned input. In 
+   between these two actions, the program will also report their results to 
+   the user so they can cross check the result themselves. If the two cstrings 
+   are the same the input will be declared as a palindrome, otherwise the 
+   program will say that it isn't a palindrome. Afterwards, the program will 
+   ask the user if they'd like to continue using the program, and based on the 
+   response it will either close the program or reset everything to be ready 
+   for use again. 
+   Author: Kevin Chacko
+   Last Updated: 9/22/2023
+   Period 6, C++ / Data Structures
+*/
