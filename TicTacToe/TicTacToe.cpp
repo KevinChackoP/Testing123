@@ -1,15 +1,21 @@
 /* 
-   This project...
+   This project plays a TicTacToe game that can be played between two players.
+   The game starts by telling the players the instructions and showing them 
+   the blank board. Then it prompts player 1 to enter a coordinate to play 
+   their move. It will then switch between players asking for their moves as 
+   their moves are played to the board. Once a player won or after all the 
+   spots in the board have been played on an end result will be declared. Then 
+   the game will ask the users if they'd like to play again. If they say yes 
+   everything will be reset and ready for them to start playing again. If they 
+   say no the program will end. 
    Author: Kevin Chacko
-   Last Updated: Write End Date Here!
+   Last Updated: 10/4/2023
    Period 6, C++ / Data Structures
 */
 
 /*
   I got a lot of help with learning c++ for this project from the 
   "Functions, Structs, By Reference, By Value, Pointers" module
-
-  NAME ANY OTHER RESOURCES YOU USED HERE!!!!!
 */
 
 //imports
@@ -23,23 +29,36 @@ using namespace std;
 
 //Function prototypes
 void instructions();
-void askInput(bool turn, int & inputRow, int & inputColumn, char grid[][3]);
+void askInput(bool & turn, int & inputRow, int & inputColumn, char grid[][3]);
 void printGrid(char grid[][3]);
+void checkAssignWin(int & playState, char grid[][3]);
+void printEndGameText(int playState);
+void playAgain(bool & playingGame);
 
 //Global constants
 const char p1Sym = 'o';
 const char p2Sym = 'x';
 const bool p1Turn = true;
 const bool p2Turn = false;
+const int playingGameState = 0;
+const int p1WinState = 1;
+const int p2WinState = 2;
+const int tieState = 3;
 
 //start of main function
 int main() {
   //variable declarations
   bool playerTurn = true;
   char grid[3][3];
+  for(int i = 0; i < 3; i++) {
+    for(int j = 0; j < 3; j++) {
+      grid[i][j] = '\0';
+    }
+  }
   int inputRow = 0;
   int inputColumn = 0;
   bool playingGame = true;
+  int playState = 0; 
   
   //give instructions first time playing
   instructions();
@@ -58,6 +77,26 @@ int main() {
 
     //print out board
     printGrid(grid);
+
+    //check for win
+    checkAssignWin(playState, grid);
+    if(playState > playingGameState) {
+      //Go through after game text
+      printEndGameText(playState);
+
+      //ask player if they'd like to play again
+      playAgain(playingGame);
+      if(playingGame == true) { //reset everything that needs to be reset
+	for(int i = 0; i < 3; i++) {
+	  for(int j = 0; j < 3; j++) {
+	    grid[i][j] = '\0';
+	  }
+	}
+	inputRow = 0;
+	inputColumn = 0;
+	playState = 0;
+      }
+    }
   }
   
   //if everything turned out fine, return 0
@@ -85,13 +124,13 @@ void instructions() {
 void printGrid(char grid[][3]) {
   cout << "\t|1|\t|2|\t|3|" << endl;
   cout << "|a|\t" << grid[0][0] << "\t" << grid[0][1] << "\t" << grid[0][2] << endl;
-  cout << "|a|\t" << grid[1][0] << "\t" << grid[1][1] << "\t" << grid[1][2] << endl;
-  cout << "|a|\t" << grid[2][0] << "\t" << grid[2][1] << "\t" << grid[2][2] << endl;
+  cout << "|b|\t" << grid[1][0] << "\t" << grid[1][1] << "\t" << grid[1][2] << endl;
+  cout << "|c|\t" << grid[2][0] << "\t" << grid[2][1] << "\t" << grid[2][2] << endl;
   cout << endl;
 }
 
 //This function asks for the player's input, validates it, and adds it to the grid.
-void askInput (bool turn, int & inputRow, int & inputColumn, char grid[][3]) {
+void askInput (bool & turn, int & inputRow, int & inputColumn, char grid[][3]) {
   //local variable declarations
   char input[2];
   bool validInput = false;
@@ -103,15 +142,15 @@ void askInput (bool turn, int & inputRow, int & inputColumn, char grid[][3]) {
     cout << "Player 2's Turn! (Player 'x')" << endl;
   }
   cout << endl;
-  
-  //ask for and receive input
-  cout << "Name the coordinates for where you want to play your symbol:" << endl;
-  cout << "Format your input like a1 or b3 (row first, then column)." << endl;
-  cin.get(input, 3);
-  cin.get();
 
   //check the user's input
   while(!validInput) {
+    //ask for and receive input
+    cout << "Name the coordinates for where you want to play your symbol:" << endl;
+    cout << "Format your input like a1 or b3 (row first, then column)." << endl;
+    cin.get(input, 3);
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    
     //check for first input's validity
     if(input[0] == 'a' || input[0] == 'b' || input[0] == 'c') { //row
       if(input[1] == '1' || input[1] == '2' || input[1] == '3') { //column
@@ -137,8 +176,10 @@ void askInput (bool turn, int & inputRow, int & inputColumn, char grid[][3]) {
 	  //Their input was fully validated, add their move to the grid
 	  if(turn == p1Turn) {
 	    grid[inputRow][inputColumn] = p1Sym;
+	    turn = p2Turn; //change to p2 turn
 	  } else if(turn == p2Turn) {
 	    grid[inputRow][inputColumn] = p2Sym;
+	    turn = p1Turn; //change to p1 turn
 	  }
 	  validInput = true;
 	} else { //If the move has already been played
@@ -158,4 +199,103 @@ void askInput (bool turn, int & inputRow, int & inputColumn, char grid[][3]) {
       cout << "you want to place your symbol in. (i.e. a1, b3)" << endl;
     }
   }
+
+  cout << endl;
+}
+
+//This method checks if a win or tie has happened and will change the state
+//of the game based on the result if there is a difference
+void checkAssignWin(int & playState, char grid[][3]) {
+  //Check diagonals first
+  if((grid[0][0] == p1Sym && grid[1][1] == p1Sym && grid[2][2] == p1Sym) || (grid[0][2] == p1Sym && grid[1][1] == p1Sym && grid[2][0] == p1Sym)) {
+      //If the player one symbols make a diagonal, give player 1 the win
+      playState = p1WinState;
+      
+    } else if((grid[0][0] == p2Sym && grid[1][1] == p2Sym && grid[2][2] == p2Sym) || (grid[0][2] == p2Sym && grid[1][1] == p2Sym && grid[2][0] == p2Sym)) {
+      //If the player two symbols make a diagonal, give player 2 the win
+      playState = p2WinState;
+      
+    }
+
+  //Check for rows and columns next
+  for(int i = 0; i < 3; i++) {
+    //check rows
+    if(grid[i][0] == p1Sym && grid[i][1] == p1Sym && grid[i][2] == p1Sym) {
+      //If the player one symbols make a row, give player 1 the win
+      playState = p1WinState;
+      
+    } else if(grid[i][0] == p1Sym && grid[i][1] == p1Sym && grid[i][2] == p1Sym) {
+      //If the player two symbols make a diagonal, give player 2 the win
+      playState = p2WinState;
+      
+    }
+
+    //check columns
+    if(grid[0][i] == p1Sym && grid[1][i] == p1Sym && grid[2][i] == p1Sym) {
+      //If the player one symbols make a column, give player 1 the win
+      playState = p1WinState;
+      
+    } else if(grid[0][i] == p1Sym && grid[1][i] == p1Sym && grid[2][i] == p1Sym) {
+      //If the player two symbols make a column, give player 2 the win
+      playState = p2WinState;
+      
+    }
+  }
+
+  //check for tie by seeing if everything on the grid is filled in
+  if((grid[0][0] != '\0' && grid[0][1] != '\0' && grid[0][2] != '\0' && grid[1][0] != '\0' && grid[1][1] != '\0' && grid[1][2] != '\0' && grid[2][0] != '\0' && grid[2][1] != '\0' && grid[2][2] != '\0') && playState == playingGameState) {
+    playState = tieState;
+  }
+  
+}
+
+//This function prints out the text at the end of the game
+void printEndGameText(int playState) {
+  if(playState == p1WinState) { //if player 1 wins...
+    cout << "Player 1 wins! Congradulations!" << endl;
+    
+  } else if(playState == p2WinState) { //if player 2 wins...
+    cout << "Player 2 wins! Nice job!" << endl;
+    
+  } else if(playState == tieState) { //if there is a tie
+    cout << "It's a tie! It seems like it was a tough game!" << endl;
+    
+  }
+
+  cout << endl;
+}
+
+//This function asks the players if they'd like to keep playing, resetting the
+//game if they say yes, and ending the program if they say no
+void playAgain(bool & playingGame) {
+  //Ask the players if they'd like to play again
+  cout << "Would you both like to play another game of Tic Tac Toe?" << endl;
+  cout << "Enter (y) for yes or (n) for no." << endl;
+  cout << endl;
+
+  //Take the users' input
+  char input = 0;
+  while(input != 'y' && input != 'n') {
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    //If their input doesn't work, tell them
+    if(input != 'y' && input != 'n') {
+      cout << "Sorry, I don't understand that." << endl;
+      cout << "Please enter either 'y' for yes or 'n' for no." << endl;
+      cout << endl;
+    }
+  }
+
+  //if the said yes, keep playing game as true and reset variables in main
+  if(input == 'y') {
+    playingGame = true;
+    cout << "Ok! I'll get everything set up again for you both!" << endl;
+    
+  } else if(input == 'n') { //If they said no, end the program
+    cout << "Ok! Thanks for playing!" << endl;
+    playingGame = false;
+  }
+
+  cout << endl;
 }
