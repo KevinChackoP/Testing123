@@ -4,7 +4,8 @@
    the blank board. Then it prompts player 1 to enter a coordinate to play 
    their move. It will then switch between players asking for their moves as 
    their moves are played to the board. Once a player won or after all the 
-   spots in the board have been played on an end result will be declared. Then 
+   spots in the board have been played on an end result will be declared while
+   also mentioning how many times each player has won respectivally. Then 
    the game will ask the users if they'd like to play again. If they say yes 
    everything will be reset and ready for them to start playing again. If they 
    say no the program will end. 
@@ -31,13 +32,13 @@ using namespace std;
 void instructions();
 void askInput(bool & turn, int & inputRow, int & inputColumn, char grid[][3]);
 void printGrid(char grid[][3]);
-void checkAssignWin(int & playState, char grid[][3]);
-void printEndGameText(int playState);
+void checkAssignWin(int & playState, char grid[][3], int & p1Wins, int & p2Wins, int & ties);
+void printEndGameText(int playState, int p1Wins, int p2Wins, int ties);
 void playAgain(bool & playingGame);
 
 //Global constants
-const char p1Sym = 'o';
-const char p2Sym = 'x';
+const char p1Sym = 'x';
+const char p2Sym = 'o';
 const bool p1Turn = true;
 const bool p2Turn = false;
 const int playingGameState = 0;
@@ -58,7 +59,10 @@ int main() {
   int inputRow = 0;
   int inputColumn = 0;
   bool playingGame = true;
-  int playState = 0; 
+  int playState = 0;
+  int p1Wins = 0;
+  int p2Wins = 0;
+  int ties = 0;
   
   //give instructions first time playing
   instructions();
@@ -79,10 +83,10 @@ int main() {
     printGrid(grid);
 
     //check for win
-    checkAssignWin(playState, grid);
+    checkAssignWin(playState, grid, p1Wins, p2Wins, ties);
     if(playState > playingGameState) {
       //Go through after game text
-      printEndGameText(playState);
+      printEndGameText(playState, p1Wins, p2Wins, ties);
 
       //ask player if they'd like to play again
       playAgain(playingGame);
@@ -92,6 +96,7 @@ int main() {
 	    grid[i][j] = '\0';
 	  }
 	}
+	playerTurn = true;
 	inputRow = 0;
 	inputColumn = 0;
 	playState = 0;
@@ -110,12 +115,15 @@ void instructions() {
   cout << "coordinates on a grid to try getting a vertical, " << endl;
   cout << "horizontal, or diagonal line of 3 symbols before your " << endl;
   cout << "opponent." << endl;
-  cout << "Player 1 will be assigned the symbol 'o' and will go first." << endl;
-  cout << "Player 2 will be assigned the symbol 'x' and will go second." << endl;
+  cout << endl;
+  cout << "Player 1 will be assigned the symbol '" << p1Sym << "' and will go first." << endl;
+  cout << "Player 2 will be assigned the symbol '" << p2Sym << "' and will go second." << endl;
   cout << "The grid will consist of rows labeled a, b and c, and " << endl;
-  cout << "columns labeled 1, 2, or 3. When inputting your coordinates " << endl;
-  cout << "make sure to put the row first, then the column second with " << endl;
-  cout << "no spaces or other characters include (ie 'a1' or 'b3')." << endl;
+  cout << "columns labeled 1, 2, or 3." << endl;
+  cout << endl;
+  cout << "When inputting your coordinates make sure to put the row " << endl;
+  cout << "first, then the column second with no spaces or other " << endl;
+  cout << "characters included (ie 'a1' or 'b3')." << endl;
   cout << "Please take turns inputting your plays and have a good time!" << endl;
   cout << endl;
 }
@@ -137,9 +145,9 @@ void askInput (bool & turn, int & inputRow, int & inputColumn, char grid[][3]) {
   
   //Name who's turn it is
   if(turn == p1Turn) {
-    cout << "Player 1's Turn! (Player 'o')" << endl;
+    cout << "Player 1's Turn! (Player '" << p1Sym << "')" << endl;
   } else if(turn == p2Turn) {
-    cout << "Player 2's Turn! (Player 'x')" << endl;
+    cout << "Player 2's Turn! (Player '" << p2Sym << "')" << endl;
   }
   cout << endl;
 
@@ -205,15 +213,17 @@ void askInput (bool & turn, int & inputRow, int & inputColumn, char grid[][3]) {
 
 //This method checks if a win or tie has happened and will change the state
 //of the game based on the result if there is a difference
-void checkAssignWin(int & playState, char grid[][3]) {
+void checkAssignWin(int & playState, char grid[][3], int & p1Wins, int & p2Wins, int & ties) {
   //Check diagonals first
   if((grid[0][0] == p1Sym && grid[1][1] == p1Sym && grid[2][2] == p1Sym) || (grid[0][2] == p1Sym && grid[1][1] == p1Sym && grid[2][0] == p1Sym)) {
       //If the player one symbols make a diagonal, give player 1 the win
       playState = p1WinState;
+      p1Wins++;
       
     } else if((grid[0][0] == p2Sym && grid[1][1] == p2Sym && grid[2][2] == p2Sym) || (grid[0][2] == p2Sym && grid[1][1] == p2Sym && grid[2][0] == p2Sym)) {
       //If the player two symbols make a diagonal, give player 2 the win
       playState = p2WinState;
+      p2Wins++;
       
     }
 
@@ -223,10 +233,12 @@ void checkAssignWin(int & playState, char grid[][3]) {
     if(grid[i][0] == p1Sym && grid[i][1] == p1Sym && grid[i][2] == p1Sym) {
       //If the player one symbols make a row, give player 1 the win
       playState = p1WinState;
+      p1Wins++;
       
-    } else if(grid[i][0] == p1Sym && grid[i][1] == p1Sym && grid[i][2] == p1Sym) {
+    } else if(grid[i][0] == p2Sym && grid[i][1] == p2Sym && grid[i][2] == p2Sym) {
       //If the player two symbols make a diagonal, give player 2 the win
       playState = p2WinState;
+      p2Wins++;
       
     }
 
@@ -234,10 +246,12 @@ void checkAssignWin(int & playState, char grid[][3]) {
     if(grid[0][i] == p1Sym && grid[1][i] == p1Sym && grid[2][i] == p1Sym) {
       //If the player one symbols make a column, give player 1 the win
       playState = p1WinState;
+      p1Wins++;
       
-    } else if(grid[0][i] == p1Sym && grid[1][i] == p1Sym && grid[2][i] == p1Sym) {
+    } else if(grid[0][i] == p2Sym && grid[1][i] == p2Sym && grid[2][i] == p2Sym) {
       //If the player two symbols make a column, give player 2 the win
       playState = p2WinState;
+      p2Wins++;
       
     }
   }
@@ -245,12 +259,13 @@ void checkAssignWin(int & playState, char grid[][3]) {
   //check for tie by seeing if everything on the grid is filled in
   if((grid[0][0] != '\0' && grid[0][1] != '\0' && grid[0][2] != '\0' && grid[1][0] != '\0' && grid[1][1] != '\0' && grid[1][2] != '\0' && grid[2][0] != '\0' && grid[2][1] != '\0' && grid[2][2] != '\0') && playState == playingGameState) {
     playState = tieState;
+    ties++;
   }
   
 }
 
 //This function prints out the text at the end of the game
-void printEndGameText(int playState) {
+void printEndGameText(int playState, int p1Wins, int p2Wins, int ties) {
   if(playState == p1WinState) { //if player 1 wins...
     cout << "Player 1 wins! Congradulations!" << endl;
     
@@ -261,6 +276,14 @@ void printEndGameText(int playState) {
     cout << "It's a tie! It seems like it was a tough game!" << endl;
     
   }
+
+  cout << endl;
+
+  //Name current win and tie totals
+  cout << "So far..." << endl;
+  cout << "Player 1 has won " << p1Wins << " time(s)." << endl;
+  cout << "Player 2 has won " << p2Wins << " time(s)." << endl;
+  cout << "Both players have tied " << ties << " time(s)." << endl;
 
   cout << endl;
 }
