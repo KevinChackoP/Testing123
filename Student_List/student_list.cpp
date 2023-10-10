@@ -24,8 +24,8 @@ using namespace std;
 
 //struct declarations
 struct Student {
-  char firstName[10];
-  char lastName[10];
+  char firstName[15];
+  char lastName[15];
   int id;
   float gpa;
 };
@@ -132,6 +132,18 @@ int askCommand() {
 
 //This function helps the user to add a student to the list
 void addStudent(vector<Student*> & list) {
-  Student addedStudent;
-  
+  //These are a local variables being used
+  Student* addedStudent = new Student();
+  char firstNameInput[15];
+  char lastNameInput[15];
+  for(int i = 0; i < 15; i++) {
+    firstNameInput[i] = '\0';
+    lastNameInput[i] = '\0';
+  }
+  int idInput;
+  float gpaInput;
+
+  //When finished checking all the inputs and putting them all in, add the
+  //finalized student pointer to the main vector.
+  list.push_back(addedStudent);
 }
