@@ -1,0 +1,42 @@
+/* 
+   This project...
+   Author: Kevin Chacko
+   Last Updated: WRITE END DATE HERE
+   Period 6, C++ / Data Structures
+*/
+
+/*
+  I got a lot of help with learning c++ for this project from the 
+  "Functions, Structs, By Reference, By Value, Pointers" module
+
+  WRITE ANY MORE RESOURCES YOU USED HERE
+*/
+
+//imports
+#include <iostream>
+#include <cstring>
+#include <cctype>
+#include <ios>
+#include <limits>
+
+using namespace std;
+
+//struct declarations
+struct Student {
+  char firstName[10];
+  char lastName[10];
+  int id;
+  float gpa;
+};
+
+//Function prototypes
+
+
+//Start of main function
+int main() {
+  //local variable declarations
+  
+  
+  //If nothing went wrong, return 0
+  return 0;
+}
