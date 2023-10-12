@@ -9,6 +9,18 @@
   I got a lot of help with learning c++ for this project from the 
   "Functions, Structs, By Reference, By Value, Pointers" module
 
+  To check if a character in a string is a valid digit I got help from
+  cplusplus.com's article on "isdigit".
+  url: https://cplusplus.com/reference/cctype/isdigit/
+  This checks if each character the user inputted for the id number is 
+  actually a number.
+
+  In order to round the gpa to two decimal places I needed help from 
+  Java2Blog's "Round to 2 decimal places in C++" article
+  URL: https://java2blog.com/round-to-2-decimal-places-cpp/
+  This told me that because round always goes rounds to a whole number the 
+  best way to get around this is to multiply by 100, round, divide by 100.
+
   WRITE ANY MORE RESOURCES YOU USED HERE
 */
 
@@ -18,6 +30,7 @@
 #include <cctype>
 #include <ios>
 #include <limits>
+#include <math.h>
 #include <vector>
 
 using namespace std;
@@ -26,7 +39,7 @@ using namespace std;
 struct Student {
   char firstName[15];
   char lastName[15];
-  int id;
+  char id[6];
   float gpa;
 };
 
@@ -53,14 +66,20 @@ int main() {
     //Based on their command, do something to the list or quit from the program
     if(commandKey == 1) {
       //If they want to add a student to the list
+      cout << "Adding a student to list." << endl;
+      cout << endl;
       addStudent(studentList);
       
     } else if(commandKey == 2) {
       //If they want to delete a student from the list, do so
+      cout << "Deleting a student from list." << endl;
+      cout << endl;
       //
       
     } else if(commandKey == 3) {
       //If they want to print out the list, do so
+      cout << "Printing current student list out." << endl;
+      cout << endl;
       //
       
     } else if(commandKey == 4) {
@@ -140,9 +159,66 @@ void addStudent(vector<Student*> & list) {
     firstNameInput[i] = '\0';
     lastNameInput[i] = '\0';
   }
-  int idInput;
-  float gpaInput;
+  char idInput[6];
+  for(int i = 0; i < 6; i++) {
+    idInput[i] = '\0';
+  }
+  float gpaInput = 10.00;
 
+  //Take first name
+  cout << "What's the student's first name?" << endl;
+  cin.get(firstNameInput, 15);
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  strcpy((*addedStudent).firstName, firstNameInput);
+  cout << endl;
+
+  //Take last name
+  cout << "What's the student's last name?" << endl;
+  cin.get(lastNameInput, 15);
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  strcpy((*addedStudent).lastName, lastNameInput);
+  cout << endl;
+
+  //Get id and make sure that it is a 6 digit integer
+  cout << "What's the student's id number (6 number integer)?" << endl;
+  while(isdigit(idInput[0]) != 0 && isdigit(idInput[1]) != 0 && isdigit(idInput[2]) != 0 && isdigit(idInput[3]) != 0 && isdigit(idInput[4]) != 0 && isdigit(idInput[5]) != 0) {
+    cin.get(idInput, 6);
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    /*
+      To check if a character in a string is a valid digit I got help from
+      cplusplus.com's article on "isdigit".
+      url: https://cplusplus.com/reference/cctype/isdigit/
+      This checks if each character the user inputted for the id number is 
+      actually a number.
+     */
+    if(isdigit(idInput[0]) != 0 && isdigit(idInput[1]) != 0 && isdigit(idInput[2]) != 0 && isdigit(idInput[3]) != 0 && isdigit(idInput[4]) != 0 && isdigit(idInput[5]) != 0) {
+      cout << "You didn't enter a 6 digit integer." << endl;
+      cout << "Could you try inputting the id again?" << endl;
+      cout << "(i.e. 464877, 342907)" << endl;
+      cout << endl;
+    }
+  }
+  strcpy((*addedStudent).id, idInput);
+  cout << endl;
+
+  //get student GPA
+  cout << "Please input the student's GPA to 2 decimal places (i.e. 3.00)." << endl;
+  while(gpaInput > 5.00 || gpaInput < 0.00) {
+    cin >> gpaInput;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  }
+  /*
+    In order to round the gpa to two decimal places I needed help from 
+    Java2Blog's "Round to 2 decimal places in C++" article
+    URL: https://java2blog.com/round-to-2-decimal-places-cpp/
+    This told me that because round always goes rounds to a whole number the 
+    best way to get around this is to multiply by 100, round, divide by 100.
+   */
+  gpaInput = round(gpaInput * 100.0) / 100.0;
+  (*addedStudent).gpa = gpaInput;
+  cout << endl;
+  
   //When finished checking all the inputs and putting them all in, add the
   //finalized student pointer to the main vector.
   list.push_back(addedStudent);
