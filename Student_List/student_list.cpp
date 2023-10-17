@@ -25,6 +25,21 @@
   it out using cout from the canvas module "Introduction to C++: Video
   Tutorials". 
 
+  To get help with getting rid of stuff from a vector I got help from 
+  Mr. Galbraith. He suggested that I use delete along with *it to delete 
+  the contents in list first. Then, to remove the pointers from the vector 
+  I'd use .erase, that way there wouldn't be a useless hole in the vector.
+  Finally I should use break to get out of my for loop because it
+  will now run off of my shorted list if I let it continue, and 
+  that could do some bad stuff.
+  
+  To figure out of my vector is empty or not I got help from cplusplus's 
+  article on "vector::empty".
+  URL: https://cplusplus.com/reference/vector/vector/empty/
+  This helped me with making sure my user wasn't trying to print an 
+  empty list, or trying to delete from an empty list, and with helping me 
+  deleting everything on the heap after the program was done.
+  
   WRITE ANY MORE RESOURCES YOU USED HERE
 */
 
@@ -52,6 +67,7 @@ void instructions();
 int askCommand();
 void addStudent(vector<Student*> & list);
 void printList(vector<Student*> & list);
+void deleteStudent(vector<Student*> & list);
 
 //Start of main function
 int main() {
@@ -79,7 +95,7 @@ int main() {
       //If they want to delete a student from the list, do so
       cout << "Deleting a student from list." << endl;
       cout << endl;
-      //
+      deleteStudent(studentList);
       
     } else if(commandKey == 3) {
       //If they want to print out the list, do so
@@ -90,6 +106,26 @@ int main() {
     } else if(commandKey == 4) {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
+
+      //delete everything on the heap from my student list vector
+      /*
+	To figure out of my vector is empty or not I got help from cplusplus's 
+	article on "vector::empty".
+	URL: https://cplusplus.com/reference/vector/vector/empty/
+	This helped me with making sure my user wasn't trying to print an 
+	empty list, or trying to delete from an empty list, and with helping me
+	deleting everything on the heap after the program was done.
+      */
+      while(!studentList.empty()) {
+	/*
+	  WRITE ABOUT HOW YOU GOT HELP FROM THE cplusplus DOCS ON POP_BACK
+	  AND BACK()!
+	*/
+	delete studentList.back();
+	studentList.pop_back();
+      }
+
+      //change the boolean that determines if the program continues
       inUse = false;
     }
   }
@@ -257,33 +293,123 @@ void addStudent(vector<Student*> & list) {
   list.push_back(addedStudent);
 }
 
+//This function helps the user to delete a student from the list
+void deleteStudent(vector<Student*> & list) {
+  //local variables for function
+  char idInput[7];
+  for(int i = 0; i < 7; i++) {
+    idInput[i] = '\0';
+  }
+  bool matchingIdFound = false;
+
+  //If the list is currently empty, don't let them delete any student
+  /*
+    To figure out of my vector is empty or not I got help from cplusplus's 
+    article on "vector::empty".
+    URL: https://cplusplus.com/reference/vector/vector/empty/
+    This helped me with making sure my user wasn't trying to print an 
+    empty list, or trying to delete from an empty list, and with helping me 
+    deleting everything on the heap after the program was done.
+  */
+  if(list.empty()) {
+    cout << "There isn't any students in the list to delete from " << endl;
+    cout << "the list. After you've added a few students, then " << endl;
+    cout << "consider deleting some of them from the list." << endl;
+    cout << endl;
+    
+  } else { //Otherwise, continue with the rest of the function
+    //ask user for the id of the student they want to remove from the list
+    cout << "What's the id of the student you want to remove from the list?" << endl;
+    cout << "Please make it a 6 digit integer like before (i.e. 464877)." << endl;
+    while((isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) || !matchingIdFound) {
+      cin.get(idInput, 7);
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      
+      //If the whole id isn't just numbers, let the user know they made a mistake
+      if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
+	cout << endl;
+	cout << "You didn't enter a 6 digit integer." << endl;
+	cout << "Could you try inputting the student's id again?" << endl;
+	cout << "(i.e. 464877, 342907)" << endl;
+	cout << endl;
+      } else { //Is there a matching student id in the list?
+	for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
+	  if(strcmp(((*it) -> id), idInput) == 0) { //There's a match
+	    matchingIdFound = true;
+	    cout << "Removing student " << (*it) -> firstName << " " << (*it) -> lastName << " from list." << endl;
+	    cout << endl;
+	  
+	    //get rid of the student from the vector
+	    /*
+	      To get help with this I got help from Mr. Galbraith. He suggested
+	      that I use delete along with *it to delete the contents in list 
+	      first. Then, to remove the pointers from the vector I'd use 
+	      .erase, that way there wouldn't be a useless hole in the vector.
+	      Finally I should use break to get out of my for loop because it
+	      will now run off of my shorted list if I let it continue, and 
+	      that could do some bad stuff.
+	    */
+	    delete *it;
+	    list.erase(it);
+	    break;
+	  }
+	}
+	
+	if(!matchingIdFound) {
+	  cout << "Sorry, I couldn't find a student with that id in the list." << endl;
+	  cout << "This is what your current list is like" << endl;
+	  cout << endl;
+	  printList(list);
+	  cout << "Could you reinput the id of the student you want " << endl;
+	  cout << "to remove from the list?" << endl;
+	  cout << endl;
+	}
+      }
+    }
+  }
+}
+
 //This function helps the user to view their current student list by printing
 //it out
 void printList(vector<Student*> & list) {
-  //give a header to the list
-  cout << "firstname lastname, id, gpa" << endl;
-  cout << endl;
+  //If there is nobody in the list, tell the user
+  /*
+    To figure out of my vector is empty or not I got help from cplusplus's 
+    article on "vector::empty".
+    URL: https://cplusplus.com/reference/vector/vector/empty/
+    This helped me with making sure my user wasn't trying to print an 
+    empty list, or trying to delete from an empty list, and with helping me 
+    deleting everything on the heap after the program was done.
+  */
+  if(list.empty()) {
+    cout << "Sorry, there is currently nobody in the list!" << endl;
+  } else {
+    //give a header to the list
+    cout << "firstname lastname, id, gpa" << endl;
+    cout << endl;
 
-  //Set precision for floats so that they always show two digits after the
-  //decimal point
-  /*
-    Got help with this from the "Formatting Output" video in the Canvas
-    module "Introduction to C++: Video Tutorials".
-   */
-  cout.setf(ios::fixed, ios::floatfield);
-  cout.setf(ios::showpoint);
-  cout.precision(2);
-  
-  //Check for everything in the student list vector and print each out
-  /*
-    For getting help with iterators I used the vector example given in the
-    "Functions, Structs, By Reference, By Value, Pointers" module in Canvas.
-   */
-  for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
-    cout << (*it) -> firstName << " ";
-    cout << (*it) -> lastName << ", ";
-    cout << (*it) -> id << ", ";
-    cout << (*it) -> gpa << endl;
+    //Set precision for floats so that they always show two digits after the
+    //decimal point
+    /*
+      Got help with this from the "Formatting Output" video in the Canvas
+      module "Introduction to C++: Video Tutorials".
+    */
+    cout.setf(ios::fixed, ios::floatfield);
+    cout.setf(ios::showpoint);
+    cout.precision(2);
+    
+    //Check for everything in the student list vector and print each out
+    /*
+      For getting help with iterators I used the vector example given in the
+      "Functions, Structs, By Reference, By Value, Pointers" module in Canvas.
+    */
+    for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
+      cout << (*it) -> firstName << " ";
+      cout << (*it) -> lastName << ", ";
+      cout << (*it) -> id << ", ";
+      cout << (*it) -> gpa << endl;
+    }
   }
+  
   cout << endl;
 }
