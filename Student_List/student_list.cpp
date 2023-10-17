@@ -21,6 +21,10 @@
   This part of the std namespace allows me to change a string value into
   a floating point which is what I need after the first gpa input check.
 
+  I got help with setting the precision of the gpa float while printing
+  it out using cout from the canvas module "Introduction to C++: Video
+  Tutorials". 
+
   WRITE ANY MORE RESOURCES YOU USED HERE
 */
 
@@ -47,6 +51,7 @@ struct Student {
 void instructions();
 int askCommand();
 void addStudent(vector<Student*> & list);
+void printList(vector<Student*> & list);
 
 //Start of main function
 int main() {
@@ -80,7 +85,7 @@ int main() {
       //If they want to print out the list, do so
       cout << "Printing current student list out." << endl;
       cout << endl;
-      //
+      printList(studentList);
       
     } else if(commandKey == 4) {
       //If they want to quit the program, do so
@@ -250,4 +255,35 @@ void addStudent(vector<Student*> & list) {
   //When finished checking all the inputs and putting them all in, add the
   //finalized student pointer to the main vector.
   list.push_back(addedStudent);
+}
+
+//This function helps the user to view their current student list by printing
+//it out
+void printList(vector<Student*> & list) {
+  //give a header to the list
+  cout << "firstname lastname, id, gpa" << endl;
+  cout << endl;
+
+  //Set precision for floats so that they always show two digits after the
+  //decimal point
+  /*
+    Got help with this from the "Formatting Output" video in the Canvas
+    module "Introduction to C++: Video Tutorials".
+   */
+  cout.setf(ios::fixed, ios::floatfield);
+  cout.setf(ios::showpoint);
+  cout.precision(2);
+  
+  //Check for everything in the student list vector and print each out
+  /*
+    For getting help with iterators I used the vector example given in the
+    "Functions, Structs, By Reference, By Value, Pointers" module in Canvas.
+   */
+  for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
+    cout << (*it) -> firstName << " ";
+    cout << (*it) -> lastName << ", ";
+    cout << (*it) -> id << ", ";
+    cout << (*it) -> gpa << endl;
+  }
+  cout << endl;
 }
