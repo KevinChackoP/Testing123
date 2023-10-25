@@ -1,7 +1,16 @@
 /* 
-   This project...
+   This project helps the user keep track of students by creating a list for
+   them to keep student's first names, last names, id, and gpa in. The user
+   will be given instructions on how to use the program before being prompted
+   to enter a command to do an action with the list. ADD will add a student
+   to the list, in which the user will be asked for the student's first name,
+   last name, id, and gpa. PRINT will print out the current list with all the
+   students inside, or tell the user that there are no students in the list.
+   DELETE will remove a student from the list via entering that student's id
+   number. Lastly, if the user would like to quit the program they can type
+   QUIT which will clear the heap and end the program. 
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 10/17/2023
    Period 6, C++ / Data Structures
 */
 
@@ -40,7 +49,15 @@
   empty list, or trying to delete from an empty list, and with helping me 
   deleting everything on the heap after the program was done.
   
-  WRITE ANY MORE RESOURCES YOU USED HERE
+  Also to help me with clearing what I had on the heap, I needed more
+  help from cplusplus from their documentation on "vector::back" and
+  "vector::pop_back".
+  URL: https://cplusplus.com/reference/vector/vector/back/
+  URL: https://cplusplus.com/reference/vector/vector/pop_back/
+  Using the vector back function I could go into the last item in
+  a vector, which helped me with deleting its contents. This worked
+  well in tandem with vector pop_back which would then get rid of
+  the last item in a vector from the vector, finishing the job. 
 */
 
 //imports
@@ -118,8 +135,15 @@ int main() {
       */
       while(!studentList.empty()) {
 	/*
-	  WRITE ABOUT HOW YOU GOT HELP FROM THE cplusplus DOCS ON POP_BACK
-	  AND BACK()!
+	  Also to help me with clearing what I had on the heap, I needed more
+	  help from cplusplus from their documentation on "vector::back" and
+	  "vector::pop_back".
+	  URL: https://cplusplus.com/reference/vector/vector/back/
+	  URL: https://cplusplus.com/reference/vector/vector/pop_back/
+	  Using the vector back function I could go into the last item in
+	  a vector, which helped me with deleting its contents. This worked
+	  well in tandem with vector pop_back which would then get rid of
+	  the last item in a vector from the vector, finishing the job. 
 	*/
 	delete studentList.back();
 	studentList.pop_back();
@@ -214,6 +238,7 @@ void addStudent(vector<Student*> & list) {
   cout << "What's the student's first name?" << endl;
   cin.get(firstNameInput, 16);
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  //Add the first name to the pointer to the student struct
   strcpy((*addedStudent).firstName, firstNameInput);
   cout << endl;
 
@@ -221,6 +246,7 @@ void addStudent(vector<Student*> & list) {
   cout << "What's the student's last name?" << endl;
   cin.get(lastNameInput, 16);
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  //Add the last name to the pointer to the student struct
   strcpy((*addedStudent).lastName, lastNameInput);
   cout << endl;
 
@@ -245,6 +271,7 @@ void addStudent(vector<Student*> & list) {
       cout << endl;
     }
   }
+  //Add the id to the pointer to the student struct
   strcpy((*addedStudent).id, idInput);
   cout << endl;
 
@@ -259,10 +286,10 @@ void addStudent(vector<Student*> & list) {
     if(isdigit(gpaInput1[0]) == 0 || gpaInput1[1] != '.' || isdigit(gpaInput1[2]) == 0 || isdigit(gpaInput1[3]) == 0) {
       cout << "Your given gpa isn't in the corrent format of one leading " << endl;
       cout << "number, one decimal point, and two trailing numbers." << endl;
-      cout << "(ie: 3.24, 4.22, 2.76)" << endl;
+      cout << "(ie: 3.24, 4.22, 2.76, 3.00)" << endl;
       cout << "Could you please try inputting the gpa again?" << endl;
       
-    } else {
+    } else { //If the gpa is in the right format, make sure it's in the range
       //transfer their string input into a float
       /*
 	I got help with transferring strings into floating points from
@@ -285,6 +312,7 @@ void addStudent(vector<Student*> & list) {
       }
     }
   }
+  //Add the gpa to the pointer to the student struct
   (*addedStudent).gpa = gpaInput2;
   cout << endl;
   
@@ -319,6 +347,7 @@ void deleteStudent(vector<Student*> & list) {
     
   } else { //Otherwise, continue with the rest of the function
     //ask user for the id of the student they want to remove from the list
+    //and make sure the inputted id is valid and matches a student
     cout << "What's the id of the student you want to remove from the list?" << endl;
     cout << "Please make it a 6 digit integer like before (i.e. 464877)." << endl;
     while((isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) || !matchingIdFound) {
@@ -354,10 +383,15 @@ void deleteStudent(vector<Student*> & list) {
 	    break;
 	  }
 	}
-	
+
+	//If after going through the whole vector and no match could be found
+	//let the user know that their id doesn't work before letting them
+	//try again
 	if(!matchingIdFound) {
 	  cout << "Sorry, I couldn't find a student with that id in the list." << endl;
 	  cout << "This is what your current list is like" << endl;
+	  //Show the user their current list so they can see the right id
+	  //of who they want to delete off the list
 	  cout << endl;
 	  printList(list);
 	  cout << "Could you reinput the id of the student you want " << endl;
@@ -386,7 +420,7 @@ void printList(vector<Student*> & list) {
   } else {
     //give a header to the list
     cout << "firstname lastname, id, gpa" << endl;
-    cout << endl;
+    cout << "---------------------------------------------------" << endl;
 
     //Set precision for floats so that they always show two digits after the
     //decimal point
