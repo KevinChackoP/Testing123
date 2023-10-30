@@ -1,0 +1,14 @@
+#include <iostream>
+
+class Parent {
+public:
+  void printStuff() {
+    cout << "I am a parent" << endl;
+  }
+};
+
+using namespace std;
+
+int main() {
+  cout << "Hello World!" << endl;
+}
