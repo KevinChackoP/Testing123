@@ -1,0 +1,12 @@
+#include <cstring>
+#include "music.h"
+
+//constructor for music child class
+music::music(char* titleInput, char* artistInput, int yearInput, char* publisherInput, int durationInput) {
+  //On construction, set each of the variables to the corresponding parameters
+  title = titleInput;
+  artist = artistInput;
+  year = yearInput;
+  publisher = publisherInput;
+  duration = durationInput;
+}

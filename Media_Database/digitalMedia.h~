@@ -1,0 +1,16 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class digitalMedia {
+ public:
+  digitalMedia(char* titleInput, int yearInput);
+  char* getTitle();
+  //Don't need a setter for title, it will be passed in by reference
+  int getYear();
+  void setYear(int newYear);
+ protected:
+  char* title;
+  int year;
+};

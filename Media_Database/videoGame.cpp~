@@ -1,0 +1,7 @@
+#include "videoGame.h"
+
+//contructor for videoGame child class
+videoGame::videoGame(char* titleInput, int yearInput, char* publisher, int rating) {
+  //On construction, set each of the variables to the corresponding parameters
+  title = titleInput;
+}
