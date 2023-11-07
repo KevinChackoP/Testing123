@@ -65,22 +65,22 @@ int main() {
       //If they want to delete media from the database, do so
       cout << "Deleting media from the database." << endl;
       cout << endl;
-      deleteMedia(mediaDatabase);
+      //deleteMedia(mediaDatabase); ADD THIS IN WHEN IT'S READY
       
     } else if(commandKey == 3) {
       //If they want to search for an item in the database, do so
       cout << "Searching for media in the database." << endl;
       cout << endl;
-      searchDatabase(mediaDatabase);
+      //searchDatabase(mediaDatabase); ADD THIS IN WHEN IT'S READY
       
     } else if(commandKey == 4) {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
 
       //delete everything on the heap from my media list vector
-      while(!mediaList.empty()) {
-	delete mediaList.back();
-	mediaList.pop_back();
+      while(!mediaDatabase.empty()) {
+	delete mediaDatabase.back();
+	mediaDatabase.pop_back();
       }
 
       //change the boolean that determines if the program continues
@@ -122,8 +122,7 @@ int askCommand() {
   //command key, if invalid have them reinput their desired command.
   while(true) {
     //Ask for input
-    cin.get(input, 10);
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.getline(input, 10);
 
     //Clean input up by making it all upper case
     for(int i = 0; i < 10; i++) {
@@ -152,7 +151,7 @@ int askCommand() {
 void addMedia(vector<digitalMedia*> & database) {
   //These are a local variables being used
   digitalMedia* addedMedia;
-  mediaTypeCode = 0; //1 for videogame, 2 for music, 3 for movie
+  int mediaTypeCode = 0; //1 for videogame, 2 for music, 3 for movie
   char* title = new char[31];
   for(int i = 0; i < 31; i++) {
     title[i] = '\0';
@@ -174,6 +173,7 @@ void addMedia(vector<digitalMedia*> & database) {
     cout << "What type of digital media are you entering?" << endl;
     cout << "Enter 1 for video games, 2 for music, or 3 for movies." << endl;
     cin >> mediaTypeCode;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     //If input is invalid
     if(mediaTypeCode != 1 && mediaTypeCode != 2 && mediaTypeCode != 3) {
@@ -194,11 +194,13 @@ void addMedia(vector<digitalMedia*> & database) {
   cout << "In what year was the media released?" << endl;
   cout << "(positive numbers as A.D., negative as B.C.)" << endl;
   cin >> year;
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
   cout << endl;
 
   //If needed, ask for the publisher name
   if(mediaTypeCode == 1 || mediaTypeCode == 2) {
     cout << "What's the name of the media's publisher?" << endl;
+    cout << "(make no more than 15 characters)" << endl;
     cin.getline(publisher, 16);
     cout << endl;
   }
@@ -206,6 +208,7 @@ void addMedia(vector<digitalMedia*> & database) {
   //If needed, ask for the artist name
   if(mediaTypeCode == 2) {
     cout << "What's the name of the media's artist?" << endl;
+    cout << "(make no more than 15 characters)" << endl;
     cin.getline(artist, 16);
     cout << endl;
   }
@@ -213,6 +216,7 @@ void addMedia(vector<digitalMedia*> & database) {
   //If needed, ask for the director name
   if(mediaTypeCode == 3) {
     cout << "What's the name of the media's director?" << endl;
+    cout << "(make no more than 15 characters)" << endl;
     cin.getline(director, 16);
     cout << endl;
   }
@@ -221,6 +225,7 @@ void addMedia(vector<digitalMedia*> & database) {
   if(mediaTypeCode == 1 || mediaTypeCode == 3) {
     cout << "What's the rating that the media received? (0 to 100)" << endl;
     cin >> rating;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cout << endl;
   }
 
@@ -253,7 +258,7 @@ void addMedia(vector<digitalMedia*> & database) {
   //Add finalized digitalMedia pointer to the main vector (database).
   database.push_back(addedMedia);
 }
-
+/*
 //This function helps the user to delete media from the database
 void deleteMedia(vector<digitalMedia*> & database) {
   //local variables for function
@@ -264,14 +269,6 @@ void deleteMedia(vector<digitalMedia*> & database) {
   bool matchingIdFound = false;
 
   //If the list is currently empty, don't let them delete any student
-  /*
-    To figure out of my vector is empty or not I got help from cplusplus's 
-    article on "vector::empty".
-    URL: https://cplusplus.com/reference/vector/vector/empty/
-    This helped me with making sure my user wasn't trying to print an 
-    empty list, or trying to delete from an empty list, and with helping me 
-    deleting everything on the heap after the program was done.
-  */
   if(list.empty()) {
     cout << "There isn't any students in the list to delete from " << endl;
     cout << "the list. After you've added a few students, then " << endl;
@@ -302,15 +299,6 @@ void deleteMedia(vector<digitalMedia*> & database) {
 	    cout << endl;
 	  
 	    //get rid of the student from the vector
-	    /*
-	      To get help with this I got help from Mr. Galbraith. He suggested
-	      that I use delete along with *it to delete the contents in list 
-	      first. Then, to remove the pointers from the vector I'd use 
-	      .erase, that way there wouldn't be a useless hole in the vector.
-	      Finally I should use break to get out of my for loop because it
-	      will now run off of my shorted list if I let it continue, and 
-	      that could do some bad stuff.
-	    */
 	    delete *it;
 	    list.erase(it);
 	    break;
@@ -340,14 +328,6 @@ void deleteMedia(vector<digitalMedia*> & database) {
 //out media that matches with their search (based on title or year released)
 void searchDatabase(vector<digitalMedia*> & database); {
   //If there is nobody in the database, tell the user
-  /*
-    To figure out of my vector is empty or not I got help from cplusplus's 
-    article on "vector::empty".
-    URL: https://cplusplus.com/reference/vector/vector/empty/
-    This helped me with making sure my user wasn't trying to print an 
-    empty list, or trying to delete from an empty list, and with helping me 
-    deleting everything on the heap after the program was done.
-  */
   if(list.empty()) {
     cout << "Sorry, there is currently no media in the database!" << endl;
   } else {
@@ -357,19 +337,11 @@ void searchDatabase(vector<digitalMedia*> & database); {
 
     //Set precision for floats so that they always show two digits after the
     //decimal point
-    /*
-      Got help with this from the "Formatting Output" video in the Canvas
-      module "Introduction to C++: Video Tutorials".
-    */
     cout.setf(ios::fixed, ios::floatfield);
     cout.setf(ios::showpoint);
     cout.precision(2);
     
     //Check for everything in the student list vector and print each out
-    /*
-      For getting help with iterators I used the vector example given in the
-      "Functions, Structs, By Reference, By Value, Pointers" module in Canvas.
-    */
     for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
       cout << (*it) -> firstName << " ";
       cout << (*it) -> lastName << ", ";
@@ -380,3 +352,4 @@ void searchDatabase(vector<digitalMedia*> & database); {
   
   cout << endl;
 }
+*/

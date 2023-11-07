@@ -1,8 +1,8 @@
 #include <iostream>
 #include <cstring>
-#include "parent.h"
+#include "digitalMedia.h"
 
-class movies : public digitalMedia {
+class movie : public digitalMedia {
  public:
   movie(char* titleInput, char* directorInput, int yearInput, int ratingInput, int durationInput);
   char* getTitle();

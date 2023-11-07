@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstring>
-#include "parent.h"
+#include "digitalMedia.h"
 
 class videoGame : public digitalMedia {
  public:

@@ -2,7 +2,7 @@
 #include "videoGame.h"
 
 //contructor for videoGame child class
-videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int ratingInput) {
+videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int ratingInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
   title = titleInput;
   year = yearInput;
@@ -11,31 +11,31 @@ videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int 
 }
 
 //getter function for title
-char* getTitle() {
+char* videoGame::getTitle() {
   return title;
 }
 
 //getter function for year
-int getYear() {
+int videoGame::getYear() {
   return year;
 }
 
 //setter function for year
-void setYear(int newYear) {
+void videoGame::setYear(int newYear) {
   year = newYear;
 }
 
 //getter function for publisher
-char* getPublisher() {
+char* videoGame::getPublisher() {
   return publisher;
 }
 
 //getter function for rating
-int getRating() {
+int videoGame::getRating() {
   return rating;
 }
 
 //setter function for rating
-void setRating(int newRating) {
+void videoGame::setRating(int newRating) {
   rating = newRating;
 }

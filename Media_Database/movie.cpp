@@ -2,51 +2,49 @@
 #include "movie.h"
 
 //constructor for music child class
-movie::movie(char* titleInput, char* directorInput, int yearInput, int ratingInput, int durationInput) {
+movie::movie(char* titleInput, char* directorInput, int yearInput, int ratingInput, int durationInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
-  title = titleInput;
   director = directorInput;
-  year = yearInput;
   rating = ratingInput;
   duration = durationInput;
 }
 
-//getter function for title
-char* getTitle() {
+//title getter function
+char* movie::getTitle() {
   return title;
 }
 
 //getter function for director
-char* getDirector() {
+char* movie::getDirector() {
   return director;
 }
 
-//getter function for year
-int getYear() {
+//year getter function
+int movie::getYear() {
   return year;
 }
 
-//setter function for year
-void setYear(int newYear) {
+//year setter function
+void movie::setYear(int newYear) {
   year = newYear;
 }
 
 //getter function for rating
-int getRating() {
+int movie::getRating() {
   return rating;
 }
 
 //setter function for rating
-void setRating(int newRating) {
+void movie::setRating(int newRating) {
   rating = newRating;
 }
 
 //getter function for duration
-int getDuration() {
+int movie::getDuration() {
   return duration;
 }
 
 //setter function for duration
-void setDuration(int newDuration) {
+void movie::setDuration(int newDuration) {
   duration = newDuration;
 }

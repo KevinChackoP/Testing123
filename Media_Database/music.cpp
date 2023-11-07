@@ -2,7 +2,7 @@
 #include "music.h"
 
 //constructor for music child class
-music::music(char* titleInput, char* artistInput, int yearInput, char* publisherInput, int durationInput) {
+music::music(char* titleInput, char* artistInput, int yearInput, char* publisherInput, int durationInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
   title = titleInput;
   artist = artistInput;
@@ -12,36 +12,36 @@ music::music(char* titleInput, char* artistInput, int yearInput, char* publisher
 }
 
 //getter function for title
-char* getTitle() {
+char* music::getTitle() {
   return title;
 }
 
 //getter function for artist
-char* getArtist() {
+char* music::getArtist() {
   return artist;
 }
 
 //getter function for year
-int getYear() {
+int music::getYear() {
   return year;
 }
 
 //setter function for year
-void setYear(int newYear) {
+void music::setYear(int newYear) {
   year = newYear;
 }
 
 //getter function for publisher
-char* getPublisher() {
+char* music::getPublisher() {
   return publisher;
 }
 
 //getter function for duration
-int getDuration() {
+int music::getDuration() {
   return duration;
 }
 
 //setter function for duration
-void setDuration(int newDuration) {
+void music::setDuration(int newDuration) {
   duration = newDuration;
 }
