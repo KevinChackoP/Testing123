@@ -151,107 +151,106 @@ int askCommand() {
 //This function helps the user to add media to the database
 void addMedia(vector<digitalMedia*> & database) {
   //These are a local variables being used
-  digitalMedia* addedMedia = new digitalMedia();
-  char firstNameInput[16];
-  char lastNameInput[16];
+  digitalMedia* addedMedia;
+  mediaTypeCode = 0; //1 for videogame, 2 for music, 3 for movie
+  char* title = new char[31];
+  for(int i = 0; i < 31; i++) {
+    title[i] = '\0';
+  }
+  int year = 0;
+  char* publisher = new char[16];
+  char* artist = new char[16];
+  char* director = new char[16];
   for(int i = 0; i < 16; i++) {
-    firstNameInput[i] = '\0';
-    lastNameInput[i] = '\0';
+    publisher[i] = '\0';
+    artist[i] = '\0';
+    director[i] = '\0';
   }
-  char idInput[7];
-  for(int i = 0; i < 7; i++) {
-    idInput[i] = '\0';
-  }
-  char gpaInput1[5];
-  for(int i = 0; i < 5; i++) {
-    gpaInput1[i] = '\0';
-  }
-  float gpaInput2 = 10.00;
+  int rating = 0;
+  int duration = 0;
 
-  //Take first name
-  cout << "What's the student's first name?" << endl;
-  cin.get(firstNameInput, 16);
-  cin.ignore(numeric_limits<streamsize>::max(), '\n');
-  //Add the first name to the pointer to the student struct
-  strcpy((*addedStudent).firstName, firstNameInput);
-  cout << endl;
+  //Ask for media type
+  while(mediaTypeCode != 1 && mediaTypeCode != 2 && mediaTypeCode != 3) {
+    cout << "What type of digital media are you entering?" << endl;
+    cout << "Enter 1 for video games, 2 for music, or 3 for movies." << endl;
+    cin >> mediaTypeCode;
 
-  //Take last name
-  cout << "What's the student's last name?" << endl;
-  cin.get(lastNameInput, 16);
-  cin.ignore(numeric_limits<streamsize>::max(), '\n');
-  //Add the last name to the pointer to the student struct
-  strcpy((*addedStudent).lastName, lastNameInput);
-  cout << endl;
-
-  //Get id and make sure that it is a 6 digit integer
-  cout << "What's the student's id number (6 number integer)?" << endl;
-  while(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
-    cin.get(idInput, 7);
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    /*
-      To check if a character in a string is a valid digit I got help from
-      cplusplus.com's article on "isdigit".
-      url: https://cplusplus.com/reference/cctype/isdigit/
-      This checks if each character the user inputted for the id number is 
-      actually a number. 
-     */
-    //If the whole id isn't just numbers, let the user know they made a mistake
-    if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
+    //If input is invalid
+    if(mediaTypeCode != 1 && mediaTypeCode != 2 && mediaTypeCode != 3) {
       cout << endl;
-      cout << "You didn't enter a 6 digit integer." << endl;
-      cout << "Could you try inputting the id again?" << endl;
-      cout << "(i.e. 464877, 342907)" << endl;
+      cout << "Sorry, that's not one of the available options." << endl;
+      cout << "Please try again." << endl;
       cout << endl;
     }
   }
-  //Add the id to the pointer to the student struct
-  strcpy((*addedStudent).id, idInput);
   cout << endl;
 
-  //get student GPA and make sure that it is a two decimal number
-  cout << "Please input the student's GPA to 2 decimal places (i.e. 3.00)." << endl;
-  while((isdigit(gpaInput1[0]) == 0 || gpaInput1[1] != '.' || isdigit(gpaInput1[2]) == 0 || isdigit(gpaInput1[3]) == 0) || (gpaInput2 > 5.00 || gpaInput2 < 0.00)) {
-    cin.get(gpaInput1, 5);
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  //Ask for title input
+  cout << "What's the title of the media? (make no more than 30 characters)" << endl;
+  cin.getline(title, 31);
+  cout << endl;
 
-    //If the user didn't enter a string with one leading number, a decimal
-    //point, and two trailing numbers, tell them they need to do it again
-    if(isdigit(gpaInput1[0]) == 0 || gpaInput1[1] != '.' || isdigit(gpaInput1[2]) == 0 || isdigit(gpaInput1[3]) == 0) {
-      cout << "Your given gpa isn't in the corrent format of one leading " << endl;
-      cout << "number, one decimal point, and two trailing numbers." << endl;
-      cout << "(ie: 3.24, 4.22, 2.76, 3.00)" << endl;
-      cout << "Could you please try inputting the gpa again?" << endl;
-      
-    } else { //If the gpa is in the right format, make sure it's in the range
-      //transfer their string input into a float
-      /*
-	I got help with transferring strings into floating points from
-	Cplusplus's article on "stof".
-	URL: https://cplusplus.com/reference/string/stof/
-	This part of the std namespace allows me to change a string value into
-	a floating point which is what I need after the first gpa input check.
-       */
-      gpaInput2 = stof(gpaInput1);
-      
-      //If the gpa isn't a within 0.00 and 5.00 let the user know the gpa isn't
-      //a valid gpa
-      if(gpaInput2 > 5.00 || gpaInput2 < 0.00) {
-	cout << endl;
-	cout << "Sorry, the two decimal place gpa is either over 5.00" << endl;
-	cout << "(5.00 is max weighted gpa) or is under 0.00 (gpa must " << endl;
-	cout << "be positive or zero). Could you enter the student's " << endl;
-	cout << "gpa again? (i.e. 2.34, 4.14, 3.59...)" << endl;
-	cout << endl;
-      }
-    }
+  //Ask for the year input
+  cout << "In what year was the media released?" << endl;
+  cout << "(positive numbers as A.D., negative as B.C.)" << endl;
+  cin >> year;
+  cout << endl;
+
+  //If needed, ask for the publisher name
+  if(mediaTypeCode == 1 || mediaTypeCode == 2) {
+    cout << "What's the name of the media's publisher?" << endl;
+    cin.getline(publisher, 16);
+    cout << endl;
   }
-  //Add the gpa to the pointer to the student struct
-  (*addedStudent).gpa = gpaInput2;
-  cout << endl;
+
+  //If needed, ask for the artist name
+  if(mediaTypeCode == 2) {
+    cout << "What's the name of the media's artist?" << endl;
+    cin.getline(artist, 16);
+    cout << endl;
+  }
+
+  //If needed, ask for the director name
+  if(mediaTypeCode == 3) {
+    cout << "What's the name of the media's director?" << endl;
+    cin.getline(director, 16);
+    cout << endl;
+  }
+
+  //If needed, ask for the rating
+  if(mediaTypeCode == 1 || mediaTypeCode == 3) {
+    cout << "What's the rating that the media received? (0 to 100)" << endl;
+    cin >> rating;
+    cout << endl;
+  }
+
+  //If needed, ask for the duration
+  if(mediaTypeCode == 2) {
+    //If for music, ask for seconds
+    cout << "What's the duration of the media in seconds?" << endl;
+    cout << "(Positive numbers only!)" << endl;
+    cin >> duration;
+    cout << endl;
+  }
+  if(mediaTypeCode == 2) {
+    //If for movie, ask for minutes
+    cout << "What's the duration of the media in minutes?" << endl;
+    cout << "(Positive numbers only!)" << endl;
+    cin >> duration;
+    cout << endl;
+  }
+    
+  //When finished taking all of the inputs, put them
+  //Into the fitting child class
+  if(mediaTypeCode == 1) { // video game
+    digitalMedia* addedMedia = new videoGame(title, year, publisher, rating);
+  } else if(mediaTypeCode == 2) { // music
+    digitalMedia* addedMedia = new music(title, artist, year, publisher, duration);
+  } else if(mediaTypeCode == 3) { // movie
+    digitalMedia* addedMedia = new movie(title, director, year, rating, duration);
+  }
   
-  //When finished checking all the inputs and putting them all in, add the
-  //finalized digitalMedia pointer to the main vector (database).
+  //Add finalized digitalMedia pointer to the main vector (database).
   database.push_back(addedMedia);
 }
 

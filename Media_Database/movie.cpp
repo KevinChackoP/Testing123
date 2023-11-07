@@ -2,7 +2,7 @@
 #include "movie.h"
 
 //constructor for music child class
-music::music(char* titleInput, char* directorInput, int yearInput, int ratingInput, int durationInput) {
+movie::movie(char* titleInput, char* directorInput, int yearInput, int ratingInput, int durationInput) {
   //On construction, set each of the variables to the corresponding parameters
   title = titleInput;
   director = directorInput;
