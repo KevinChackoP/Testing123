@@ -4,11 +4,18 @@
 //constructor for music child class
 movie::movie(char* titleInput, char* directorInput, int yearInput, int ratingInput, int durationInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
-  strcpy(title, titleInput);
-  strcpy(director, directorInput);
-  year = yearInput;
+  director = directorInput;
   rating = ratingInput;
   duration = durationInput;
+  
+  //Also set id to identify class
+  id = 3;
+}
+
+//destructor for movie child class
+movie::~movie() {
+  delete title;
+  delete director;
 }
 
 //title getter function
@@ -26,19 +33,9 @@ int movie::getYear() {
   return year;
 }
 
-//year setter function
-void movie::setYear(int newYear) {
-  year = newYear;
-}
-
 //getter function for rating
 int movie::getRating() {
   return rating;
-}
-
-//setter function for rating
-void movie::setRating(int newRating) {
-  rating = newRating;
 }
 
 //getter function for duration
@@ -46,7 +43,7 @@ int movie::getDuration() {
   return duration;
 }
 
-//setter function for duration
-void movie::setDuration(int newDuration) {
-  duration = newDuration;
+//ID getter function
+int movie::getID() {
+  return id;
 }
