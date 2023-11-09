@@ -5,7 +5,7 @@
 //digital Media class constructor
 digitalMedia::digitalMedia(char* titleInput, int yearInput) {
   //On construction, set variables based on parameters
-  title = titleInput;
+  strcpy(title, titleInput);
   year = yearInput;
 }
 
