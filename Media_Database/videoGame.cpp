@@ -4,7 +4,7 @@
 //contructor for videoGame child class
 videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int ratingInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
-  publisher = publisherInput;
+  strcpy(publisher, publisherInput);
   rating = ratingInput;
   
   //Also set id to identify class
