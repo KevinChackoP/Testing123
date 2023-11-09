@@ -18,19 +18,9 @@ movie::~movie() {
   delete director;
 }
 
-//title getter function
-char* movie::getTitle() {
-  return title;
-}
-
 //getter function for director
 char* movie::getDirector() {
   return director;
-}
-
-//year getter function
-int movie::getYear() {
-  return year;
 }
 
 //getter function for rating

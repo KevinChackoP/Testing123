@@ -248,11 +248,11 @@ void addMedia(vector<digitalMedia*> & database) {
   //When finished taking all of the inputs, put them
   //Into the fitting child class
   if(mediaTypeCode == 1) { // video game
-    digitalMedia* addedMedia = new videoGame(title, year, publisher, rating);
+    addedMedia = new videoGame(title, year, publisher, rating);
   } else if(mediaTypeCode == 2) { // music
-    digitalMedia* addedMedia = new music(title, artist, year, publisher, duration);
+    addedMedia = new music(title, artist, year, publisher, duration);
   } else if(mediaTypeCode == 3) { // movie
-    digitalMedia* addedMedia = new movie(title, director, year, rating, duration);
+    addedMedia = new movie(title, director, year, rating, duration);
   }
   
   //Add finalized digitalMedia pointer to the main vector (database).
@@ -334,7 +334,7 @@ void searchDatabase(vector<digitalMedia*> & database) {
   } else {
     //local variables
     int searchType = 0; //1 for title, 2 for year
-    char title[31];
+    char* title = new char[31];
     for(int i = 0; i < 31; i++) {
       title[i] = '\0';
     }
@@ -377,7 +377,7 @@ void searchDatabase(vector<digitalMedia*> & database) {
       
       //Check for everything in the student list vector and print each out
       for(vector<digitalMedia*>::iterator it = database.begin(); it != database.end(); it++) {
-	if((searchType == 1 && strcmp((*it) -> getTitle(), title)) || (searchType == 2 && (*it) -> getYear() == year)) {
+	if((searchType == 1 && strcmp((*it) -> getTitle(), title) == 0) || (searchType == 2 && (*it) -> getYear() == year)) {
 	  //If a matching title was found, print out whole media class
 	  //Based on the type it is
 	  if((*it) -> getID() == 1) { //If the media is a videogame

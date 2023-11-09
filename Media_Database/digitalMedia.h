@@ -8,8 +8,8 @@ class digitalMedia {
  public:
   digitalMedia(char* titleInput, int yearInput);
   ~digitalMedia();
-  virtual char* getTitle();
-  virtual int getYear();
+  char* getTitle();
+  int getYear();
   virtual char* getPublisher();
   virtual char* getArtist();
   virtual char* getDirector();

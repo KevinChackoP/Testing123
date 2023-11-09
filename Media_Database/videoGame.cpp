@@ -4,6 +4,7 @@
 //contructor for videoGame child class
 videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int ratingInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
+  publisher = new char[16];
   strcpy(publisher, publisherInput);
   rating = ratingInput;
   
@@ -15,16 +16,6 @@ videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int 
 videoGame::~videoGame() {
   delete title;
   delete publisher;
-}
-
-//getter function for title
-char* videoGame::getTitle() {
-  return title;
-}
-
-//getter function for year
-int videoGame::getYear() {
-  return year;
 }
 
 //getter function for publisher

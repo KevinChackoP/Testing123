@@ -19,19 +19,9 @@ music::~music() {
   delete publisher;
 }
 
-//getter function for title
-char* music::getTitle() {
-  return title;
-}
-
 //getter function for artist
 char* music::getArtist() {
   return artist;
-}
-
-//getter function for year
-int music::getYear() {
-  return year;
 }
 
 //getter function for publisher

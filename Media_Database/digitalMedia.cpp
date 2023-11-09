@@ -2,9 +2,12 @@
 #include <cstring>
 #include "digitalMedia.h"
 
+using namespace std;
+
 //digital Media class constructor
 digitalMedia::digitalMedia(char* titleInput, int yearInput) {
   //On construction, set variables based on parameters
+  title = new char[31];
   strcpy(title, titleInput);
   year = yearInput;
 
