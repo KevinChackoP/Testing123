@@ -4,10 +4,17 @@
 //contructor for videoGame child class
 videoGame::videoGame(char* titleInput, int yearInput, char* publisherInput, int ratingInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
-  title = titleInput;
-  year = yearInput;
   publisher = publisherInput;
   rating = ratingInput;
+  
+  //Also set id to identify class
+  id = 1;
+}
+
+//destructor for videoGame child class
+videoGame::~videoGame() {
+  delete title;
+  delete publisher;
 }
 
 //getter function for title
@@ -20,11 +27,6 @@ int videoGame::getYear() {
   return year;
 }
 
-//setter function for year
-void videoGame::setYear(int newYear) {
-  year = newYear;
-}
-
 //getter function for publisher
 char* videoGame::getPublisher() {
   return publisher;
@@ -35,7 +37,7 @@ int videoGame::getRating() {
   return rating;
 }
 
-//setter function for rating
-void videoGame::setRating(int newRating) {
-  rating = newRating;
+//ID getter function
+int videoGame::getID() {
+  return id;
 }

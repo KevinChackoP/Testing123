@@ -7,13 +7,19 @@
 class digitalMedia {
  public:
   digitalMedia(char* titleInput, int yearInput);
+  ~digitalMedia();
   virtual char* getTitle();
-  //Don't need a setter for title, it will be passed in by reference
   virtual int getYear();
-  virtual void setYear(int newYear);
+  virtual char* getPublisher();
+  virtual char* getArtist();
+  virtual char* getDirector();
+  virtual int getRating();
+  virtual int getDuration();
+  virtual int getID();
  protected:
   char* title;
   int year;
+  int id;
 };
 
 #endif

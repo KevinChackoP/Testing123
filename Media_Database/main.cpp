@@ -71,7 +71,7 @@ int main() {
       //If they want to search for an item in the database, do so
       cout << "Searching for media in the database." << endl;
       cout << endl;
-      //searchDatabase(mediaDatabase); ADD THIS IN WHEN IT'S READY
+      searchDatabase(mediaDatabase);
       
     } else if(commandKey == 4) {
       //If they want to quit the program, do so
@@ -237,7 +237,7 @@ void addMedia(vector<digitalMedia*> & database) {
     cin >> duration;
     cout << endl;
   }
-  if(mediaTypeCode == 2) {
+  if(mediaTypeCode == 3) {
     //If for movie, ask for minutes
     cout << "What's the duration of the media in minutes?" << endl;
     cout << "(Positive numbers only!)" << endl;
@@ -322,34 +322,121 @@ void deleteMedia(vector<digitalMedia*> & database) {
       }
     }
   }
-}
+}*/
 
 //This function helps the user to search for media in the database and print
 //out media that matches with their search (based on title or year released)
-void searchDatabase(vector<digitalMedia*> & database); {
+void searchDatabase(vector<digitalMedia*> & database) {
   //If there is nobody in the database, tell the user
-  if(list.empty()) {
+  if(database.empty()) {
     cout << "Sorry, there is currently no media in the database!" << endl;
+    cout << "Please try again after data has been ADDed." << endl;
   } else {
-    //give a header to the database
-    cout << "firstname lastname, id, gpa" << endl;
-    cout << "---------------------------------------------------" << endl;
-
-    //Set precision for floats so that they always show two digits after the
-    //decimal point
-    cout.setf(ios::fixed, ios::floatfield);
-    cout.setf(ios::showpoint);
-    cout.precision(2);
+    //local variables
+    int searchType = 0; //1 for title, 2 for year
+    char title[31];
+    for(int i = 0; i < 31; i++) {
+      title[i] = '\0';
+    }
+    int year = 0;
+    bool foundResult = false;
+    int searchAgain = 0;
     
-    //Check for everything in the student list vector and print each out
-    for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
-      cout << (*it) -> firstName << " ";
-      cout << (*it) -> lastName << ", ";
-      cout << (*it) -> id << ", ";
-      cout << (*it) -> gpa << endl;
+    //Ask for what they are searching for
+    cout << "Do you want to search for items by title or year? " << endl;
+    cout << "Enter 1 for title, or 2 for year." << endl;
+    //take and validate their input asking for their preferred search attribute
+    while(searchType != 1 && searchType != 2) {
+      cin >> searchType;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << endl;
+      
+      //If input is invalid
+      if(searchType != 1 && searchType != 2) {
+	cout << "Sorry, that's not one of the available options." << endl;
+	cout << "Please enter 1 for title, or 2 for year." << endl;
+	cout << endl;
+      }
+    }
+
+    //Start search loop (until they find something or want to quit search)
+    while(!foundResult) {
+      //Ask them to give the value they want to use for their database search
+      if(searchType == 1) { //If they are searching by title, ask for the title
+	cout << "What is the title of the media you're searching for?" << endl;
+	cin.getline(title, 31);
+	cout << endl;
+	
+      } else { //If they are searching by year, ask for the year
+	cout << "What is the year the media you're searching for released?" << endl;
+	cout << "(positive numbers as A.D., negative as B.C.)" << endl;
+	cin >> year;
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	cout << endl;
+      }
+      
+      //Check for everything in the student list vector and print each out
+      for(vector<digitalMedia*>::iterator it = database.begin(); it != database.end(); it++) {
+	if((searchType == 1 && strcmp((*it) -> getTitle(), title)) || (searchType == 2 && (*it) -> getYear() == year)) {
+	  //If a matching title was found, print out whole media class
+	  //Based on the type it is
+	  if((*it) -> getID() == 1) { //If the media is a videogame
+	    cout << (*it) -> getTitle() << ", ";
+	    cout << (*it) -> getYear() << ", ";
+	    cout << (*it) -> getPublisher() << ", ";
+	    cout << (*it) -> getRating() << endl;
+	    
+	  } else if((*it) -> getID() == 2) { //If the media is music
+	    cout << (*it) -> getTitle() << ", ";
+	    cout << (*it) -> getYear() << ", ";
+	    cout << (*it) -> getPublisher() << ", ";
+	    cout << (*it) -> getArtist() << ", ";
+	    cout << (*it) -> getDuration() << endl;
+	    
+	  } else if((*it) -> getID() == 3) { //If the media is a movie
+	    cout << (*it) -> getTitle() << ", ";
+	    cout << (*it) -> getYear() << ", ";
+	    cout << (*it) -> getDirector() << ", ";
+	    cout << (*it) -> getRating() << ", ";
+	    cout << (*it) -> getDuration() << endl;
+	  }
+	  
+	  foundResult = true;
+	}
+      }
+
+      if(!foundResult) {
+	cout << "Sorry, no results were found. Would you like to " << endl;
+	cout << " try again with a different search term?" << endl;
+	cout << "Enter 1 for yes, or 2 for no." << endl;
+
+	while(searchAgain != 1 && searchAgain != 2) {
+	  cin >> searchAgain;
+	  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	  
+	  //If input is invalid
+	  if(searchAgain != 1 && searchAgain != 2) {
+	    cout << endl;
+	    cout << "Sorry, that's not one of the available options." << endl;
+	    cout << "Please enter 1 to search again, or 2 to exit." << endl;
+	    cout << endl;
+	  }
+	}
+
+	//Based on their input, continue search or exit
+	if(searchAgain == 1) { //if they enter yes, go to start of loop again
+	  //reset variables
+	  searchAgain = 0;
+	  for(int i = 0; i < 31; i++) {
+	    title[i] = '\0';
+	  }
+	  year = 0;
+	} else {
+	  foundResult = true;
+	}
+      }
     }
   }
   
   cout << endl;
 }
-*/
