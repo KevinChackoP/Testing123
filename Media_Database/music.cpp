@@ -1,10 +1,13 @@
+//imports
 #include <cstring>
 #include "music.h"
 
 //constructor for music child class
 music::music(char* titleInput, char* artistInput, int yearInput, char* publisherInput, int durationInput) : digitalMedia(titleInput, yearInput) {
   //On construction, set each of the variables to the corresponding parameters
+  artist = new char[16];
   strcpy(artist, artistInput);
+  publisher = new char[16];
   strcpy(publisher, publisherInput);
   duration = durationInput;
   

@@ -191,7 +191,7 @@ void addMedia(vector<digitalMedia*> & database) {
   cout << endl;
 
   //Ask for the year input
-  cout << "In what year was the media released?" << endl;
+  cout << "In what whole number year was the media released?" << endl;
   cout << "(positive numbers as A.D., negative as B.C.)" << endl;
   cin >> year;
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -257,6 +257,12 @@ void addMedia(vector<digitalMedia*> & database) {
   
   //Add finalized digitalMedia pointer to the main vector (database).
   database.push_back(addedMedia);
+
+  //delete heap data pointed to made in function
+  delete title;
+  delete publisher;
+  delete director;
+  delete artist;
 }
 /*
 //This function helps the user to delete media from the database
@@ -377,39 +383,63 @@ void searchDatabase(vector<digitalMedia*> & database) {
       
       //Check for everything in the student list vector and print each out
       for(vector<digitalMedia*>::iterator it = database.begin(); it != database.end(); it++) {
+	//If search term matches with one of the corresponding fields in
+	//the classes in the media database...
 	if((searchType == 1 && strcmp((*it) -> getTitle(), title) == 0) || (searchType == 2 && (*it) -> getYear() == year)) {
-	  //If a matching title was found, print out whole media class
+	  //If a matching title or year was found, print out whole media class
 	  //Based on the type it is
 	  if((*it) -> getID() == 1) { //If the media is a videogame
+	    //header line
+	    cout << "Video Game: " << endl;
+	    cout << "TITLE, YEAR, PUBLISHER, RATING" << endl;
+	    cout << "---------------------------------------------" << endl;
+	    //database information
 	    cout << (*it) -> getTitle() << ", ";
 	    cout << (*it) -> getYear() << ", ";
 	    cout << (*it) -> getPublisher() << ", ";
 	    cout << (*it) -> getRating() << endl;
+	    cout << "---------------------------------------------" << endl;
 	    
 	  } else if((*it) -> getID() == 2) { //If the media is music
+	    //header line
+	    cout << "Music (duration in seconds): " << endl;
+	    cout << "TITLE, YEAR, PUBLISHER, ARTIST, DURATION" << endl;
+	    cout << "---------------------------------------------" << endl;
+	    //database information
 	    cout << (*it) -> getTitle() << ", ";
 	    cout << (*it) -> getYear() << ", ";
 	    cout << (*it) -> getPublisher() << ", ";
 	    cout << (*it) -> getArtist() << ", ";
 	    cout << (*it) -> getDuration() << endl;
+	    cout << "---------------------------------------------" << endl;
 	    
 	  } else if((*it) -> getID() == 3) { //If the media is a movie
+	    //header line
+	    cout << "Movie (duration in minutes): " << endl;
+	    cout << "TITLE, YEAR, DIRECTOR, RATING, DURATION" << endl;
+	    cout << "---------------------------------------------" << endl;
+	    //database information
 	    cout << (*it) -> getTitle() << ", ";
 	    cout << (*it) -> getYear() << ", ";
 	    cout << (*it) -> getDirector() << ", ";
 	    cout << (*it) -> getRating() << ", ";
 	    cout << (*it) -> getDuration() << endl;
+	    cout << "---------------------------------------------" << endl;
 	  }
-	  
+
+	  //note that a result was found and function was sucessful
 	  foundResult = true;
 	}
       }
 
+      //If no results were found
       if(!foundResult) {
+	//Ask them if they'd like to search again
 	cout << "Sorry, no results were found. Would you like to " << endl;
 	cout << " try again with a different search term?" << endl;
 	cout << "Enter 1 for yes, or 2 for no." << endl;
 
+	//validate their answer input
 	while(searchAgain != 1 && searchAgain != 2) {
 	  cin >> searchAgain;
 	  cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -431,11 +461,14 @@ void searchDatabase(vector<digitalMedia*> & database) {
 	    title[i] = '\0';
 	  }
 	  year = 0;
-	} else {
+	} else { //if the say no, exit the function
 	  foundResult = true;
 	}
       }
     }
+
+    //delete heap data pointed to made in function
+    delete title;
   }
   
   cout << endl;
