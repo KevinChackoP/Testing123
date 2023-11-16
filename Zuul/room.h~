@@ -1,0 +1,24 @@
+//Implement a header guard
+#ifndef ROOM_H
+#define ROOM_H
+
+//Add imports
+#include <iostream>
+#include <cstring>
+#include <map>
+
+//struct declarations
+struct item {
+  char name[16];
+  char description[51];
+  int id;
+};
+
+//start of room class
+class room {
+ public:
+  //Public variables and functions open for use wherever
+  room(char[16] name, char[51] description, );
+}
+
+#endif
