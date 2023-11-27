@@ -29,15 +29,16 @@ using namespace std;
 void instructions();
 int askCommand();
 void move(vector<room*> & list);
-void take(vector<room*> & list);
+void take(vector<room*> & list, vector<item*> & inventory);
 void inventory(vector<item*> & inventory);
-void drop(vector<room*> & list);
+void drop(vector<room*> & list, vector<item*> & inventory);
 
 //Start of main function
 int main() {
   //local variable declarations
   vector<room*> roomList;
   vector<item*> inventory;
+  int currentRoom = 1; //Start with Mostly Empty Hut
   bool inUse = true;
   int commandKey = 0;
 

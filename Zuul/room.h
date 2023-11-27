@@ -20,7 +20,7 @@ struct item {
 class room {
  public:
   //Public variables and functions open for use wherever
-  room(char* nameInput, char* descriptionInput, map<int, int> & exitsInput, vector<item*> & roomInvInput);
+  room(char* nameInput, char* descriptionInput, map<int, int> & exitsInput, int idInput);
   ~room();
   char* getName();
   char* getDescription();
@@ -33,8 +33,9 @@ class room {
   //secured variables that can't be accessed outside of class
   char* name;
   char* description;
-  map<int, int> exits;
+  map<int, int> exits; //First int is exit code, second int is room id
   vector<item*> roomInv;
+  int id;
 }
 
 #endif

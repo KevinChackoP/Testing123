@@ -1,0 +1,26 @@
+//imports
+#include <iostream>
+#include <cstring>
+#include <cctype>
+#include <ios>
+#include <limits>
+#include <math.h>
+#include <vector>
+#include <map>
+#include "room.h"
+
+using namespace std;
+
+//room class constructor
+room:room(char* nameInput, char* descriptionInput, map<int, int> & exitsInput, int idInput) {
+  //On construction, set variables based on parameters passed in
+  name = new char[31];
+  strcpy(name, nameInput);
+  description = new char[101];
+  strcpy(description, descriptionInput);
+  exits = exitsInput;
+  id = idInput;
+  
+  //Also create an empty inventory vector for the room
+  roomInv = new ve
+}
