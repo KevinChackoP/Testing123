@@ -28,10 +28,11 @@ using namespace std;
 //Function prototypes
 void instructions();
 int askCommand();
-void move(vector<room*> & list);
-void take(vector<room*> & list, vector<item*> & inventory);
-void inventory(vector<item*> & inventory);
-void drop(vector<room*> & list, vector<item*> & inventory);
+void roomDescription(vector<room*> & list, int roomID);
+void move(vector<room*> & list, int & roomID);
+void take(vector<room*> & list, vector<item*> & inventory, int roomID);
+void inventoryPrint(vector<item*> & inventory);
+void drop(vector<room*> & list, vector<item*> & inventory, int roomID);
 
 //Start of main function
 int main() {
@@ -44,6 +45,55 @@ int main() {
 
   //Set the situation up for the player and tell them how the game works
   instructions();
+
+  //Have them loop through doing actions in the game until they win or until
+  //they want to quit
+  while(inUse) {
+    //Give the user a description of their surroundings based on the current
+    //room they are in
+    roomDescription(roomList, currentRoom);
+    
+    //ask the user to choose an action
+    commandKey = askCommand();
+
+    //Based on their command, have them do something in the game
+    if(commandKey == 1) { //If they want to move...
+      cout << "You consider where to go next..." << endl;
+      cout << endl;
+      move(roomList, currentRoom);
+      
+    } else if(commandKey == 2) { //If they want to take an item from their current room...
+      cout << "You consider what to take from your surroundings..." << endl;
+      cout << endl;
+      take(roomList, inventory, currentRoom);
+
+    } else if(commandKey == 3) { //If they want to check their inventory...
+      cout << "You check your current belongings..." << endl;
+      cout << endl;
+      inventoryPrint(inventory);
+
+    } else if(commandKey == 4) { //If they want to drop an item into their current room...
+      cout << "You decide to leave one of your belongings in the room..." << endl;
+      cout << endl;
+      drop(roomList, inventory, currentRoom);
+      
+    } else if(commandKey == 5) { //If they want to quick the game
+      cout << "You decide to give up. You feel THE CROW's disappointment " << endl;
+      cout << "crawling on your back. " << endl;
+
+      //delete the pointers from the vectors used
+      while(!roomList.empty()) {
+	delete roomList.back();
+	roomList.pop_back();
+      }
+      while(!inventory.empty()) {
+	delete inventory.back();
+	inventory.pop_back();
+      }
+
+      inUse = false;
+    }
+  }
   
   //If nothing went wrong, return 0
   return 0;
@@ -113,4 +163,36 @@ int askCommand() {
       cout << endl;
     }
   }
+}
+
+//This function gives a description of the current room
+void roomDescription(vector<room*> & list, int roomID) {
+  cout << "This function should print out the current room's description." << endl;
+  cout << endl;
+}
+
+//This function moves the player from their current room into another one
+void move(vector<room*> & list, int & roomID) {
+  cout << "This function should move the player from one room to another." << endl;
+  cout << endl;
+}
+
+//This function adds an item from the current room's inventory (removing it
+//from the current room's inventory) into the player's inventory
+void take(vector<room*> & list, vector<item*> & inventory, int roomID) {
+  cout << "This function should complete the take action." << endl;
+  cout << endl;
+}
+
+//This function prints a list of the player's current inventory items
+void inventoryPrint(vector<item*> & inventory) {
+  cout << "This function should print out the player's inventory." << endl;
+  cout << endl;
+}
+
+//This function removes an item from the player's inventory and adds it
+//to the inventory of the player's current room
+void drop(vector<room*> & list, vector<item*> & inventory, int roomID) {
+  cout << "This function should complete the drop action." << endl;
+  cout << endl;
 }

@@ -36,6 +36,6 @@ class room {
   map<int, int> exits; //First int is exit code, second int is room id
   vector<item*> roomInv;
   int id;
-}
+};
 
 #endif
