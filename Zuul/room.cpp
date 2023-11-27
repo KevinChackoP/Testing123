@@ -16,7 +16,7 @@ room::room(char* nameInput, char* descriptionInput, map<int, int> & exitsInput, 
   //On construction, set variables based on parameters passed in
   name = new char[31];
   strcpy(name, nameInput);
-  description = new char[101];
+  description = new char[201];
   strcpy(description, descriptionInput);
   exits = exitsInput;
   id = idInput;
@@ -95,4 +95,9 @@ item* room::removeRoomInv(char* itemName) {
   //If an item matched with the search name, return it, else return NULL
   //to show that there wasn't a matching item
   return returnItem;
+}
+
+//room ID getter function
+int room::getID() {
+  return id;
 }

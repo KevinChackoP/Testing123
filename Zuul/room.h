@@ -29,6 +29,7 @@ class room {
   vector<item*> getRoomInv();
   void addRoomInv(item* newItem);
   item* removeRoomInv(char* itemName);
+  int getID();
  protected:
   //secured variables that can't be accessed outside of class
   char* name;

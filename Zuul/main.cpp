@@ -7,6 +7,20 @@
 */
 
 /*
+  To get help with assigning a value to a cstring I looked at the cplusplus
+  documentation for strcpy.
+  URL: https://cplusplus.com/reference/cstring/strcpy/
+  This helped me deal with some issues involving giving a name and description
+  to my rooms. I figured out that "" alone couldn't be passed as a cstring
+  value into a parameter, but could be assigned to a cstring variable which
+  could then be passed in as a parameter.
+
+  To get help with using the map class I used the cplusplus docs on map.
+  URL: https://cplusplus.com/reference/map/map/
+  I used this and its pages in order to figure out how to initialize a map,
+  access its values, and manipulate it. This was crucial for making my exits
+  in my game work. 
+
   NOTE CITATIONS HERE
 */
 
@@ -25,6 +39,12 @@
 
 using namespace std;
 
+//Global constants
+const int NORTH = 1;
+const int EAST = 2;
+const int SOUTH = 3;
+const int WEST = 4;
+
 //Function prototypes
 void instructions();
 int askCommand();
@@ -38,6 +58,14 @@ void drop(vector<room*> & list, vector<item*> & inventory, int roomID);
 int main() {
   //local variable declarations
   vector<room*> roomList;
+  
+  //room declarations and additions to list
+  char name1[31] = "Mostly Empty Hut";
+  char description1[201] = "This is the makeshift home both you and your master are staying at. She's \ncurrently at a table writing something as she awaits for you to complete \nyour test. Don't disappoint her.";
+  map<int,int> exits1 = {{EAST, 3}, {SOUTH, 2}};
+  room* emptyHut = new room(name1, description1, exits1, 1);
+  roomList.push_back(emptyHut); //Room 1 added
+  
   vector<item*> inventory;
   int currentRoom = 1; //Start with Mostly Empty Hut
   bool inUse = true;
@@ -45,6 +73,9 @@ int main() {
 
   //Set the situation up for the player and tell them how the game works
   instructions();
+
+  cout << "------------------Test Start------------------" << endl;
+  cout << endl;
 
   //Have them loop through doing actions in the game until they win or until
   //they want to quit
@@ -118,7 +149,7 @@ void instructions() {
   cout << "your INVENTORY to see what items you currently have. " << endl;
   cout << "Furthermore, you can DROP items that you currently have " << endl;
   cout << "into the area you are in. Lastly, if you want to give up, " << endl;
-  cout << "you can QUIT. I won't hold it against you if you do. " << endl;
+  cout << "you can QUIT. I won't hold it against you if you do.\"" << endl;
   cout << endl;
 }
 
@@ -167,8 +198,41 @@ int askCommand() {
 
 //This function gives a description of the current room
 void roomDescription(vector<room*> & list, int roomID) {
-  cout << "This function should print out the current room's description." << endl;
-  cout << endl;
+  //Loop through rooms list
+  for(vector<room*>::iterator it = list.begin(); it != list.end(); it++) {
+    //Find the current room in the rooms list
+    if((*it) -> getID() == roomID) {
+      //print out all the information about the room
+      cout << (*it) -> getName() << endl; //Name
+      cout << (*it) -> getDescription() << endl; //Description
+      cout << endl;
+      
+      cout << "Current area exits:" << endl; //Exits
+      map<int, int> roomExits = (*it) -> getExits();
+      if(roomExits.find(NORTH) != roomExits.end()) {
+	cout << "NORTH\t";
+      }
+      if(roomExits.find(EAST) != roomExits.end()) {
+	cout << "EAST\t";
+      }
+      if(roomExits.find(SOUTH) != roomExits.end()) {
+	cout << "SOUTH\t";
+      }
+      if(roomExits.find(WEST) != roomExits.end()) {
+	cout << "WEST\t";
+      }
+      cout << endl;
+      cout << endl;
+
+      if(((*it) -> getRoomInv()).empty()) { //No Items
+	cout << "There are no notable items here." << endl;
+      } else { //Items List
+	cout << "LIST OF ALL THE ITEMS IN THE ROOM" << endl;
+      }
+      
+      cout << endl;
+    }
+  }
 }
 
 //This function moves the player from their current room into another one
