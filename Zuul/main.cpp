@@ -58,13 +58,26 @@ void drop(vector<room*> & list, vector<item*> & inventory, int roomID);
 int main() {
   //local variable declarations
   vector<room*> roomList;
+
+  //item declarations (added to rooms later)
+  item* knife = new item();
+  strcpy((*knife).name, "Knife");
+  strcpy((*knife).description, "This should do as an adequate weapon.");
+  (*knife).id = 1;
+  //ADD MORE ITEM DECLARATIONS HERE
   
   //room declarations and additions to list
-  char name1[31] = "Mostly Empty Hut";
-  char description1[201] = "This is the makeshift home both you and your master are staying at. She's \ncurrently at a table writing something as she awaits for you to complete \nyour test. Don't disappoint her.";
-  map<int,int> exits1 = {{EAST, 3}, {SOUTH, 2}};
-  room* emptyHut = new room(name1, description1, exits1, 1);
+  char initName[31] = "Mostly Empty Hut";
+  char initDescription[201] = "This is the makeshift home both you and your master are staying at. She's \ncurrently at a table writing something as she awaits for you to complete \nyour test. Don't disappoint her.";
+  map<int,int> initExits = {{EAST, 3}, {SOUTH, 2}};
+  room* emptyHut = new room(initName, initDescription, initExits, 1);
   roomList.push_back(emptyHut); //Room 1 added
+  strcpy(initName, "Training Grounds");
+  strcpy(initDescription, "This is where your master trained you so that you could fight off the \nmonsters alone. There should be something you can arm yourself with \nnearby.");
+  initExits = {{NORTH, 1}};
+  room* trainingGrounds = new room(initName, initDescription, initExits, 2);
+  (*trainingGrounds).addRoomInv(knife);
+  roomList.push_back(trainingGrounds); //Room 2 added
   
   vector<item*> inventory;
   int currentRoom = 1; //Start with Mostly Empty Hut
@@ -74,6 +87,7 @@ int main() {
   //Set the situation up for the player and tell them how the game works
   instructions();
 
+  //Let the player know the game has started (in story it's a test)
   cout << "------------------Test Start------------------" << endl;
   cout << endl;
 
@@ -227,7 +241,12 @@ void roomDescription(vector<room*> & list, int roomID) {
       if(((*it) -> getRoomInv()).empty()) { //No Items
 	cout << "There are no notable items here." << endl;
       } else { //Items List
-	cout << "LIST OF ALL THE ITEMS IN THE ROOM" << endl;
+	cout << "Notable items in the vicinity:" << endl; //Exits
+	vector<item*> roomItems = (*it) -> getRoomInv();
+	for(vector<item*>::iterator it2 = roomItems.begin(); it2 != roomItems.end(); it2++) {
+	  cout << (*it2) -> name << "\t";
+	}
+	cout << endl;
       }
       
       cout << endl;
@@ -237,7 +256,72 @@ void roomDescription(vector<room*> & list, int roomID) {
 
 //This function moves the player from their current room into another one
 void move(vector<room*> & list, int & roomID) {
-  cout << "This function should move the player from one room to another." << endl;
+  //make an input array for the exit name and clean it up
+  char input[7];
+  for(int i = 0; i < 7; i++) {
+    input[i] = '\0';
+  }
+  bool invalidInput = true;
+
+  //Ask the user for which exit they'd like to take
+  cout << "Which exit would you like to take?" << endl;
+  cout << endl;
+
+  //Keep asking the user for an exit input until their input matches with
+  //a valid exit or a they want to quit.
+  while(invalidInput) {
+    cin.getline(input, 7);
+
+    //Clean input up by making it all uppercase
+    for(int i = 0; i < 7; i++) {
+      input[i] = toupper(input[i]);
+    }
+
+    //validate the user's input
+    if(strcmp(input, "QUIT") == 0) {
+      invalidInput = false;
+    } else {
+      for(vector<room*>::iterator it = list.begin(); it != list.end(); it++) {
+	if((*it) -> getID() == roomID) {
+	  map<int, int> roomExits = (*it) -> getExits();
+	  if(roomExits.find(NORTH) != roomExits.end() && strcmp(input, "NORTH") == 0) {
+	    roomID = roomExits.at(NORTH);
+	    invalidInput = false;
+	  } else if(roomExits.find(EAST) != roomExits.end() && strcmp(input, "EAST") == 0) {
+	    roomID = roomExits.at(EAST);
+	    invalidInput = false;
+	  } else if(roomExits.find(SOUTH) != roomExits.end() && strcmp(input, "SOUTH") == 0) {
+	    roomID = roomExits.at(SOUTH);
+	    invalidInput = false;
+	  } else if(roomExits.find(WEST) != roomExits.end() && strcmp(input, "WEST") == 0) {
+	    roomID = roomExits.at(WEST);
+	    invalidInput = false;
+	  }
+	  if(invalidInput) { //The user's input was invalid, so tell them
+	    cout << endl;
+	    cout << "Sorry but that wasn't one of the available exits." << endl;
+	    cout << "These are the exits in the current area:" << endl;
+	    if(roomExits.find(NORTH) != roomExits.end()) {
+	      cout << "NORTH\t";
+	    }
+	    if(roomExits.find(EAST) != roomExits.end()) {
+	      cout << "EAST\t";
+	    }
+	    if(roomExits.find(SOUTH) != roomExits.end()) {
+	      cout << "SOUTH\t";
+	    }
+	    if(roomExits.find(WEST) != roomExits.end()) {
+	      cout << "WEST\t";
+	    }
+	    cout << endl;
+	    cout << "Please decide between one of these exits." << endl;
+	    cout << "Alternativally, if you don't want to move anymore, you " << endl;
+	    cout << "can also QUIT instead." << endl;
+	  }
+	}
+      }
+    }
+  }
   cout << endl;
 }
 
