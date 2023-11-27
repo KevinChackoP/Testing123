@@ -61,7 +61,7 @@ int main() {
 
   //item declarations (added to rooms later)
   item* knife = new item();
-  strcpy((*knife).name, "Knife");
+  strcpy((*knife).name, "KNIFE");
   strcpy((*knife).description, "This should do as an adequate weapon.");
   (*knife).id = 1;
   //ADD MORE ITEM DECLARATIONS HERE
@@ -263,12 +263,12 @@ void move(vector<room*> & list, int & roomID) {
   }
   bool invalidInput = true;
 
-  //Ask the user for which exit they'd like to take
-  cout << "Which exit would you like to take?" << endl;
+  //Ask the player for which exit they'd like to take
+  cout << "Which exit would you like to take? (no more than 6 characters)" << endl;
   cout << endl;
 
-  //Keep asking the user for an exit input until their input matches with
-  //a valid exit or a they want to quit.
+  //Keep asking the player for an exit input until their input matches with
+  //a valid exit or they want to quit.
   while(invalidInput) {
     cin.getline(input, 7);
 
@@ -277,29 +277,35 @@ void move(vector<room*> & list, int & roomID) {
       input[i] = toupper(input[i]);
     }
 
-    //validate the user's input
-    if(strcmp(input, "QUIT") == 0) {
+    //validate the player's input
+    if(strcmp(input, "QUIT") == 0) { //If they want to quit, exit function
       invalidInput = false;
-    } else {
+    } else { //Find current room's exits
       for(vector<room*>::iterator it = list.begin(); it != list.end(); it++) {
 	if((*it) -> getID() == roomID) {
 	  map<int, int> roomExits = (*it) -> getExits();
+
+	  //Check if the player's input matches one of the valid exit types and
+	  //that said exit type exists for the current room
 	  if(roomExits.find(NORTH) != roomExits.end() && strcmp(input, "NORTH") == 0) {
-	    roomID = roomExits.at(NORTH);
+	    roomID = roomExits.at(NORTH); //Take the north exit
 	    invalidInput = false;
 	  } else if(roomExits.find(EAST) != roomExits.end() && strcmp(input, "EAST") == 0) {
-	    roomID = roomExits.at(EAST);
+	    roomID = roomExits.at(EAST); //Take the east exit
 	    invalidInput = false;
 	  } else if(roomExits.find(SOUTH) != roomExits.end() && strcmp(input, "SOUTH") == 0) {
-	    roomID = roomExits.at(SOUTH);
+	    roomID = roomExits.at(SOUTH); //Take the south exit
 	    invalidInput = false;
 	  } else if(roomExits.find(WEST) != roomExits.end() && strcmp(input, "WEST") == 0) {
-	    roomID = roomExits.at(WEST);
+	    roomID = roomExits.at(WEST); //Take the west exit
 	    invalidInput = false;
 	  }
+
+	  //If an exit matching the user's input wasn't found...
 	  if(invalidInput) { //The user's input was invalid, so tell them
 	    cout << endl;
 	    cout << "Sorry but that wasn't one of the available exits." << endl;
+	    //Show them what exits are available for them to enter
 	    cout << "These are the exits in the current area:" << endl;
 	    if(roomExits.find(NORTH) != roomExits.end()) {
 	      cout << "NORTH\t";
@@ -315,6 +321,7 @@ void move(vector<room*> & list, int & roomID) {
 	    }
 	    cout << endl;
 	    cout << "Please decide between one of these exits." << endl;
+	    //Mention that they can also quit current action
 	    cout << "Alternativally, if you don't want to move anymore, you " << endl;
 	    cout << "can also QUIT instead." << endl;
 	  }
@@ -328,8 +335,81 @@ void move(vector<room*> & list, int & roomID) {
 //This function adds an item from the current room's inventory (removing it
 //from the current room's inventory) into the player's inventory
 void take(vector<room*> & list, vector<item*> & inventory, int roomID) {
-  cout << "This function should complete the take action." << endl;
-  cout << endl;
+  //check that the room isn't empty before proceeding
+  for(vector<room*>::iterator it = list.begin(); it != list.end(); it++) {
+    if((*it) -> getID() == roomID) {
+      if(!((*it) -> getRoomInv()).empty()) {
+	//make an input array for the item name and clean it up
+	char input[16];
+	for(int i = 0; i < 16; i++) {
+	  input[i] = '\0';
+	}
+	bool invalidInput = true;
+	
+	//Ask the player for which exit they'd like to take
+	cout << "Which item from your surroundings would you like to take?" << endl;
+	cout << "(no more than 15 characters)" << endl;
+	cout << endl;
+	
+	//Keep asking the player for an exit input until their input matches with
+	//a valid exit or they want to quit.
+	while(invalidInput) {
+	  cin.getline(input, 16);
+	  cout << endl;
+	  
+	  //Clean input up by making it all uppercase
+	  for(int i = 0; i < 16; i++) {
+	    input[i] = toupper(input[i]);
+	  }
+	  
+	  //validate the player's input
+	  if(strcmp(input, "QUIT") == 0) { //If they want to quit, exit function
+	    invalidInput = false;
+	  } else {
+	    //Find the current room's inventory
+	    vector<item*> roomItems = (*it) -> getRoomInv();
+	    
+	    //go through the items in the room's inventory and see if any of
+	    //the names of the items inside match with the player's input
+	    for(vector<item*>::iterator it2 = roomItems.begin(); it2 != roomItems.end(); it2++) {
+	      if(strcmp(input, (*it2) -> name) == 0) { //matching item was found
+		//Give name and description of item
+		cout << "You got the " << (*it2) -> name << "." << endl;
+		cout << (*it2) -> description << endl;
+		cout << endl;
+		
+		//add item into player inventory and remove it from room
+		inventory.push_back((*it) -> removeRoomInv(input));
+		
+		//validate input
+		invalidInput = false;
+	      }
+	    }
+	    
+	    //If their input didn't match with the name of any of the items in
+	    //the current room...
+	    if(invalidInput) { //The user's input was invalid, so tell them
+	      cout << "Sorry but that wasn't one of the available items." << endl;
+	      //List the items they can take in the current room
+	      cout << "These are the items in the current area:" << endl;
+	      for(vector<item*>::iterator it2 = roomItems.begin(); it2 != roomItems.end(); it2++) {
+		cout << (*it2) -> name << "\t";
+	      }
+	      cout << endl;
+	      cout << "Please decide between one of these items." << endl;
+	      //Mention that they can quit current action
+	      cout << "Alternativally, if you don't want to take anything anymore, " << endl;
+	      cout << "you can also QUIT instead." << endl;
+	      cout << endl;
+	    }
+	  }
+	}
+      } else {
+	cout << "But there is nothing notable around to take." << endl;
+	cout << endl;
+      }
+    } 
+  }
 }
 
 //This function prints a list of the player's current inventory items
