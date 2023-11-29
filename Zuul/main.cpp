@@ -60,11 +60,26 @@ int main() {
   vector<room*> roomList;
 
   //item declarations (added to rooms later)
-  item* knife = new item();
+  item* knife = new item(); //Item 1
   strcpy((*knife).name, "KNIFE");
   strcpy((*knife).description, "This should do as an adequate weapon.");
   (*knife).id = 1;
-  //ADD MORE ITEM DECLARATIONS HERE
+  item* key = new item(); //Item 2
+  strcpy((*key).name, "KEY");
+  strcpy((*key).description, "You snag a key from the key ring. The old drunkard should \nhave kept it safer.");
+  (*key).id = 2;
+  item* dustBottle = new item(); //Item 3
+  strcpy((*dustBottle).name, "DUST BOTTLE");
+  strcpy((*dustBottle).description, "You can burn some dust to use some black magic \nto find your target. Though, why does the old \ndrunkard have this?");
+  (*dustBottle).id = 3;
+  item* soul = new item(); //Item 4
+  strcpy((*soul).name, "SOUL");
+  strcpy((*soul).description, "This is what you needed to acquire from your \ntarget. You should head back to THE CROW as soon as possible.");
+  (*soul).id = 4;
+  item* photo = new item(); //Item 5
+  strcpy((*photo).name, "PHOTO");
+  strcpy((*photo).description, "It's a picture of your master from before the \nmonsters invaded. She's told you about it before.");
+  (*photo).id = 5;
   
   //room declarations and additions to list
   char initName[31] = "Mostly Empty Hut";
@@ -76,8 +91,45 @@ int main() {
   strcpy(initDescription, "This is where your master trained you so that you could fight off the \nmonsters alone. There should be something you can arm yourself with \nnearby.");
   initExits = {{NORTH, 1}};
   room* trainingGrounds = new room(initName, initDescription, initExits, 2);
-  (*trainingGrounds).addRoomInv(knife);
+  (*trainingGrounds).addRoomInv(knife); //Item 1 added
   roomList.push_back(trainingGrounds); //Room 2 added
+  strcpy(initName, "Road with Branching Paths");
+  strcpy(initDescription, "There are three tunnels, one that heads to the city, one \nwhich leads to the \"countryside\" where a few monsters live, and the last \n which leads to your makeshift home.");
+  initExits = {{EAST, 4}, {SOUTH, 6}, {WEST, 1}};
+  room* branchingRoad = new room(initName, initDescription, initExits, 3);
+  roomList.push_back(branchingRoad); //Room 3 added
+  strcpy(initName, "Hermit's House");
+  strcpy(initDescription, "In the countryside you find a small house that's in pretty \nbad condition. It's probably owned by a hermit, though it's unusual that \nthey don't seem to be home.");
+  initExits = {{EAST, 5}, {WEST, 3}};
+  room* hermitHouse = new room(initName, initDescription, initExits, 4);
+  roomList.push_back(hermitHouse); //Room 4 added
+  strcpy(initName, "Indoors of Hermit's House");
+  strcpy(initDescription, "With the door now open you are inside the hermit's house. \n Maybe you can find something useful in here.");
+  initExits = {{WEST, 4}};
+  room* insideHermitHouse = new room(initName, initDescription, initExits, 5);
+  (*insideHermitHouse).addRoomInv(dustBottle); //Item 3 added
+  roomList.push_back(insideHermitHouse); //Room 5 added
+  strcpy(initName, "Clearing Before City");
+  strcpy(initDescription, "You hear that there is a good view of the city from here. \nThe buildings are carved out from earthen pillars, the windows glistening \nwith blue light. Around the city is a lake covered in cave lilies.");
+  initExits = {{NORTH, 3}, {EAST, 7}};
+  room* cityClearing = new room(initName, initDescription, initExits, 6);
+  roomList.push_back(cityClearing); //Room 6 added
+  strcpy(initName, "City's Edge");
+  strcpy(initDescription, "The area isn't busy. Around you are dated earthen mounds \nhousing small businesses. You get the idea that the monsters around here aren't \nto well to do.");
+  initExits = {{EAST, 8}, {SOUTH, 9}, {WEST, 6}};
+  room* cityEdge = new room(initName, initDescription, initExits, 7);
+  roomList.push_back(cityEdge); //Room 7 added
+  strcpy(initName, "The Drawl");
+  strcpy(initDescription, "The draught house reeks of the smell of rotten marshmellos. \nThe customers around you are lively, with one's voice \nbeing accompanied by the clatter of keys.");
+  initExits = {{WEST, 7}};
+  room* theBar = new room(initName, initDescription, initExits, 8);
+  (*theBar).addRoomInv(key); //Item 2 added
+  roomList.push_back(theBar); //Room 8 added
+  strcpy(initName, "City Crosswalks");
+  strcpy(initDescription, "At the center of the city its streets all converge. You \nhear the pattering of feet and the flapping of wings all around you. You can \nget to wherever you need to go, given that you're careful.");
+  initExits = {{NORTH, 7}, {EAST, 14}, {SOUTH, 12}, {WEST, 10}};
+  room* cityCrosswalks = new room(initName, initDescription, initExits, 9);
+  roomList.push_back(cityCrosswalks); //Room 9 added
   
   vector<item*> inventory;
   int currentRoom = 1; //Start with Mostly Empty Hut
@@ -147,7 +199,7 @@ int main() {
 //This function sets the situation the game takes place in up before telling
 //the user how to use the program
 void instructions() {
-  cout << "Today is the day. You leave your make shift home buried " << endl;
+  cout << "Today is the day. You leave your makeshift home buried " << endl;
   cout << "miles under the SURFACE in the UNDERGROUND. The 'sky' " << endl;
   cout << "is pitch black with specs of light emminating from the " << endl;
   cout << "ember crystals scattered along the cave ceiling. The air " << endl;
