@@ -414,7 +414,17 @@ void take(vector<room*> & list, vector<item*> & inventory, int roomID) {
 
 //This function prints a list of the player's current inventory items
 void inventoryPrint(vector<item*> & inventory) {
-  cout << "This function should print out the player's inventory." << endl;
+  //If the player has nothing in their inventory, tell them
+  if(inventory.empty()) {
+    cout << "Though, you find that you have nothing useful on you." << endl;
+  } else { //The player has stuff in their inventory
+    cout << "You see that you currently have these items: " << endl;
+    //loop through and list each item in the player's inventory
+    for(vector<item*>::iterator it = inventory.begin(); it != inventory.end(); it++) {
+      cout << (*it) -> name << "\t";
+    }
+    cout << endl;
+  }
   cout << endl;
 }
 
