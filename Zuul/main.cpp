@@ -346,13 +346,13 @@ void take(vector<room*> & list, vector<item*> & inventory, int roomID) {
 	}
 	bool invalidInput = true;
 	
-	//Ask the player for which exit they'd like to take
+	//Ask the player for which item they'd like to take
 	cout << "Which item from your surroundings would you like to take?" << endl;
 	cout << "(no more than 15 characters)" << endl;
 	cout << endl;
 	
-	//Keep asking the player for an exit input until their input matches with
-	//a valid exit or they want to quit.
+	//Keep asking the player for an item name input until their input 
+	//matches with an item existing in the room or they want to quit.
 	while(invalidInput) {
 	  cin.getline(input, 16);
 	  cout << endl;
@@ -381,8 +381,9 @@ void take(vector<room*> & list, vector<item*> & inventory, int roomID) {
 		//add item into player inventory and remove it from room
 		inventory.push_back((*it) -> removeRoomInv(input));
 		
-		//validate input
+		//validate input and break from for loop to avoid running off
 		invalidInput = false;
+		break;
 	      }
 	    }
 	    
@@ -431,6 +432,82 @@ void inventoryPrint(vector<item*> & inventory) {
 //This function removes an item from the player's inventory and adds it
 //to the inventory of the player's current room
 void drop(vector<room*> & list, vector<item*> & inventory, int roomID) {
-  cout << "This function should complete the drop action." << endl;
-  cout << endl;
+  //check to first make sure that the player's inventory isn't empty
+  if(inventory.empty()) { //It is empty
+    cout << "But find that you have nothing to leave in the room " << endl;
+    cout << "to begin with. " << endl;
+    cout << endl;
+    
+  } else { //there are possible items to drop
+    //find the room the player is currently in
+    for(vector<room*>::iterator it = list.begin(); it != list.end(); it++) {
+      if((*it) -> getID() == roomID) {
+	//make an input array for the item name and clean it up
+	char input[16];
+	for(int i = 0; i < 16; i++) {
+	  input[i] = '\0';
+	}
+	bool invalidInput = true;
+	
+	//Ask the player for which item they'd like to drop
+	cout << "Which item from your inventory would you like to drop?" << endl;
+	cout << "(no more than 15 characters)" << endl;
+	cout << endl;
+	
+	//Keep asking the player for an item name input until their input
+	//matches with an item in their inventory or they want to quit.
+	while(invalidInput) {
+	  cin.getline(input, 16);
+	  cout << endl;
+	  
+	  //Clean input up by making it all uppercase
+	  for(int i = 0; i < 16; i++) {
+	    input[i] = toupper(input[i]);
+	  }
+	  
+	  //validate the player's input
+	  if(strcmp(input, "QUIT") == 0) { //If they want to quit, exit function
+	    invalidInput = false;
+	  } else {
+	    //go through the items in the room's inventory and see if any of
+	    //the names of the items inside match with the player's input
+	    for(vector<item*>::iterator it2 = inventory.begin(); it2 != inventory.end(); it2++) {
+	      if(strcmp(input, (*it2) -> name) == 0) { //matching item was found
+		//Tell the player that they successfully dropped the item
+		cout << "You dropped the " << (*it2) -> name << " into the " << endl;
+		cout << "area you're currently in. " << endl;
+		cout << endl;
+		
+		//add item into the room's inventory and remove it from the
+		//player's inventory
+		(*it) -> addRoomInv((*it2));
+		inventory.erase(it2);
+		
+		//validate input and break from the for loop to avoid running off
+		invalidInput = false;
+		break;
+	      }
+	    }
+
+	    //If their input didn't match with the name of any of the items in
+	    //their inventory...
+	    if(invalidInput) { //The user's input was invalid, so tell them
+	      cout << "Sorry but you don't have an item like that on you." << endl;
+	      //List the items they can take in the current room
+	      cout << "These are the items you currently have:" << endl;
+	      for(vector<item*>::iterator it2 = inventory.begin(); it2 != inventory.end(); it2++) {
+		cout << (*it2) -> name << "\t";
+	      }
+	      cout << endl;
+	      cout << "Please decide between one of these items." << endl;
+	      //Mention that they can quit current action
+	      cout << "Alternativally, if you don't want to drop anything anymore, " << endl;
+	      cout << "you can also QUIT instead." << endl;
+	      cout << endl;
+	    }
+	  }
+	}
+      }
+    }
+  }
 }
