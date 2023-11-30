@@ -1,8 +1,17 @@
 /* 
-   This program... WRITE MORE HERE, MAKE SURE TO INCLUDE MAP OF ZUUL GAME IN
-   THIS PROGRAM'S FOLDER!
+   This program plays a game where the player in put into another world where
+   they have to complete a mission. To do this they can move between rooms,
+   pick up items in rooms, check their inventory, and drop items in rooms.
+   Every time they enter a room they'll be given a description of the room,
+   told what exits the room has to other rooms, and what items are in the
+   room which they may take. Then they'll then be prompted to input an action
+   to take (move, take, inventory, drop, or quit). By moving between rooms and
+   using the right items (by carrying them or dropping them into rooms) the
+   player can find a way to complete their mission and the game.
+   Alternativally, if they want to leave the game immediately they can also
+   quit by inputting quit when prompted to act. 
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 11/29/2023
    Period 6, C++ / Data Structures
 */
 
@@ -21,7 +30,16 @@
   access its values, and manipulate it. This was crucial for making my exits
   in my game work. 
 
-  NOTE CITATIONS HERE
+  For this program I also reused a lot of the same for loop and if statement
+  structures, as well as functions from my Media Database project as scaffolds
+  for my code. This helped me with printing functions out, taking command
+  inputs, creating a main function loop that would keep asking for inputs,
+  deleting all my pointers at the end of the program, and with making my
+  room class.
+
+  Similiarly I also used some of my code from my student list project for
+  similiar structures, but this time to help me more with my items since they
+  are a struct rather than a class. 
 */
 
 //imports
@@ -49,7 +67,7 @@ const int WEST = 4;
 void instructions();
 int askCommand();
 void roomDescription(vector<room*> & list, int roomID);
-void move(vector<room*> & list, int & roomID);
+void move(vector<room*> & list, vector<item*> & inventory, int & roomID);
 void take(vector<room*> & list, vector<item*> & inventory, int roomID);
 void inventoryPrint(vector<item*> & inventory);
 void drop(vector<room*> & list, vector<item*> & inventory, int roomID);
@@ -78,7 +96,7 @@ int main() {
   (*soul).id = 4;
   item* photo = new item(); //Item 5
   strcpy((*photo).name, "PHOTO");
-  strcpy((*photo).description, "You're master has told you about it before.");
+  strcpy((*photo).description, "Your master has told you about it before.");
   (*photo).id = 5;
   
   //room declarations and additions to list
@@ -115,7 +133,7 @@ int main() {
   room* cityClearing = new room(initName, initDescription, initExits, 6);
   roomList.push_back(cityClearing); //Room 6 added
   strcpy(initName, "City's Edge");
-  strcpy(initDescription, "The area isn't busy. Around you are dated earthen mounds \nhousing small businesses. You get the idea that the monsters around here aren't \nto well to do.");
+  strcpy(initDescription, "The area isn't busy. Around you are dated earthen mounds \nhousing small businesses. You get the idea that the monsters around \nhere aren't to well to do.");
   initExits = {{EAST, 8}, {SOUTH, 9}, {WEST, 6}};
   room* cityEdge = new room(initName, initDescription, initExits, 7);
   roomList.push_back(cityEdge); //Room 7 added
@@ -137,7 +155,7 @@ int main() {
   roomList.push_back(movieTheatre); //Room 10 added
   strcpy(initName, "Empty Road");
   strcpy(initDescription, "For some reason, you don't hear anything by. Your heart is racing, \nand your blood feels like cold water running through your veins. It's a \nliminal space. You decide to go no further.");
-  initExits = {{WEST, 10}};
+  initExits = {{EAST, 10}};
   room* emptyRoad = new room(initName, initDescription, initExits, 11);
   roomList.push_back(emptyRoad); //Room 11 added
   strcpy(initName, "Downtown");
@@ -159,7 +177,7 @@ int main() {
   strcpy(initDescription, "Who knew that you're target would be a hobo living at the end of an \nalleyway? They don't seem to be in good condition, but you don't want to \ntake any chances.");
   initExits = {{NORTH, 14}};
   room* deadEnd = new room(initName, initDescription, initExits, 15);
-  (*theBar).addRoomInv(soul); //Item 4 added
+  (*deadEnd).addRoomInv(soul); //Item 4 added
   roomList.push_back(deadEnd); //Room 15 added
   
   vector<item*> inventory;
@@ -177,9 +195,6 @@ int main() {
   //Have them loop through doing actions in the game until they win or until
   //they want to quit
   while(inUse) {
-    //After certain actions have changes made to game state or rooms happen
-    
-    
     //Give the user a description of their surroundings based on the current
     //room they are in
     roomDescription(roomList, currentRoom);
@@ -191,7 +206,7 @@ int main() {
     if(commandKey == 1) { //If they want to move...
       cout << "You consider where to go next..." << endl;
       cout << endl;
-      move(roomList, currentRoom);
+      move(roomList, inventory, currentRoom);
       
     } else if(commandKey == 2) { //If they want to take an item from their current room...
       cout << "You consider what to take from your surroundings..." << endl;
@@ -208,22 +223,58 @@ int main() {
       cout << endl;
       drop(roomList, inventory, currentRoom);
       
-    } else if(commandKey == 5) { //If they want to quick the game
+    } else if(commandKey == 5) { //If they want to quit the game
       cout << "You decide to give up. You feel THE CROW's disappointment " << endl;
       cout << "crawling on your back. " << endl;
-
-      //delete the pointers from the vectors used
-      while(!roomList.empty()) {
-	delete roomList.back();
-	roomList.pop_back();
-      }
-      while(!inventory.empty()) {
-	delete inventory.back();
-	inventory.pop_back();
-      }
-
       inUse = false;
     }
+
+    //After certain actions have changes made to game state or rooms happen
+    for(vector<item*>::iterator it = inventory.begin(); it != inventory.end(); it++) {
+      if(((*it) -> id) == 5) { //WIN STATE MET
+	//If the player obtained the photo, they won. Give them the ending to
+	//the story and congradulate them.
+	cout << "This photo is her most prized possession. It is a " << endl;
+	cout << "of her before they invaded the SURFACE, a reminder " << endl;
+	cout << "of who she once was. In the picture she is " << endl;
+	cout << "surrounded by children in an orphanage, all of them " << endl;
+	cout << "asking for the candy she bought from the store with " << endl;
+	cout << "her pocket change. She was their caretaker, and " << endl;
+	cout << "she loved all those children as if they were her " << endl;
+	cout << "own. After the invasion, she never saw them again." << endl;
+	cout << endl;
+	cout << "You assess the area and find traces of guards who " << endl;
+	cout << "likely burned the hut down. You also find some " << endl;
+	cout << "remains. You bury them and with them the photo. " << endl;
+	cout << "It seems that now you're own your own." << endl;
+	cout << endl;
+	cout << "Congradulations on beating the game!" << endl;
+	inUse = false;
+	
+      } else if (currentRoom == 1 && ((*it) -> id) == 4) {
+	//The player has the soul in their inventory and they make it back to
+	//the empty hut, change the condition of the room
+	(*emptyHut).addRoomInv(photo); //Item 5 added
+	strcpy(initDescription, "THE CROW is gone and the makeshift home you were staying in was burnt down. \nYou make your way to the table she was previously at. It seems like she \nleft a keepsake for you.");
+	(*emptyHut).setDescription(initDescription);
+	
+      } else if(currentRoom == 15 && ((*it) -> id) == 4) {
+	//If the player is at the dead end and they have the soul in their
+	//inventory, change the description of the dead end room
+	strcpy(initDescription, "With your weapon and your master's training you made quick work of your \ntarget. Nothing was around to see you. Nothing will remember what happened, \nbut you.");
+	(*deadEnd).setDescription(initDescription);
+      }
+    }
+  }
+
+  //delete the pointers from the vectors used
+  while(!roomList.empty()) {
+    delete roomList.back();
+    roomList.pop_back();
+  }
+  while(!inventory.empty()) {
+    delete inventory.back();
+    inventory.pop_back();
   }
   
   //If nothing went wrong, return 0
@@ -341,7 +392,7 @@ void roomDescription(vector<room*> & list, int roomID) {
 }
 
 //This function moves the player from their current room into another one
-void move(vector<room*> & list, int & roomID) {
+void move(vector<room*> & list, vector<item*> & inventory, int & roomID) {
   //make an input array for the exit name and clean it up
   char input[7];
   for(int i = 0; i < 7; i++) {
@@ -368,8 +419,9 @@ void move(vector<room*> & list, int & roomID) {
       invalidInput = false;
     } else { //Find current room's exits
       for(vector<room*>::iterator it = list.begin(); it != list.end(); it++) {
-	if((*it) -> getID() == roomID) {
+	if((*it) -> getID() == roomID && invalidInput) {
 	  map<int, int> roomExits = (*it) -> getExits();
+	  vector<item*> roomItems = (*it) -> getRoomInv(); //for special cases
 
 	  //Check if the player's input matches one of the valid exit types and
 	  //that said exit type exists for the current room
@@ -377,14 +429,95 @@ void move(vector<room*> & list, int & roomID) {
 	    roomID = roomExits.at(NORTH); //Take the north exit
 	    invalidInput = false;
 	  } else if(roomExits.find(EAST) != roomExits.end() && strcmp(input, "EAST") == 0) {
-	    roomID = roomExits.at(EAST); //Take the east exit
-	    invalidInput = false;
+	    //Special cases for EAST exit
+	    if(roomID == 4) {
+	      //If currently in room 4
+	      bool noKey = true;
+
+	      //loop through room inventory to check for key
+	      for(vector<item*>::iterator it2 = roomItems.begin(); it2 != roomItems.end(); it2++) {
+		if(((*it2) -> id) == 2) { //If the key is in room 4
+		  noKey = false;
+		}
+	      }
+
+	      if(noKey) {
+		//If there isn't a key in the room, the exit is locked, so
+		//tell the player
+		cout << "You try opening the door to the Hermit's " << endl;
+		cout << "House, though find that it's locked." << endl;
+		cout << "Maybe if you DROPped a key into the " << endl;
+		cout << "keyhole you'd be able to open it." << endl;
+		invalidInput = false;
+	      } else {
+		//If there is a key in the room the exit is open, so let the
+		//player go through
+		roomID = roomExits.at(EAST); //Take the east exit
+		invalidInput = false;
+	      }
+	      
+	    } else if(roomID == 9) {
+	      //If currently in room 9
+	      bool noBottle = true;
+
+	      //loop through inventory to check for bottle of dust
+	      for(vector<item*>::iterator it2 = inventory.begin(); it2 != inventory.end(); it2++) {
+		if(((*it2) -> id) == 3) {
+		  noBottle = false;
+		}
+	      }
+
+	      if(noBottle) {
+		//If they don't have the dust bottle, don't let them take
+		//this exit and tell them why
+		cout << "The streets in that direction are winding " << endl;
+		cout << "and hard to follow. Your target may be " << endl;
+		cout << "there, but it would be better if you had a " << endl;
+		cout << "better means of navigating the streets." << endl;
+		invalidInput = false;
+	      } else {
+		//If they have the dust bottle, let the player go through
+		roomID = roomExits.at(EAST); //Take the east exit
+		invalidInput = false;
+	      }
+	      
+	    } else { //normal case for east exit
+	      roomID = roomExits.at(EAST); //Take the east exit
+	      invalidInput = false;
+	    }
 	  } else if(roomExits.find(SOUTH) != roomExits.end() && strcmp(input, "SOUTH") == 0) {
 	    roomID = roomExits.at(SOUTH); //Take the south exit
 	    invalidInput = false;
 	  } else if(roomExits.find(WEST) != roomExits.end() && strcmp(input, "WEST") == 0) {
-	    roomID = roomExits.at(WEST); //Take the west exit
-	    invalidInput = false;
+	    //Special cases for WEST exit
+	    if(roomID == 14) {
+	      //If currently in room 14
+	      bool noBottle = true;
+
+	      //loop through inventory to check for bottle of dust
+	      for(vector<item*>::iterator it2 = inventory.begin(); it2 != inventory.end(); it2++) {
+		if(((*it2) -> id) == 3) {
+		  noBottle = false;
+		}
+	      }
+
+	      if(noBottle) {
+		//If they don't have the dust bottle, don't let them take
+		//this exit and tell them why
+		cout << "Even though you've found your way here with " << endl;
+		cout << "the dust bottle, you still need it to find " << endl;
+		cout << "your way back." << endl;
+		invalidInput = false;
+	      } else {
+		//If they have the dust bottle, let the player go through
+		roomID = roomExits.at(WEST); //Take the west exit
+		invalidInput = false;
+	      }
+	      
+	    } else { //normal case for west exit
+	      roomID = roomExits.at(WEST); //Take the west exit
+	      invalidInput = false;
+	    }
 	  }
 
 	  //If an exit matching the user's input wasn't found...
@@ -459,17 +592,53 @@ void take(vector<room*> & list, vector<item*> & inventory, int roomID) {
 	    //the names of the items inside match with the player's input
 	    for(vector<item*>::iterator it2 = roomItems.begin(); it2 != roomItems.end(); it2++) {
 	      if(strcmp(input, (*it2) -> name) == 0) { //matching item was found
-		//Give name and description of item
-		cout << "You got the " << (*it2) -> name << "." << endl;
-		cout << (*it2) -> description << endl;
-		cout << endl;
-		
-		//add item into player inventory and remove it from room
-		inventory.push_back((*it) -> removeRoomInv(input));
-		
-		//validate input and break from for loop to avoid running off
-		invalidInput = false;
-		break;
+		//special cases
+		if(roomID == 15 && ((*it2) -> id) == 4) {
+		  //If currently in room 14
+		  bool noKnife = true;
+		  
+		  //loop through inventory again to check for knife
+		  for(vector<item*>::iterator it3 = inventory.begin(); it3 != inventory.end(); it3++) {
+		    if(((*it3) -> id) == 1) {
+		      noKnife = false;
+		    }
+		  }
+		  
+		  if(noKnife) {
+		    //If they don't have the knife, don't let them take
+		    //the soul from the room
+		    cout << "It's not a good idea to try aquiring what " << endl;
+		    cout << "you need from your target without getting " << endl;
+		    cout << "armed first." << endl;
+		    cout << endl;
+		    invalidInput = false;
+		  } else { //If they have the knife, let the player get the soul
+		    //Give name and description of item
+		    cout << "You got the " << (*it2) -> name << "." << endl;
+		    cout << (*it2) -> description << endl;
+		    cout << endl;
+		    
+		    //add item into player inventory and remove it from room
+		    inventory.push_back((*it) -> removeRoomInv(input));
+		    
+		    //validate input and break from for loop to avoid running off
+		    invalidInput = false;
+		    break;
+		  }
+		  
+		} else { //normal case
+		  //Give name and description of item
+		  cout << "You got the " << (*it2) -> name << "." << endl;
+		  cout << (*it2) -> description << endl;
+		  cout << endl;
+		  
+		  //add item into player inventory and remove it from room
+		  inventory.push_back((*it) -> removeRoomInv(input));
+		  
+		  //validate input and break from for loop to avoid running off
+		  invalidInput = false;
+		  break;
+		}
 	      }
 	    }
 	    
@@ -555,7 +724,7 @@ void drop(vector<room*> & list, vector<item*> & inventory, int roomID) {
 	  if(strcmp(input, "QUIT") == 0) { //If they want to quit, exit function
 	    invalidInput = false;
 	  } else {
-	    //go through the items in the room's inventory and see if any of
+	    //go through the items in the player's inventory and see if any of
 	    //the names of the items inside match with the player's input
 	    for(vector<item*>::iterator it2 = inventory.begin(); it2 != inventory.end(); it2++) {
 	      if(strcmp(input, (*it2) -> name) == 0) { //matching item was found
@@ -579,7 +748,7 @@ void drop(vector<room*> & list, vector<item*> & inventory, int roomID) {
 	    //their inventory...
 	    if(invalidInput) { //The user's input was invalid, so tell them
 	      cout << "Sorry but you don't have an item like that on you." << endl;
-	      //List the items they can take in the current room
+	      //List the items they can drop from their inventory
 	      cout << "These are the items you currently have:" << endl;
 	      for(vector<item*>::iterator it2 = inventory.begin(); it2 != inventory.end(); it2++) {
 		cout << (*it2) -> name << "\t";
