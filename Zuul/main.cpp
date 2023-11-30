@@ -66,19 +66,19 @@ int main() {
   (*knife).id = 1;
   item* key = new item(); //Item 2
   strcpy((*key).name, "KEY");
-  strcpy((*key).description, "You snag a key from the key ring. The old drunkard should \nhave kept it safer.");
+  strcpy((*key).description, "The old drunkard should have kept it safer.");
   (*key).id = 2;
   item* dustBottle = new item(); //Item 3
   strcpy((*dustBottle).name, "DUST BOTTLE");
-  strcpy((*dustBottle).description, "You can burn some dust to use some black magic \nto find your target. Though, why does the old \ndrunkard have this?");
+  strcpy((*dustBottle).description, "You can burn some dust to find your target.");
   (*dustBottle).id = 3;
   item* soul = new item(); //Item 4
   strcpy((*soul).name, "SOUL");
-  strcpy((*soul).description, "This is what you needed to acquire from your \ntarget. You should head back to THE CROW as soon as possible.");
+  strcpy((*soul).description, "This is what you needed to acquire from your target.");
   (*soul).id = 4;
   item* photo = new item(); //Item 5
   strcpy((*photo).name, "PHOTO");
-  strcpy((*photo).description, "It's a picture of your master from before the \nmonsters invaded. She's told you about it before.");
+  strcpy((*photo).description, "You're master has told you about it before.");
   (*photo).id = 5;
   
   //room declarations and additions to list
@@ -104,7 +104,7 @@ int main() {
   room* hermitHouse = new room(initName, initDescription, initExits, 4);
   roomList.push_back(hermitHouse); //Room 4 added
   strcpy(initName, "Indoors of Hermit's House");
-  strcpy(initDescription, "With the door now open you are inside the hermit's house. \n Maybe you can find something useful in here.");
+  strcpy(initDescription, "As you enter through the unlocked door you're surprised by the \nsmell of dust. It seems like the hermit is a black magician. Though, you \ncould use some of his stuff for black magic of your own.");
   initExits = {{WEST, 4}};
   room* insideHermitHouse = new room(initName, initDescription, initExits, 5);
   (*insideHermitHouse).addRoomInv(dustBottle); //Item 3 added
@@ -120,7 +120,7 @@ int main() {
   room* cityEdge = new room(initName, initDescription, initExits, 7);
   roomList.push_back(cityEdge); //Room 7 added
   strcpy(initName, "The Drawl");
-  strcpy(initDescription, "The draught house reeks of the smell of rotten marshmellos. \nThe customers around you are lively, with one's voice \nbeing accompanied by the clatter of keys.");
+  strcpy(initDescription, "The draught house reeks of the smell of rotten marshmellos. \nThe customers around you are lively, with one's loud voice being \naccompanied by the clatter of keys on what sounds to be a key ring.");
   initExits = {{WEST, 7}};
   room* theBar = new room(initName, initDescription, initExits, 8);
   (*theBar).addRoomInv(key); //Item 2 added
@@ -130,6 +130,37 @@ int main() {
   initExits = {{NORTH, 7}, {EAST, 14}, {SOUTH, 12}, {WEST, 10}};
   room* cityCrosswalks = new room(initName, initDescription, initExits, 9);
   roomList.push_back(cityCrosswalks); //Room 9 added
+  strcpy(initName, "Movie Theatre");
+  strcpy(initDescription, "You hear the sound of various appendages congregating to a \nbuilding. You overhear the monsters with their nasty speech talking about...\nan actor? Also, is the the smell of fried juice bugs?");
+  initExits = {{EAST, 9}, {WEST, 11}};
+  room* movieTheatre = new room(initName, initDescription, initExits, 10);
+  roomList.push_back(movieTheatre); //Room 10 added
+  strcpy(initName, "Empty Road");
+  strcpy(initDescription, "For some reason, you don't hear anything by. Your heart is racing, \nand your blood feels like cold water running through your veins. It's a \nliminal space. You decide to go no further.");
+  initExits = {{WEST, 10}};
+  room* emptyRoad = new room(initName, initDescription, initExits, 11);
+  roomList.push_back(emptyRoad); //Room 11 added
+  strcpy(initName, "Downtown");
+  strcpy(initDescription, "You hear a water fountain roaring like a waterfall nearby. It seems that \nyou've made it to the busiest part of the city with monsters all around \nyou. The target isn't here though.");
+  initExits = {{NORTH, 9}, {WEST, 13}};
+  room* downtown = new room(initName, initDescription, initExits, 12);
+  roomList.push_back(downtown); //Room 12 added
+  strcpy(initName, "Busy Mall");
+  strcpy(initDescription, "You've made it into a huge building full of various products made by the \nmost monsterous brands. It smells suprisingly pleasant here. Too bad you \ndon't have any gold on you.");
+  initExits = {{EAST, 12}};
+  room* busyMall = new room(initName, initDescription, initExits, 13);
+  roomList.push_back(busyMall); //Room 13 added
+  strcpy(initName, "The Alleyway");
+  strcpy(initDescription, "You've made it to a narrow corridor that you'd never have expected to find \nby yourself. You hear rummaging nearby and smell garbage all around you.");
+  initExits = {{SOUTH, 15}, {WEST, 9}};
+  room* alleyway = new room(initName, initDescription, initExits, 14);
+  roomList.push_back(alleyway); //Room 14 added
+  strcpy(initName, "Dead End");
+  strcpy(initDescription, "Who knew that you're target would be a hobo living at the end of an \nalleyway? They don't seem to be in good condition, but you don't want to \ntake any chances.");
+  initExits = {{NORTH, 14}};
+  room* deadEnd = new room(initName, initDescription, initExits, 15);
+  (*theBar).addRoomInv(soul); //Item 4 added
+  roomList.push_back(deadEnd); //Room 15 added
   
   vector<item*> inventory;
   int currentRoom = 1; //Start with Mostly Empty Hut
@@ -146,6 +177,9 @@ int main() {
   //Have them loop through doing actions in the game until they win or until
   //they want to quit
   while(inUse) {
+    //After certain actions have changes made to game state or rooms happen
+    
+    
     //Give the user a description of their surroundings based on the current
     //room they are in
     roomDescription(roomList, currentRoom);
