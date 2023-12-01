@@ -1,0 +1,30 @@
+#include <iostream>
+#include "Node.h"
+
+using namespace std;
+
+void add(int newvalue);
+void print(Node* next);
+
+Node* head;
+
+int main() {
+  add(5);
+  print(head);
+  add(7);
+  print(head);
+  add(2);
+  print(head);
+}
+
+void add(int newvalue) {
+  Node* current = head;
+  if() {
+    head = new Node();
+    head -> setValue(newvalue);
+  } else {
+    while(current -> getNext() != NULL) {
+      current = current -> getNext();
+    }
+  }
+}
