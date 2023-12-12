@@ -9,12 +9,13 @@
   I got a lot of help with learning c++ for this project from the 
   "Linked List Part 1" module.
   
-  I got help with transferring strings into integers from
-  Cplusplus's article on "stoi".
-  URL: https://cplusplus.com/reference/string/stoi/
-  This part of the std namespace allows me to change a string value into
-  a integer which is what I need for ordering all the students in the list 
-  by how much their id value is.
+  I got help with transferring cstrings into integers from
+  Cplusplus's article on "atoi".
+  URL: https://cplusplus.com/reference/cstdlib/atoi/
+  This part of the cstdlib library will convert a cstring into an integer 
+  whether negative or positive while ignoring leading spaces. This is crucial
+  for finding the integer values of my cstring ids for the brief purpose of 
+  sorting them from greatest to least in the linked list.
   
   ADD ANY OTHER NEEDED CITATIONS HERE!!!
 */
@@ -26,16 +27,13 @@
 #include <ios>
 #include <limits>
 #include <math.h>
+#include <cstdlib>
+
+//class inclusions
+#include "Node.o"
+#include "Student.h"
 
 using namespace std;
-
-//struct declarations
-struct Student {
-  char firstName[16];
-  char lastName[16];
-  char id[7];
-  float gpa;
-};
 
 //Function prototypes
 void instructions();
@@ -156,7 +154,6 @@ int askCommand() {
 //This function helps the user to add a student to the list
 void addStudent(vector<Student*> & list) {
   //These are a local variables being used
-  Student* addedStudent = new Student();
   char firstNameInput[16];
   char lastNameInput[16];
   for(int i = 0; i < 16; i++) {
@@ -176,34 +173,27 @@ void addStudent(vector<Student*> & list) {
   //Take first name
   cout << "What's the student's first name?" << endl;
   cin.getline(firstNameInput, 16);
-  //Add the first name to the pointer to the student class
-  (*addedStudent) -> setFirstName(firstNameInput);
   cout << endl;
 
   //Take last name
   cout << "What's the student's last name?" << endl;
   cin.getline(lastNameInput, 16);
-  //Add the last name to the pointer to the student class
-  (*addedStudent) -> setLastName(lastNameInput);
   cout << endl;
 
   //Get id and make sure that it is a 6 digit integer
   cout << "What's the student's id number (6 number integer)?" << endl;
   while(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
     cin.getline(idInput, 7);
+    cout << endl;
     
     //If the whole id isn't just numbers, let the user know they made a mistake
     if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
-      cout << endl;
       cout << "You didn't enter a 6 digit integer." << endl;
       cout << "Could you try inputting the id again?" << endl;
       cout << "(i.e. 464877, 342907)" << endl;
       cout << endl;
     }
   }
-  //convert the id to an int and add the id to the pointer to the student class
-  (*addedStudent) -> setID(idInput);
-  cout << endl;
 
   //get student GPA and make sure that it is a two decimal number
   cout << "Please input the student's GPA to 2 decimal places (i.e. 3.00)." << endl;
@@ -221,11 +211,11 @@ void addStudent(vector<Student*> & list) {
     } else { //If the gpa is in the right format, make sure it's in the range
       //transfer their string input into a float
       gpaInput2 = stof(gpaInput1);
+      cout << endl;
       
       //If the gpa isn't a within 0.00 and 5.00 let the user know the gpa isn't
       //a valid gpa
       if(gpaInput2 > 5.00 || gpaInput2 < 0.00) {
-	cout << endl;
 	cout << "Sorry, the two decimal place gpa is either over 5.00" << endl;
 	cout << "(5.00 is max weighted gpa) or is under 0.00 (gpa must " << endl;
 	cout << "be positive or zero). Could you enter the student's " << endl;
@@ -234,20 +224,21 @@ void addStudent(vector<Student*> & list) {
       }
     }
   }
-  //Add the gpa to the pointer to the student class
-  (*addedStudent) -> setGPA(gpaInput2);
-  cout << endl;
   
-  //When finished checking all the inputs and putting them all in, add the
-  //finalized student pointer to it's corresponding point in the linked list
+  //When finished checking all the inputs and validating them all, make the
+  //finalized student pointer
+  Student* addedStudent = new Student(firstNameInput, lastNameInput, idInput, gpaInput2);
+
+  //Add the finalized student pointer to where it should be in the list
   //NEED TO MAKE STUDENT ID SORT HERE
   /*
-    I got help with transferring strings into integers from
-    Cplusplus's article on "stoi".
-    URL: https://cplusplus.com/reference/string/stoi/
-    This part of the std namespace allows me to change a string value into
-    a integer which is what I need for ordering all the students in the list 
-    by how much their id value is.
+    I got help with transferring cstrings into integers from
+    Cplusplus's article on "atoi".
+    URL: https://cplusplus.com/reference/cstdlib/atoi/
+    This part of the cstdlib library will convert a cstring into an integer 
+    whether negative or positive while ignoring leading spaces. This is crucial
+    for finding the integer values of my cstring ids for the brief purpose of 
+    sorting them from greatest to least in the linked list.
   */
 }
 
