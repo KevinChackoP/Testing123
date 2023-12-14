@@ -38,9 +38,10 @@ using namespace std;
 //Function prototypes
 void instructions();
 int askCommand();
-void addStudent(vector<Student*> & list);
-void printList(vector<Student*> & list);
-void deleteStudent(vector<Student*> & list);
+void addStudent(Node* & head);
+void addNode(Student* newStudent, Node* current, Node* & head);
+void printList(Node* current, Node* head);
+void deleteStudent(Node* previous, Node* current, Node* & head);
 
 //Start of main function
 int main() {
