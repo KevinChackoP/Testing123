@@ -39,14 +39,15 @@ using namespace std;
 void instructions();
 int askCommand();
 void addStudent(Node* & head);
-void addNode(Student* newStudent, Node* current, Node* & head);
+void addStudentNode(Student* newStudent, Node* current, Node* & head);
 void printList(Node* current, Node* head);
 void deleteStudent(Node* previous, Node* current, Node* & head);
+void averageList(Node* current);
 
 //Start of main function
 int main() {
   //local variable declarations
-  vector<Student*> studentList;
+  Node* head = NULL;
   bool inUse = true;
   int commandKey = 0;
   
@@ -75,9 +76,15 @@ int main() {
       //If they want to print out the list, do so
       cout << "Printing current student list out." << endl;
       cout << endl;
-      printList(studentList);
+      printList(head, head);
       
     } else if(commandKey == 4) {
+      //If they want to find the average of all the students' scores, do so
+      cout << "Finding average GPA of class" << endl;
+      cout << endl;
+      averageList(head);
+      
+    } else if(commandKey == 5) {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
 
@@ -101,9 +108,9 @@ void instructions() {
   cout << "Hello, this is a program that can keep track of students in a class" << endl;
   cout << "using a list! You can use various commands to interact with the list." << endl;
   cout << "That is to say, you can add students to the list, print out the list, " << endl;
-  cout << "delete students from the list, or exit out of the program." << endl;
+  cout << "delete students from the list, or find the average gpa of the class. " << endl;
+  cout << "You can also quit out of the program whenever you'd like to." << endl;
   cout << "I hope this program is of use to you!" << endl;
-  //NEED TO ADD INSTRUCTIONS FOR NEW FUNCTIONALITY!!!!
   cout << endl;
 }
 
@@ -120,6 +127,7 @@ int askCommand() {
   cout << "Input ADD for adding a new student to the list." << endl;
   cout << "Input DELETE to delete a student from the list." << endl;
   cout << "Input PRINT to print out the current list of students." << endl;
+  cout << "Input AVERAGE to find the average gpa of the list of students." << endl;
   cout << "Input QUIT to exit the program." << endl;
   cout << endl;
 
@@ -141,19 +149,21 @@ int askCommand() {
       return 2;
     } else if(strcmp(input, "PRINT") == 0) {
       return 3;
-    } else if(strcmp(input, "QUIT") == 0) {
+    } else if(strcmp(input, "AVERAGE") == 0) {
       return 4;
+    } else if(strcmp(input, "QUIT") == 0) {
+      return 5;
     } else { //If their command is invalid, tell the and have them try again
       cout << "Sorry, I don't recognize that command." << endl;
       cout << "Please input one of the following commands: " << endl;
-      cout << "ADD, DELETE, PRINT, QUIT." << endl;
+      cout << "ADD, DELETE, PRINT, AVERAGE, QUIT." << endl;
       cout << endl;
     }
   }
 }
 
 //This function helps the user to add a student to the list
-void addStudent(vector<Student*> & list) {
+void addStudent(Node* & head) {
   //These are a local variables being used
   char firstNameInput[16];
   char lastNameInput[16];
@@ -231,7 +241,12 @@ void addStudent(vector<Student*> & list) {
   Student* addedStudent = new Student(firstNameInput, lastNameInput, idInput, gpaInput2);
 
   //Add the finalized student pointer to where it should be in the list
-  //NEED TO MAKE STUDENT ID SORT HERE
+  addStudentNode(addedStudent, head, head);
+}
+
+//This function will sort and add the passed in student pointer into the
+//properly sorted location in the linked list
+void addStudentNode(Student* newStudent, Node* current, Node* & head) {
   /*
     I got help with transferring cstrings into integers from
     Cplusplus's article on "atoi".
@@ -241,6 +256,39 @@ void addStudent(vector<Student*> & list) {
     for finding the integer values of my cstring ids for the brief purpose of 
     sorting them from greatest to least in the linked list.
   */
+
+  //go through recursion step
+  if(head == NULL) {
+    //If the current linked list is empty, make the student the head node
+    head = new Node(newStudent);
+    
+  } else if(current == head && atoi(newStudent -> getID()) < atoi(current -> getStudent() -> getID())) {
+    //If the current node being looked at is the head node and the new student
+    //being added has an ID that's smaller than the head node, make a new head
+    //node using the new student and link it to the old head
+    head = new Node(newStudent);
+    head -> setNext(current);
+    
+  } else if(current -> getNext() != NULL) {
+    //If the next node isn't null, make comparisons to the next node's student
+    //and the student being added to the list
+    if(atoi(newStudent -> getID()) < atoi(current -> getNext() -> getStudent() -> getID())) {
+      //If the new student's ID is less than the next node, add it into the
+      //linked list between the current node and the next node
+      Node* placeholderNode = new Node(newStudent);
+      placeholderNode -> setNext(current -> getNext());
+      current -> setNext(placeholderNode);
+
+    } else {
+      //Move onto the next step of recursion by looking at the next node
+      addStudentNode(addedStudent, current -> getNext(), head);
+    }
+    
+  } else {
+    //If the next node is null, add the student into a node at the end of the
+    //list
+    current -> setNext(new Node(newStudent));
+  }
 }
 
 //This function helps the user to delete a student from the list
