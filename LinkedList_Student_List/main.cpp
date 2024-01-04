@@ -1,7 +1,7 @@
 /* 
    This project... WRITE ABOUT WHAT THIS PROJECT DOES
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 1/4/2024
    Period 6, C++ / Data Structures
 */
 
@@ -41,8 +41,9 @@ int askCommand();
 void addStudent(Node* & head);
 void addStudentNode(Student* newStudent, Node* current, Node* & head);
 void printList(Node* current, Node* head);
-void deleteStudent(Node* previous, Node* current, Node* & head);
-void averageList(Node* current, float total);
+void deleteStudent(Node* & head);
+bool deleteStudentNode(char* deleteID, Node* previous, Node* current, Node* & head);
+void averageList(Node* current, Node* head, float total);
 
 //Start of main function
 int main() {
@@ -70,7 +71,7 @@ int main() {
       //If they want to delete a student from the list, do so
       cout << "Deleting a student from list." << endl;
       cout << endl;
-      deleteStudent(head, head, head);
+      deleteStudent(head);
       
     } else if(commandKey == 3) {
       //If they want to print out the list, do so
@@ -82,7 +83,7 @@ int main() {
       //If they want to find the average of all the students' scores, do so
       cout << "Finding average GPA of class" << endl;
       cout << endl;
-      averageList(head, 0.0);
+      averageList(head, head, 0.0);
       
     } else if(commandKey == 5) {
       //If they want to quit the program, do so
@@ -154,7 +155,8 @@ int askCommand() {
       return 4;
     } else if(strcmp(input, "QUIT") == 0) {
       return 5;
-    } else { //If their command is invalid, tell the and have them try again
+    } else {
+      //If their command is invalid, tell the and have them try again
       cout << "Sorry, I don't recognize that command." << endl;
       cout << "Please input one of the following commands: " << endl;
       cout << "ADD, DELETE, PRINT, AVERAGE, QUIT." << endl;
@@ -293,67 +295,112 @@ void addStudentNode(Student* newStudent, Node* current, Node* & head) {
 }
 
 //This function helps the user to delete a student from the list
-void deleteStudent(Node* previous, Node* current, Node* & head) {
-  /*//local variables for function
-  char idInput[7];
-  for(int i = 0; i < 7; i++) {
-    idInput[i] = '\0';
-  }
-  bool matchingIdFound = false;
-
+void deleteStudent(Node* & head) {
   //If the list is currently empty, don't let them delete any student
-  if(list.empty()) {
+  if(head == NULL) {
     cout << "There isn't any students in the list to delete from " << endl;
     cout << "the list. After you've added a few students, then " << endl;
     cout << "consider deleting some of them from the list." << endl;
     cout << endl;
     
   } else { //Otherwise, continue with the rest of the function
+    //local variables for function
+    char idInput[7];
+    for(int i = 0; i < 7; i++) {
+      idInput[i] = '\0';
+    }
+    bool matchingIdFound = false;
+  
     //ask user for the id of the student they want to remove from the list
     //and make sure the inputted id is valid and matches a student
     cout << "What's the id of the student you want to remove from the list?" << endl;
     cout << "Please make it a 6 digit integer like before (i.e. 464877)." << endl;
     while((isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) || !matchingIdFound) {
       cin.getline(idInput, 7);
+      cout << endl;
+      //In case they typed exit to quit out, set everything to upper case
+      for(int i = 0; i < strlen(idInput); i++) {
+	idInput[i] = toupper(idInput[i]);
+      }
+
+      //Check if the user input the exit command to quit out of function
+      if(strcmp(idInput, "EXIT") == 0) {
+	return;
+      }
       
-      //If the whole id isn't just numbers, let the user know they made a mistake
+      //If the whole id isn't just numbers, let the user know they made
+      //a mistake
       if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
-	cout << endl;
 	cout << "You didn't enter a 6 digit integer." << endl;
 	cout << "Could you try inputting the student's id again?" << endl;
 	cout << "(i.e. 464877, 342907)" << endl;
 	cout << endl;
-      } else { //Is there a matching student id in the list?
-	for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
-	  if(strcmp(((*it) -> id), idInput) == 0) { //There's a match
-	    matchingIdFound = true;
-	    cout << "Removing student " << (*it) -> firstName << " " << (*it) -> lastName << " from list." << endl;
-	    cout << endl;
-	  
-	    //get rid of the student from the vector
-	    delete *it;
-	    list.erase(it);
-	    break;
-	  }
-	}
+      } else { //valid id input
+	//Is there a matching student id in the list? If so, delete it!
+	matchingIdFound = deleteStudentNode(idInput, head, head, head);
 
-	//If after going through the whole vector and no match could be found
+	//If after going through the whole list and no match could be found
 	//let the user know that their id doesn't work before letting them
 	//try again
 	if(!matchingIdFound) {
 	  cout << "Sorry, I couldn't find a student with that id in the list." << endl;
-	  cout << "This is what your current list is like" << endl;
+	  cout << "This is what your current list is like:" << endl;
 	  //Show the user their current list so they can see the right id
 	  //of who they want to delete off the list
 	  cout << endl;
-	  printList(list);
+	  printList(head, head);
 	  cout << "Could you reinput the id of the student you want " << endl;
 	  cout << "to remove from the list?" << endl;
+	  //If they want to quit out of the function, let them know that they
+	  //can input exit instead
+	  cout << "If you no longer want to delete a student from the" << endl;
+	  cout << "list, type EXIT instead." << endl;
 	  cout << endl;
 	}
       }
     }
-  }*/
+  }
+}
+
+//This function will look for a student in the list with a matching id to the
+//id entered for deletion and will delete the student from the list
+bool deleteStudentNode(char* deleteID, Node* previous, Node* current, Node* & head) {
+  //See if there is a match with the current node and do stuff
+  if(strcmp((current -> getStudent() -> getID()), deleteID) == 0) {
+    //There's a match!!!
+    cout << "Removing student " << current -> getStudent() -> getFirstName() << " " << current -> getStudent() -> getLastName() << " from list." << endl;
+    cout << endl;
+
+    //Check for different deletion cases
+    if(current == head) {
+      //If the current node is the head and it needs to be deleted, make the
+      //head the next node and delete the old head
+      Node* placeholderHead = head;
+      head = head -> getNext();
+      delete placeholderHead;
+      
+    } else {
+      //If the node to be deleted is between two nodes or a node before and the
+      //end of the list, carefully parse in out and make a link from the
+      //previous node and the next node
+      previous -> setNext(current -> getNext()); //make link
+      delete current; //delete target node
+    }
+
+    //return true to show that a match was found and deleted
+    return true;
+    
+  } else if(current -> getNext() == NULL) {
+    //There wasn't a match and this is the last node in the list return false
+    //to show that now matches were found
+    return false;
+    
+  } else {
+    //It's not the end of the list, and there wasn't a match with the current
+    //node, so go through the next step in recursion (and have its result be
+    //what this function returns)
+    return deleteStudentNode(deleteID, current, current -> getNext(), head);
+  }
 }
 
 //This function helps the user to view their current student list by printing
@@ -396,6 +443,16 @@ void printList(Node* current, Node* head) {
 }
 
 //This function finds and prints the average gpa of the class
-void averageList(Node* current, float total) {
+void averageList(Node* current, Node* head, float total) {
+  //Make sure the list isn't empty
+  if(head == NULL) {
+    //The list is empty so there's no GPAs to average, so let the user know!
+    cout << "There aren't any students in the list. Please add " << endl;
+    cout << "students to the list first before finding their " << endl;
+    cout << "average gpa." << endl;
+    cout << endl;
+    
+  } else { //There are students in the list
 
+  }
 }
