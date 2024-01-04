@@ -30,7 +30,7 @@
 #include <cstdlib>
 
 //class inclusions
-#include "Node.o"
+#include "Node.h"
 #include "Student.h"
 
 using namespace std;
@@ -42,7 +42,7 @@ void addStudent(Node* & head);
 void addStudentNode(Student* newStudent, Node* current, Node* & head);
 void printList(Node* current, Node* head);
 void deleteStudent(Node* previous, Node* current, Node* & head);
-void averageList(Node* current);
+void averageList(Node* current, float total);
 
 //Start of main function
 int main() {
@@ -64,13 +64,13 @@ int main() {
       //If they want to add a student to the list
       cout << "Adding a student to list." << endl;
       cout << endl;
-      addStudent(studentList);
+      addStudent(head);
       
     } else if(commandKey == 2) {
       //If they want to delete a student from the list, do so
       cout << "Deleting a student from list." << endl;
       cout << endl;
-      deleteStudent(studentList);
+      deleteStudent(head, head, head);
       
     } else if(commandKey == 3) {
       //If they want to print out the list, do so
@@ -82,16 +82,18 @@ int main() {
       //If they want to find the average of all the students' scores, do so
       cout << "Finding average GPA of class" << endl;
       cout << endl;
-      averageList(head);
+      averageList(head, 0.0);
       
     } else if(commandKey == 5) {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
 
-      //delete everything on the heap from my student list vector
-      while(!studentList.empty()) {
-	delete studentList.back();
-	studentList.pop_back();
+      //delete everything on the heap from my student linked list
+      while(head != NULL) {
+	delete head -> getStudent();
+	Node* placeholderHead = head;
+	head = head -> getNext();
+	delete placeholderHead;
       }
 
       //change the boolean that determines if the program continues
@@ -281,7 +283,7 @@ void addStudentNode(Student* newStudent, Node* current, Node* & head) {
 
     } else {
       //Move onto the next step of recursion by looking at the next node
-      addStudentNode(addedStudent, current -> getNext(), head);
+      addStudentNode(newStudent, current -> getNext(), head);
     }
     
   } else {
@@ -292,8 +294,8 @@ void addStudentNode(Student* newStudent, Node* current, Node* & head) {
 }
 
 //This function helps the user to delete a student from the list
-void deleteStudent(vector<Student*> & list) {
-  //local variables for function
+void deleteStudent(Node* previous, Node* current, Node* & head) {
+  /*//local variables for function
   char idInput[7];
   for(int i = 0; i < 7; i++) {
     idInput[i] = '\0';
@@ -352,34 +354,49 @@ void deleteStudent(vector<Student*> & list) {
 	}
       }
     }
-  }
+  }*/
 }
 
 //This function helps the user to view their current student list by printing
 //it out
-void printList(vector<Student*> & list) {
-  //If there is nobody in the list, tell the user
-  if(list.empty()) {
+void printList(Node* current, Node* head) {
+  if(head == NULL) {
+    //If there is nobody in the list, tell the user
     cout << "Sorry, there is currently nobody in the list!" << endl;
-  } else {
-    //give a header to the list
-    cout << "firstname lastname, id, gpa" << endl;
-    cout << "---------------------------------------------------" << endl;
-
-    //Set precision for floats so that they always show two digits after the
-    //decimal point
-    cout.setf(ios::fixed, ios::floatfield);
-    cout.setf(ios::showpoint);
-    cout.precision(2);
+    cout << endl;
     
-    //Check for everything in the student list vector and print each out
-    for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
-      cout << (*it) -> firstName << " ";
-      cout << (*it) -> lastName << ", ";
-      cout << (*it) -> id << ", ";
-      cout << (*it) -> gpa << endl;
+  } else {
+    if(current == head) {
+      //give a header to the list if it's the first node
+      cout << "firstname lastname, id, gpa" << endl;
+      cout << "---------------------------------------------------" << endl;
+    }
+
+    //if the node exists, print it
+    if(current != NULL) {
+      //Set precision for floats so that they always show two digits after the
+      //decimal point
+      cout.setf(ios::fixed, ios::floatfield);
+      cout.setf(ios::showpoint);
+      cout.precision(2);
+
+      //print out the student's information
+      cout << current -> getStudent() -> getFirstName() << " ";
+      cout << current -> getStudent() -> getLastName() << ", ";
+      cout << current -> getStudent() -> getID() << ", ";
+      cout << current -> getStudent() -> getGPA() << endl;
+
+      //Next step in recursion
+      printList(current -> getNext(), head);
+      
+    } else {
+      //If the node doesn't exist, add an empty line for spacing
+      cout << endl;
     }
   }
-  
-  cout << endl;
+}
+
+//This function finds and prints the average gpa of the class
+void averageList(Node* current, float total) {
+
 }

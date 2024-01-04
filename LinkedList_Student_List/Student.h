@@ -2,7 +2,7 @@
   This program is the header file for my Student.cpp file that will be used 
   in my linked lists student list project. 
   Author: Kevin Chacko
-  Last Updated: WRITE END DATE HERE
+  Last Updated: 1/4/2024
   Period 6, C++ / Data Structures
 */
 

@@ -1,8 +1,8 @@
 /*
   This program is the cpp file for my Student class that will be used in my 
-  linked lists sutdent list project
+  linked lists student list project.
   Author: Kevin Chacko
-  Last Updated: WRITE END DATE HERE
+  Last Updated: 1/4/2024
   Period 6, C++ / Data Structures
 */
 
