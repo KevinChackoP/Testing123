@@ -90,7 +90,6 @@ int main() {
 
       //delete everything on the heap from my student linked list
       while(head != NULL) {
-	delete head -> getStudent();
 	Node* placeholderHead = head;
 	head = head -> getNext();
 	delete placeholderHead;

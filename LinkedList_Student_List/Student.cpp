@@ -36,21 +36,21 @@ Student::~Student() {
 }
 
 //getter function for first name cstring
-char* getFirstName() {
+char* Student::getFirstName() {
   return firstName;
 }
 
 //getter function for last name cstring
-char* getLastName() {
+char* Student::getLastName() {
   return lastName;
 }
 
 //getter function for id cstring
-char* getID() {
+char* Student::getID() {
   return id;
 }
 
 //getter function for gpa floating number
-float getGPA() {
+float Student::getGPA() {
   return gpa;
 }
