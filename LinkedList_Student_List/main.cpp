@@ -1,5 +1,14 @@
 /* 
-   This project... WRITE ABOUT WHAT THIS PROJECT DOES
+   This project helps a user create and manage a list of students for a class.
+   The user will be prompted to enter 1 of 5 commands which will allow them to
+   do various things. They'll be allowed to add students to the list, in which
+   the student will be added based on the order of their student id. They'll
+   also be allowed to print out all the students they've added to the list
+   in order of their student ids. If they'd like, they can remove students
+   from the list by student id. Lastly, they can ask for and see the GPA
+   average of all the students in the list. When they're done, the user can
+   quit out of the program. A big part of this program is that everything is
+   done using a linked list of nodes, and most actions use recursion. 
    Author: Kevin Chacko
    Last Updated: 1/4/2024
    Period 6, C++ / Data Structures
@@ -17,7 +26,14 @@
   for finding the integer values of my cstring ids for the brief purpose of 
   sorting them from greatest to least in the linked list.
   
-  ADD ANY OTHER NEEDED CITATIONS HERE!!!
+  In order to properly round my average to two decimal places, I got
+  help from cplusplus's c++ documentation for the math.h library.
+  URL: https://cplusplus.com/reference/cmath/round/
+  I found that also included in math.h was a round function that would
+  round the passed in float or double value to the nearest integer value
+  also in float or double form. This is useful as by multiplying my
+  average by 100, rounding it using this function, and dividing it by
+  100 I'm able to essentially round my average to 2 decimal places.
 */
 
 //imports
@@ -43,7 +59,7 @@ void addStudentNode(Student* newStudent, Node* current, Node* & head);
 void printList(Node* current, Node* head);
 void deleteStudent(Node* & head);
 bool deleteStudentNode(char* deleteID, Node* previous, Node* current, Node* & head);
-void averageList(Node* current, Node* head, float total);
+void averageList(Node* current, Node* head, float total, int studentNum);
 
 //Start of main function
 int main() {
@@ -81,9 +97,9 @@ int main() {
       
     } else if(commandKey == 4) {
       //If they want to find the average of all the students' scores, do so
-      cout << "Finding average GPA of class" << endl;
+      cout << "Finding average GPA of class." << endl;
       cout << endl;
-      averageList(head, head, 0.0);
+      averageList(head, head, 0.0, 0);
       
     } else if(commandKey == 5) {
       //If they want to quit the program, do so
@@ -443,7 +459,7 @@ void printList(Node* current, Node* head) {
 }
 
 //This function finds and prints the average gpa of the class
-void averageList(Node* current, Node* head, float total) {
+void averageList(Node* current, Node* head, float total, int studentNum) {
   //Make sure the list isn't empty
   if(head == NULL) {
     //The list is empty so there's no GPAs to average, so let the user know!
@@ -453,6 +469,41 @@ void averageList(Node* current, Node* head, float total) {
     cout << endl;
     
   } else { //There are students in the list
+    //Add current student to total counters
+    total += current -> getStudent() -> getGPA();
+    studentNum++;
 
+    //check for next steps
+    if(current -> getNext() != NULL) {
+      //If there are more students in list ahead, move onto next step in
+      //recursion process
+      averageList(current -> getNext(), head, total, studentNum);
+      
+    } else {
+      //If the current node is the last one in the list, find the average
+      float average = total / studentNum;
+      /*
+	In order to properly round my average to two decimal places, I got
+	help from cplusplus's c++ documentation for the math.h library.
+	URL: https://cplusplus.com/reference/cmath/round/
+	I found that also included in math.h was a round function that would
+	round the passed in float or double value to the nearest integer value
+	also in float or double form. This is useful as by multiplying my
+	average by 100, rounding it using this function, and dividing it by
+	100 I'm able to essentially round my average to 2 decimal places.
+      */
+      average = round(average * 100) / 100;
+
+      //Set precision for floats so that they always show two digits after the
+      //decimal point
+      cout.setf(ios::fixed, ios::floatfield);
+      cout.setf(ios::showpoint);
+      cout.precision(2);
+
+      //print out the found average GPA
+      cout << "The average GPA of the students in the list is: " << endl;
+      cout << average << endl;
+      cout << endl;
+    }
   }
 }
