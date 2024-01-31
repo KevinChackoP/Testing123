@@ -21,6 +21,12 @@
   line in a file and use it in my program. With a recommendation from 
   Mr. Galbraith, I can use this to put all the names into a vector which I can 
   then pull from randomly to generate students. 
+
+  I got help with transferring cstrings into integers from
+  Cplusplus's article on "atoi".
+  URL: https://cplusplus.com/reference/cstdlib/atoi/
+  This is useful for getting the number value of the student's ID of 
+  which I want to use for my hash function key.
   
   ADD MORE CITATIONS HERE
 */
@@ -33,6 +39,7 @@
 #include <limits>
 #include <math.h>
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
 
@@ -52,9 +59,11 @@ struct Node {
 //Function prototypes
 void instructions();
 int askCommand();
-void addStudent(vector<Student*> & list);
+void addStudent(Node** & table, int & hashLength);
 void printList(vector<Student*> & list);
 void deleteStudent(vector<Student*> & list);
+int hashFunction(char* id, int & hashLength);
+void growTable(Node** & table, int & hashLength);
 
 //Start of main function
 int main() {
@@ -63,7 +72,7 @@ int main() {
   bool inUse = true;
   int commandKey = 0;
   int tableLength = 100;
-  Node studentTable[tableLength] = new Node[];
+  Node** studentTable = new Node*[tableLength];
   
   //Tell them how the program works
   instructions();
@@ -187,9 +196,10 @@ int askCommand() {
 }
 
 //This function helps the user to add a student to the list
-void addStudent(vector<Student*> & list) {
+void addStudent(Node* & table, int & hashLength) {
   //These are a local variables being used
   Student* addedStudent = new Student();
+  Node* newNode = new Node();
   char firstNameInput[16];
   char lastNameInput[16];
   for(int i = 0; i < 16; i++) {
@@ -289,8 +299,31 @@ void addStudent(vector<Student*> & list) {
   cout << endl;
   
   //When finished checking all the inputs and putting them all in, add the
-  //finalized student pointer to the main vector.
-  list.push_back(addedStudent);
+  //finalized student pointer to the hash table
+  newNode -> student = addedStudent;
+  Node* current = table[hashFunction(addedStudent -> id, hashLength)];
+  int newLinkCount = 1;
+  if(current == NULL) {
+    //If the first node of the linked list in the table is null set the new
+    //node as the first node
+    current = newNode;
+  } else {
+    //Iterate through the linked list in the table until the next node is null
+    while(current -> next != NULL) {
+      newLinkCount++;
+      current = current -> next;
+    }
+
+    //set the next pointer of the last node of the linked list to the new node
+    //and make the new last node the new node
+    current -> next = newNode;
+
+    //Check to see if there are more than 3 collisions, and if so make the
+    //linked list bigger
+    if(newLinkCount > 3) {
+      growTable(table, hashLength);
+    }
+  }
 }
 
 //This function helps the user to delete a student from the list
@@ -418,4 +451,44 @@ void printList(vector<Student*> & list) {
   }
   
   cout << endl;
+}
+
+//This is the hash function for my hash table which uses the student id as
+//its key
+int hashFunction(char* id, int & hashLength) {
+  /*
+    I got help with transferring cstrings into integers from
+    Cplusplus's article on "atoi".
+    URL: https://cplusplus.com/reference/cstdlib/atoi/
+    This is useful for getting the number value of the student's ID of 
+    which I want to use for my hash function key.
+  */
+  int index = atoi(id);
+  index = index % hashLength;
+  return index;
+}
+
+//This function will make a new hash table double the length of the current
+//hash table, and will rehash all of the old table's students into the new
+//bigger table
+void growTable(Node** & table, int & hashLength) {
+  //local variables
+  int newTableLength = hashLength * 2;
+  Node** newStudentTable = new Node*[newTableLength];
+
+  //Go through each student in the old table and rehash them into the
+  //new table
+  for(int i = 0; i < hashLength; i++) {
+    if(table[i] != NULL) {
+      //If the old table slot contains a node...
+
+      table[i] -> next = NULL;
+      newTableLength[hashFunction(table[i] -> student -> id), newTableLength] = table[i];
+    }
+  }
+
+  //set the new rehashed table as the current table
+  delete table;
+  table = newStudentTable;
+  hashLength = newTableLength;
 }
