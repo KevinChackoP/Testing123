@@ -60,8 +60,8 @@ struct Node {
 void instructions();
 int askCommand();
 void addStudent(Node** & table, int & hashLength);
-void printList(vector<Student*> & list);
-void deleteStudent(vector<Student*> & list);
+void printList(Node** & table, int & hashLength);
+void deleteStudent(Node** & table, int & hashLength);
 int hashFunction(char* id, int & hashLength);
 void growTable(Node** & table, int & hashLength);
 
@@ -302,12 +302,13 @@ void addStudent(Node* & table, int & hashLength) {
   //finalized student pointer to the hash table
   newNode -> student = addedStudent;
   Node* current = table[hashFunction(addedStudent -> id, hashLength)];
-  int newLinkCount = 1;
   if(current == NULL) {
     //If the first node of the linked list in the table is null set the new
     //node as the first node
     current = newNode;
   } else {
+    int newLinkCount = 1;
+    
     //Iterate through the linked list in the table until the next node is null
     while(current -> next != NULL) {
       newLinkCount++;
@@ -327,7 +328,7 @@ void addStudent(Node* & table, int & hashLength) {
 }
 
 //This function helps the user to delete a student from the list
-void deleteStudent(vector<Student*> & list) {
+void deleteStudent(Node** & table, int & hashLength) {
   //local variables for function
   char idInput[7];
   for(int i = 0; i < 7; i++) {
@@ -410,47 +411,29 @@ void deleteStudent(vector<Student*> & list) {
 
 //This function helps the user to view their current student list by printing
 //it out
-void printList(vector<Student*> & list) {
-  //If there is nobody in the list, tell the user
-  /*
-    To figure out of my vector is empty or not I got help from cplusplus's 
-    article on "vector::empty".
-    URL: https://cplusplus.com/reference/vector/vector/empty/
-    This helped me with making sure my user wasn't trying to print an 
-    empty list, or trying to delete from an empty list, and with helping me 
-    deleting everything on the heap after the program was done.
-  */
-  if(list.empty()) {
-    cout << "Sorry, there is currently nobody in the list!" << endl;
-  } else {
-    //give a header to the list
-    cout << "firstname lastname, id, gpa" << endl;
-    cout << "---------------------------------------------------" << endl;
-
-    //Set precision for floats so that they always show two digits after the
-    //decimal point
-    /*
-      Got help with this from the "Formatting Output" video in the Canvas
-      module "Introduction to C++: Video Tutorials".
-    */
-    cout.setf(ios::fixed, ios::floatfield);
-    cout.setf(ios::showpoint);
-    cout.precision(2);
-    
-    //Check for everything in the student list vector and print each out
-    /*
-      For getting help with iterators I used the vector example given in the
-      "Functions, Structs, By Reference, By Value, Pointers" module in Canvas.
-    */
-    for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
-      cout << (*it) -> firstName << " ";
-      cout << (*it) -> lastName << ", ";
-      cout << (*it) -> id << ", ";
-      cout << (*it) -> gpa << endl;
-    }
-  }
+void printList(Node** & table, int & hashLength) {
+  //give a header to the list
+  cout << "firstname lastname, id, gpa" << endl;
+  cout << "---------------------------------------------------" << endl;
   
-  cout << endl;
+  //Set precision for floats so that they always show two digits after the
+  //decimal point
+  /*
+    Got help with this from the "Formatting Output" video in the Canvas
+    module "Introduction to C++: Video Tutorials".
+  */
+  cout.setf(ios::fixed, ios::floatfield);
+  cout.setf(ios::showpoint);
+  cout.precision(2);
+  
+  //Go through every slot in the hash table and print the student if there is
+  //a node
+  for(int i = 0; i < hashLength; i++) {
+    cout << (*it) -> firstName << " ";
+    cout << (*it) -> lastName << ", ";
+    cout << (*it) -> id << ", ";
+    cout << (*it) -> gpa << endl;
+  }
 }
 
 //This is the hash function for my hash table which uses the student id as
@@ -474,16 +457,43 @@ int hashFunction(char* id, int & hashLength) {
 void growTable(Node** & table, int & hashLength) {
   //local variables
   int newTableLength = hashLength * 2;
-  Node** newStudentTable = new Node*[newTableLength];
+  Node** newTable = new Node*[newTableLength];
+  bool rehashAgain = false;
 
   //Go through each student in the old table and rehash them into the
   //new table
   for(int i = 0; i < hashLength; i++) {
-    if(table[i] != NULL) {
+    while(table[i] != NULL) {
       //If the old table slot contains a node...
+      //Make a placeholder node and add it to the new table
+      Node* placeholder = table[i];
+      table[i] = table[i] -> next; //go to next node in linked list
+      placeholder -> next = NULL;
+      char* id = placeholder -> student -> id;
+      Node* current = newTable[hashFunction(id, newTableLength)];
+      if(current == NULL) {
+	//If the first node of the linked list in the new table is null
+	//set the placeholder node as the first node
+	current = placeholder;
+      } else {
+	int newLinkCount = 1;
+	//Iterate through the linked list in the new table until the
+	//next node is null
+	while(current -> next != NULL) {
+	  newLinkCount++;
+	  current = current -> next;
+	}
+	
+	//set the next pointer of the last node of the linked list to the
+	//placeholder node and make the new last node the placeholder node
+	current -> next = placeholder;
 
-      table[i] -> next = NULL;
-      newTableLength[hashFunction(table[i] -> student -> id), newTableLength] = table[i];
+	//Check to see if there are more than 3 collisions, and if so make the
+	//linked list bigger again after rehashing is finished
+	if(newLinkCount > 3) {
+	  rehashAgain = true;
+	}
+      }
     }
   }
 
@@ -491,4 +501,10 @@ void growTable(Node** & table, int & hashLength) {
   delete table;
   table = newStudentTable;
   hashLength = newTableLength;
+
+  //If there are still more than 3 collisions in the new hash table
+  //rehash again
+  if(rehashAgain) {
+    growTable(table, hashLength);
+  }
 }
