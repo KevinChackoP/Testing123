@@ -53,8 +53,8 @@ struct Student {
 
 struct Node {
   Student* student;
-  Node next = NULL;
-}
+  Node* next = NULL;
+};
 
 //Function prototypes
 void instructions();
@@ -87,24 +87,25 @@ int main() {
       //If they want to add a student to the list
       cout << "Adding a student to list." << endl;
       cout << endl;
-      addStudent(studentList);
+      addStudent(studentTable, tableLength);
       
     } else if(commandKey == 2) {
       //If they want to delete a student from the list, do so
       cout << "Deleting a student from list." << endl;
       cout << endl;
-      deleteStudent(studentList);
+      deleteStudent(studentTable, tableLength);
       
     } else if(commandKey == 3) {
       //If they want to print out the list, do so
       cout << "Printing current student list out." << endl;
       cout << endl;
-      printList(studentList);
+      printList(studentTable, tableLength);
       
     } else if(commandKey == 4) {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
 
+      //FIX THE QUIT PROGRAM DELETING EVERYTHING PART HERE!
       //delete everything on the heap from my student list vector
       /*
 	To figure out of my vector is empty or not I got help from cplusplus's 
@@ -196,7 +197,7 @@ int askCommand() {
 }
 
 //This function helps the user to add a student to the list
-void addStudent(Node* & table, int & hashLength) {
+void addStudent(Node** & table, int & hashLength) {
   //These are a local variables being used
   Student* addedStudent = new Student();
   Node* newNode = new Node();
@@ -480,7 +481,7 @@ void growTable(Node** & table, int & hashLength) {
 
   //set the new rehashed table as the current table
   delete table;
-  table = newStudentTable;
+  table = newTable;
   hashLength = newTableLength;
 
   //If there are still more than 3 collisions in the new hash table
