@@ -336,74 +336,50 @@ void deleteStudent(Node** & table, int & hashLength) {
   }
   bool matchingIdFound = false;
 
-  //If the list is currently empty, don't let them delete any student
-  /*
-    To figure out of my vector is empty or not I got help from cplusplus's 
-    article on "vector::empty".
-    URL: https://cplusplus.com/reference/vector/vector/empty/
-    This helped me with making sure my user wasn't trying to print an 
-    empty list, or trying to delete from an empty list, and with helping me 
-    deleting everything on the heap after the program was done.
-  */
-  if(list.empty()) {
-    cout << "There isn't any students in the list to delete from " << endl;
-    cout << "the list. After you've added a few students, then " << endl;
-    cout << "consider deleting some of them from the list." << endl;
-    cout << endl;
+  //ask user for the id of the student they want to remove from the list
+  //and make sure the inputted id is valid and matches a student
+  cout << "What's the id of the student you want to remove from the list?" << endl;
+  cout << "Please make it a 6 digit integer like before (i.e. 464877)." << endl;
+  while((isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) || !matchingIdFound) {
+    cin.get(idInput, 7);
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     
-  } else { //Otherwise, continue with the rest of the function
-    //ask user for the id of the student they want to remove from the list
-    //and make sure the inputted id is valid and matches a student
-    cout << "What's the id of the student you want to remove from the list?" << endl;
-    cout << "Please make it a 6 digit integer like before (i.e. 464877)." << endl;
-    while((isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) || !matchingIdFound) {
-      cin.get(idInput, 7);
-      cin.ignore(numeric_limits<streamsize>::max(), '\n');
-      
-      //If the whole id isn't just numbers, let the user know they made a mistake
-      if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
-	cout << endl;
-	cout << "You didn't enter a 6 digit integer." << endl;
-	cout << "Could you try inputting the student's id again?" << endl;
-	cout << "(i.e. 464877, 342907)" << endl;
-	cout << endl;
-      } else { //Is there a matching student id in the list?
-	for(vector<Student*>::iterator it = list.begin(); it != list.end(); it++) {
-	  if(strcmp(((*it) -> id), idInput) == 0) { //There's a match
-	    matchingIdFound = true;
-	    cout << "Removing student " << (*it) -> firstName << " " << (*it) -> lastName << " from list." << endl;
-	    cout << endl;
-	  
-	    //get rid of the student from the vector
-	    /*
-	      To get help with this I got help from Mr. Galbraith. He suggested
-	      that I use delete along with *it to delete the contents in list 
-	      first. Then, to remove the pointers from the vector I'd use 
-	      .erase, that way there wouldn't be a useless hole in the vector.
-	      Finally I should use break to get out of my for loop because it
-	      will now run off of my shorted list if I let it continue, and 
-	      that could do some bad stuff.
-	    */
-	    delete *it;
-	    list.erase(it);
-	    break;
-	  }
-	}
+    //If the whole id isn't just numbers, let the user know they made a mistake
+    if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
+      cout << endl;
+      cout << "You didn't enter a 6 digit integer." << endl;
+      cout << "Could you try inputting the student's id again?" << endl;
+      cout << "(i.e. 464877, 342907)" << endl;
+      cout << endl;
+    } else { //Is there a matching student id in the list?
+      Node* current = table[hashFunction(idInput, hashLength)];
+      while(current != NULL) {
+	if(strcmp(current -> student -> id, idInput) == 0) { //There's a match
+	  matchingIdFound = true;
+	  cout << "Removing student " << current -> student -> firstName << " " << current -> student -> lastName << " from list." << endl;
+	  cout << endl;
 
-	//If after going through the whole vector and no match could be found
-	//let the user know that their id doesn't work before letting them
-	//try again
-	if(!matchingIdFound) {
-	  cout << "Sorry, I couldn't find a student with that id in the list." << endl;
-	  cout << "This is what your current list is like" << endl;
-	  //Show the user their current list so they can see the right id
-	  //of who they want to delete off the list
-	  cout << endl;
-	  printList(list);
-	  cout << "Could you reinput the id of the student you want " << endl;
-	  cout << "to remove from the list?" << endl;
-	  cout << endl;
+	  Node* placeholder = current;
+	  current = current -> next;
+	  delete placeholder;
+	} else {
+	  current = current -> next;
 	}
+      }
+      
+      //If after going through the whole vector and no match could be found
+      //let the user know that their id doesn't work before letting them
+      //try again
+      if(!matchingIdFound) {
+	cout << "Sorry, I couldn't find a student with that id in the list." << endl;
+	cout << "This is what your current list is like" << endl;
+	//Show the user their current list so they can see the right id
+	//of who they want to delete off the list
+	cout << endl;
+	printList(table, hashLength);
+	cout << "Could you reinput the id of the student you want " << endl;
+	cout << "to remove from the list?" << endl;
+	cout << endl;
       }
     }
   }
@@ -429,10 +405,15 @@ void printList(Node** & table, int & hashLength) {
   //Go through every slot in the hash table and print the student if there is
   //a node
   for(int i = 0; i < hashLength; i++) {
-    cout << (*it) -> firstName << " ";
-    cout << (*it) -> lastName << ", ";
-    cout << (*it) -> id << ", ";
-    cout << (*it) -> gpa << endl;
+    //if slot has nodes in linked list, go through each node in list
+    Node* current = table[i];
+    while(current != NULL) {
+      cout << current -> student -> firstName << " ";
+      cout << current -> student -> lastName << ", ";
+      cout << current -> student -> id << ", ";
+      cout << current -> student -> gpa << endl;
+      current = current -> next;
+    }
   }
 }
 
