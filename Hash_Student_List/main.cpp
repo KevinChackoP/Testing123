@@ -73,6 +73,10 @@ int main() {
   int commandKey = 0;
   int tableLength = 100;
   Node** studentTable = new Node*[tableLength];
+  for(int i = 0; i < tableLength; i++) {
+    //Set everything in the hash table to null
+    studentTable[i] = NULL;
+  }
   
   //Tell them how the program works
   instructions();
@@ -105,30 +109,17 @@ int main() {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
 
-      //FIX THE QUIT PROGRAM DELETING EVERYTHING PART HERE!
-      //delete everything on the heap from my student list vector
-      /*
-	To figure out of my vector is empty or not I got help from cplusplus's 
-	article on "vector::empty".
-	URL: https://cplusplus.com/reference/vector/vector/empty/
-	This helped me with making sure my user wasn't trying to print an 
-	empty list, or trying to delete from an empty list, and with helping me
-	deleting everything on the heap after the program was done.
-      */
-      while(!studentList.empty()) {
-	/*
-	  Also to help me with clearing what I had on the heap, I needed more
-	  help from cplusplus from their documentation on "vector::back" and
-	  "vector::pop_back".
-	  URL: https://cplusplus.com/reference/vector/vector/back/
-	  URL: https://cplusplus.com/reference/vector/vector/pop_back/
-	  Using the vector back function I could go into the last item in
-	  a vector, which helped me with deleting its contents. This worked
-	  well in tandem with vector pop_back which would then get rid of
-	  the last item in a vector from the vector, finishing the job. 
-	*/
-	delete studentList.back();
-	studentList.pop_back();
+      //delete everything on the heap from my hash table
+      for(int i = 0; i < tableLength; i++) {
+	//see if there is anything in the hash table slot
+	if(studentTable[i] != NULL) {
+	  do {
+	    //delete every node in the linked list in that slot
+	    Node* placeholder = studentTable[i];
+	    studentTable[i] = studentTable[i] -> next;
+	    delete placeholder;
+	  } while(studentTable[i] != NULL);
+	}
       }
 
       //change the boolean that determines if the program continues
@@ -305,8 +296,9 @@ void addStudent(Node** & table, int & hashLength) {
   Node* current = table[hashFunction(addedStudent -> id, hashLength)];
   if(current == NULL) {
     //If the first node of the linked list in the table is null set the new
-    //node as the first node
-    current = newNode;
+    //node as the first node (use table itself because current is a copy of
+    //the address in the table and we need to change the address in table)
+    table[hashFunction(addedStudent -> id, hashLength)] = newNode;
   } else {
     int newLinkCount = 1;
     
@@ -354,17 +346,33 @@ void deleteStudent(Node** & table, int & hashLength) {
       cout << endl;
     } else { //Is there a matching student id in the list?
       Node* current = table[hashFunction(idInput, hashLength)];
-      while(current != NULL) {
-	if(strcmp(current -> student -> id, idInput) == 0) { //There's a match
+
+      if(table[hashFunction(idInput, hashLength)] != NULL) {
+	//If the head of the table linked list is the match, delete it
+	//as a special case in which table needs to be directly accessed
+	if(strcmp(current -> student -> id, idInput) == 0) {
 	  matchingIdFound = true;
 	  cout << "Removing student " << current -> student -> firstName << " " << current -> student -> lastName << " from list." << endl;
 	  cout << endl;
-
-	  Node* placeholder = current;
-	  current = current -> next;
+	  
+	  Node* placeholder = table[hashFunction(idInput, hashLength)];
+	  table[hashFunction(idInput, hashLength)] = table[hashFunction(idInput, hashLength)] -> next;
 	  delete placeholder;
 	} else {
-	  current = current -> next;
+	  while(current -> next != NULL) {
+	    if(strcmp(current -> next -> student -> id, idInput) == 0) {
+	      //There's a match
+	      matchingIdFound = true;
+	      cout << "Removing student " << current -> next -> student -> firstName << " " << current -> next -> student -> lastName << " from list." << endl;
+	      cout << endl;
+
+	      Node* placeholder = current -> next;
+	      current -> next = current -> next -> next;
+	      delete placeholder;
+	    } else {
+	      current = current -> next;
+	    }
+	  }
 	}
       }
       
@@ -416,6 +424,7 @@ void printList(Node** & table, int & hashLength) {
       current = current -> next;
     }
   }
+  cout << endl;
 }
 
 //This is the hash function for my hash table which uses the student id as
@@ -430,6 +439,8 @@ int hashFunction(char* id, int & hashLength) {
   */
   int index = atoi(id);
   index = index % hashLength;
+
+  //return the hashed index value
   return index;
 }
 
@@ -440,6 +451,10 @@ void growTable(Node** & table, int & hashLength) {
   //local variables
   int newTableLength = hashLength * 2;
   Node** newTable = new Node*[newTableLength];
+  for(int i = 0; i < newTableLength; i++) {
+    //Set everything in the new hash table to null
+    newTable[i] = NULL;
+  }
   bool rehashAgain = false;
 
   //Go through each student in the old table and rehash them into the
@@ -490,3 +505,4 @@ void growTable(Node** & table, int & hashLength) {
     growTable(table, hashLength);
   }
 }
+
