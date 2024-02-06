@@ -22,6 +22,12 @@
   Mr. Galbraith, I can use this to put all the names into a vector which I can 
   then pull from randomly to generate students. 
 
+  Also for getting help with reading in from a file I got help from 
+  Mr. Galbraith.
+  He gave me sample code to use for a file line by line reader which 
+  doesn't require a String and can instead input into a cstring 
+  using the >>.
+
   I got help with transferring cstrings into integers from
   Cplusplus's article on "atoi".
   URL: https://cplusplus.com/reference/cstdlib/atoi/
@@ -40,6 +46,7 @@
 #include <math.h>
 #include <vector>
 #include <cstdlib>
+#include <fstream>
 
 using namespace std;
 
@@ -64,11 +71,34 @@ void printList(Node** & table, int & hashLength);
 void deleteStudent(Node** & table, int & hashLength);
 int hashFunction(char* id, int & hashLength);
 void growTable(Node** & table, int & hashLength);
+void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNames, vector<char*> & lastNames);
 
 //Start of main function
 int main() {
   //local variable declarations
-  vector<Student*> studentList;
+  vector<char*> firstNames;
+  /*
+    For this section I got help from Mr. Galbraith.
+    He gave me the following sample code to use for a file line by line 
+    reader which doesn't require a String and can instead input into a 
+    cstring using the >>.
+   */
+  ifstream fin("firstNames.txt");
+  char* fileInput = new char[16];
+  while(fin >> fileInput) {
+    char* tmp = new char[16];
+    strcpy(tmp, fileInput);
+    firstNames.push_back(tmp);
+  }
+  fin.close();
+  vector<char*> lastNames;
+  ifstream fin2("lastNames.txt");
+  while(fin2 >> fileInput) {
+    char* tmp = new char[16];
+    strcpy(tmp, fileInput);
+    lastNames.push_back(tmp);
+  }
+  fin2.close();
   bool inUse = true;
   int commandKey = 0;
   int tableLength = 100;
@@ -106,6 +136,12 @@ int main() {
       printList(studentTable, tableLength);
       
     } else if(commandKey == 4) {
+      //If they want to randomly generate students, do so
+      cout << "Generating new students to add to list." << endl;
+      cout << endl;
+      generateStudents(studentTable, tableLength, firstNames, lastNames);
+      
+    } else if(commandKey == 5) {
       //If they want to quit the program, do so
       cout << "Ok then, have a good day!" << endl;
 
@@ -336,14 +372,21 @@ void deleteStudent(Node** & table, int & hashLength) {
   while((isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) || !matchingIdFound) {
     cin.get(idInput, 7);
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    
-    //If the whole id isn't just numbers, let the user know they made a mistake
-    if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
+
+    if(strcmp(idInput, "Exit") == 0 || strcmp(idInput, "exit") == 0 || strcmp(idInput, "EXIT") == 0) {
+      //Does the user want to quit, if so, exit the function
+      cout << endl;
+      return;
+
+    } else if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
+      //If the whole id isn't just numbers, let the user know they
+      //made a mistake
       cout << endl;
       cout << "You didn't enter a 6 digit integer." << endl;
       cout << "Could you try inputting the student's id again?" << endl;
       cout << "(i.e. 464877, 342907)" << endl;
       cout << endl;
+      
     } else { //Is there a matching student id in the list?
       Node* current = table[hashFunction(idInput, hashLength)];
 
@@ -381,13 +424,15 @@ void deleteStudent(Node** & table, int & hashLength) {
       //try again
       if(!matchingIdFound) {
 	cout << "Sorry, I couldn't find a student with that id in the list." << endl;
-	cout << "This is what your current list is like" << endl;
+	cout << "This is what your current list is like:" << endl;
 	//Show the user their current list so they can see the right id
 	//of who they want to delete off the list
 	cout << endl;
 	printList(table, hashLength);
 	cout << "Could you reinput the id of the student you want " << endl;
 	cout << "to remove from the list?" << endl;
+	cout << "Alternativally, if you don't want to delete anymore " << endl;
+	cout << "just type \"exit\"." << endl;
 	cout << endl;
       }
     }
@@ -506,3 +551,36 @@ void growTable(Node** & table, int & hashLength) {
   }
 }
 
+//This function will randomly generate students into the list for
+//testing purposes
+void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNames, vector<char*> & lastNames) {
+  //local variables
+  int newStudentNumber = 0;
+  srand(time(NULL));
+
+  //Ask the user to input the number of students they want generated
+  cout << "How many students would you like to generate?" << endl;
+  cout << "(Please input only a positive, non-zero integer number)" << endl;
+  cout << endl;
+  cin >> newStudentNumber;
+
+  //Randomly generate the desired number of students
+  for(int i = 0; i < newStudentNumber; i++) {
+    //new student variable declarations
+    Student* addedStudent = new Student();
+    Node* newNode = new Node();
+    char firstName[16];
+    char lastName[16];
+    for(int i = 0; i < 16; i++) {
+      firstName[i] = '\0';
+      lastName[i] = '\0';
+    }
+    char id[7];
+    float gpa = 0.00;
+
+    //Assign random student values
+    strcpy(firstName, firstNames.at(rand() % firstNames.size()));
+    strcpy(lastName, lastNames.at(rand() % lastNames.size()));
+    //NEED TO FIGURE OUT HOW TO TURN AN INTEGER INTO A CSTRING
+  }
+}
