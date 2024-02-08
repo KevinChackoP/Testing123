@@ -32,9 +32,17 @@
   Cplusplus's article on "atoi".
   URL: https://cplusplus.com/reference/cstdlib/atoi/
   This is useful for getting the number value of the student's ID of 
-  which I want to use for my hash function key.
-  
-  ADD MORE CITATIONS HERE
+  which I want to use for my hash function key.  
+
+  In order to convert a random number into a cstring for my student 
+  id formatting I got help from cplusplus's page on itoa.
+  URL: https://cplusplus.com/reference/cstdlib/itoa/
+  This is the inverse of atoi converting the inputted integer into a 
+  string in the numerical base of your choice. This is useful since I 
+  can just pass in a random int into my id to get a randomly generated 
+  id. However, this didn't work since the function is a bit funky with 
+  what compilers will accept it. So instead I used the alternative they 
+  recommended which was sprintf(str, "%d", int).
 */
 
 //imports
@@ -172,8 +180,8 @@ void instructions() {
   cout << "Hello, this is a program that can keep track of students in a class" << endl;
   cout << "using a list! You can use various commands to interact with the list." << endl;
   cout << "That is to say, you can add students to the list, print out the list, " << endl;
-  cout << "delete students from the list, or exit out of the program." << endl;
-  cout << "I hope this program is of use to you!" << endl;
+  cout << "delete students from the list, randomly generate new students into the" << endl;
+  cout << "list, or exit out of the program. I hope this program is of use to you!" << endl;
   cout << endl;
 }
 
@@ -190,6 +198,7 @@ int askCommand() {
   cout << "Input ADD for adding a new student to the list." << endl;
   cout << "Input DELETE to delete a student from the list." << endl;
   cout << "Input PRINT to print out the current list of students." << endl;
+  cout << "Input GENERATE randomly generate new students to the list." << endl;
   cout << "Input QUIT to exit the program." << endl;
   cout << endl;
 
@@ -212,12 +221,14 @@ int askCommand() {
       return 2;
     } else if(strcmp(input, "PRINT") == 0) {
       return 3;
-    } else if(strcmp(input, "QUIT") == 0) {
+    } else if(strcmp(input, "GENERATE") == 0) {
       return 4;
+    } else if(strcmp(input, "QUIT") == 0) {
+      return 5;
     } else { //If their command is invalid, tell the and have them try again
       cout << "Sorry, I don't recognize that command." << endl;
       cout << "Please input one of the following commands: " << endl;
-      cout << "ADD, DELETE, PRINT, QUIT." << endl;
+      cout << "ADD, DELETE, PRINT, GENERATE, QUIT." << endl;
       cout << endl;
     }
   }
@@ -350,7 +361,7 @@ void addStudent(Node** & table, int & hashLength) {
 
     //Check to see if there are more than 3 collisions, and if so make the
     //linked list bigger
-    if(newLinkCount > 3) {
+    if(newLinkCount >= 3) {
       growTable(table, hashLength);
     }
   }
@@ -493,6 +504,8 @@ int hashFunction(char* id, int & hashLength) {
 //hash table, and will rehash all of the old table's students into the new
 //bigger table
 void growTable(Node** & table, int & hashLength) {
+  cout << "REHASHING TABLE" << endl;
+  
   //local variables
   int newTableLength = hashLength * 2;
   Node** newTable = new Node*[newTableLength];
@@ -516,7 +529,7 @@ void growTable(Node** & table, int & hashLength) {
       if(current == NULL) {
 	//If the first node of the linked list in the new table is null
 	//set the placeholder node as the first node
-	current = placeholder;
+	newTable[hashFunction(id, newTableLength)] = placeholder;
       } else {
 	int newLinkCount = 1;
 	//Iterate through the linked list in the new table until the
@@ -532,7 +545,7 @@ void growTable(Node** & table, int & hashLength) {
 
 	//Check to see if there are more than 3 collisions, and if so make the
 	//linked list bigger again after rehashing is finished
-	if(newLinkCount > 3) {
+	if(newLinkCount >= 3) {
 	  rehashAgain = true;
 	}
       }
@@ -563,6 +576,7 @@ void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNam
   cout << "(Please input only a positive, non-zero integer number)" << endl;
   cout << endl;
   cin >> newStudentNumber;
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
   //Randomly generate the desired number of students
   for(int i = 0; i < newStudentNumber; i++) {
@@ -581,6 +595,70 @@ void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNam
     //Assign random student values
     strcpy(firstName, firstNames.at(rand() % firstNames.size()));
     strcpy(lastName, lastNames.at(rand() % lastNames.size()));
-    //NEED TO FIGURE OUT HOW TO TURN AN INTEGER INTO A CSTRING
+    /*
+      In order to convert a random number into a cstring for my student 
+      id formatting I got help from cplusplus's page on itoa.
+      URL: https://cplusplus.com/reference/cstdlib/itoa/
+      This is the inverse of atoi converting the inputted integer into a 
+      string in the numerical base of your choice. This is useful since I 
+      can just pass in a random int into my id to get a randomly generated 
+      id. However, this didn't work since the function is a bit funky with 
+      what compilers will accept it. So instead I used the alternative they 
+      recommended which was sprintf(str, "%d", int).
+    */
+    sprintf(id, "%d", rand() % 1000000);
+    while(strlen(id) < 6) {
+      //Make sure to add any needed leading zeros
+      id[5] = id[4];
+      id[4] = id[3];
+      id[3] = id[2];
+      id[2] = id[1];
+      id[1] = id[0];
+      id[0] = '0';
+    }
+    gpa = float(rand() % 1000) / 200.0;
+
+    /*cout << firstName << endl;
+    cout << lastName << endl;
+    cout << id << endl;
+    cout << gpa << endl;
+    cout << endl;*/
+
+    //Add the student attributes into the new student
+    strcpy(addedStudent -> firstName, firstName);
+    strcpy(addedStudent -> lastName, lastName);
+    strcpy(addedStudent -> id, id);
+    addedStudent -> gpa = gpa;
+
+    //Add the new student into the new node, and add the new node into the
+    //hash table
+    newNode -> student = addedStudent;
+    Node* current = table[hashFunction(addedStudent -> id, hashLength)];
+    if(current == NULL) {
+      //If the first node of the linked list in the table is null set the new
+      //node as the first node (use table itself because current is a copy of
+      //the address in the table and we need to change the address in table)
+      table[hashFunction(addedStudent -> id, hashLength)] = newNode;
+    } else {
+      int newLinkCount = 1;
+      
+      //Iterate through the linked list in the table until the next node is null
+      while(current -> next != NULL) {
+	newLinkCount++;
+	current = current -> next;
+      }
+      
+      //set the next pointer of the last node of the linked list to the new node
+      //and make the new last node the new node
+      current -> next = newNode;
+      
+      //Check to see if there are more than 3 collisions, and if so make the
+      //linked list bigger
+      if(newLinkCount >= 3) {
+	growTable(table, hashLength);
+      }
+    }
   }
+
+  cout << endl;
 }
