@@ -1,7 +1,23 @@
 /* 
-   This project... WRITE MORE ABOUT THIS PROJECT HERE
+   This project creates a student list using a hash table that the user
+   can interact with. The program will give the user instructions on
+   how to use it and prompt the user to enter a command telling the
+   program to do something. The user can add a student to the list,
+   specifying what the student's first and last name is, what their
+   assigned 6 number id is, and what the student's gpa is. They can
+   also remove a student from the list by entering the student's id,
+   print the whole list out, generate random students to add to the
+   list, or quit the program. The program uses a hash table and function
+   to work with the data. The adding student, deleting student, and adding
+   generated students function use the hash function to properly store
+   the student into the right slot in the hash table. If more than one
+   student fits a slot, they'll be chained in a linked list. If any
+   of the slots in the hash table has more than 3 students in the
+   linked list, the whole table will be rehashed to have double the
+   number of slots. When the user is done using the program, all
+   the slots in the hash table will be deleted and the program will end. 
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 2/8/2024
    Period 6, C++ / Data Structures
 */
 
@@ -34,6 +50,17 @@
   This is useful for getting the number value of the student's ID of 
   which I want to use for my hash function key.  
 
+  To get help with generating random number values to use for my
+  random student generator, Mr. Galbraith recommended that I looked
+  into rand() and srand() which I found cplusplus articles on.
+  URL: https://cplusplus.com/reference/cstdlib/srand/
+  URL: https://cplusplus.com/reference/cstdlib/rand/
+  Srand makes it so that I can make a random seed that rand can pull
+  from multiple times and get various different random numbers. This
+  is great for me since I can use this for picking random names in my
+  names vectors and generate a random id and gpa with the help of the
+  modulus (%) operator. 
+  
   In order to convert a random number into a cstring for my student 
   id formatting I got help from cplusplus's page on itoa.
   URL: https://cplusplus.com/reference/cstdlib/itoa/
@@ -119,14 +146,15 @@ int main() {
   //Tell them how the program works
   instructions();
 
-  //Put them through the loop of interacting with the list until they are done with it
+  //Put them through the loop of interacting with the list until
+  //they are done with it
   while(inUse) {
     //ask the user to choose a command
     commandKey = askCommand();
 
     //Based on their command, do something to the list or quit from the program
     if(commandKey == 1) {
-      //If they want to add a student to the list
+      //If they want to add a student to the list, do so
       cout << "Adding a student to list." << endl;
       cout << endl;
       addStudent(studentTable, tableLength);
@@ -144,7 +172,7 @@ int main() {
       printList(studentTable, tableLength);
       
     } else if(commandKey == 4) {
-      //If they want to randomly generate students, do so
+      //If they want to randomly generate students into list, do so
       cout << "Generating new students to add to list." << endl;
       cout << endl;
       generateStudents(studentTable, tableLength, firstNames, lastNames);
@@ -155,10 +183,10 @@ int main() {
 
       //delete everything on the heap from my hash table
       for(int i = 0; i < tableLength; i++) {
-	//see if there is anything in the hash table slot
+	//check to see if there is anything in the hash table slot
 	if(studentTable[i] != NULL) {
 	  do {
-	    //delete every node in the linked list in that slot
+	    //if so, delete every node in the linked list in that slot
 	    Node* placeholder = studentTable[i];
 	    studentTable[i] = studentTable[i] -> next;
 	    delete placeholder;
@@ -225,7 +253,7 @@ int askCommand() {
       return 4;
     } else if(strcmp(input, "QUIT") == 0) {
       return 5;
-    } else { //If their command is invalid, tell the and have them try again
+    } else { //If their command is invalid, tell them and have them try again
       cout << "Sorry, I don't recognize that command." << endl;
       cout << "Please input one of the following commands: " << endl;
       cout << "ADD, DELETE, PRINT, GENERATE, QUIT." << endl;
@@ -276,13 +304,7 @@ void addStudent(Node** & table, int & hashLength) {
   while(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
     cin.get(idInput, 7);
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    /*
-      To check if a character in a string is a valid digit I got help from
-      cplusplus.com's article on "isdigit".
-      url: https://cplusplus.com/reference/cctype/isdigit/
-      This checks if each character the user inputted for the id number is 
-      actually a number. 
-     */
+    
     //If the whole id isn't just numbers, let the user know they made a mistake
     if(isdigit(idInput[0]) == 0 || isdigit(idInput[1]) == 0 || isdigit(idInput[2]) == 0 || isdigit(idInput[3]) == 0 || isdigit(idInput[4]) == 0 || isdigit(idInput[5]) == 0) {
       cout << endl;
@@ -312,13 +334,6 @@ void addStudent(Node** & table, int & hashLength) {
       
     } else { //If the gpa is in the right format, make sure it's in the range
       //transfer their string input into a float
-      /*
-	I got help with transferring strings into floating points from
-	Cplusplus's article on "stof".
-	URL: https://cplusplus.com/reference/string/stof/
-	This part of the std namespace allows me to change a string value into
-	a floating point which is what I need after the first gpa input check.
-       */
       gpaInput2 = stof(gpaInput1);
       
       //If the gpa isn't a within 0.00 and 5.00 let the user know the gpa isn't
@@ -338,14 +353,17 @@ void addStudent(Node** & table, int & hashLength) {
   cout << endl;
   
   //When finished checking all the inputs and putting them all in, add the
-  //finalized student pointer to the hash table
+  //finalized student pointer into a node
   newNode -> student = addedStudent;
+
+  //Add the node into the correct place in the hash table
   Node* current = table[hashFunction(addedStudent -> id, hashLength)];
   if(current == NULL) {
     //If the first node of the linked list in the table is null set the new
     //node as the first node (use table itself because current is a copy of
     //the address in the table and we need to change the address in table)
     table[hashFunction(addedStudent -> id, hashLength)] = newNode;
+    
   } else {
     int newLinkCount = 1;
     
@@ -384,6 +402,7 @@ void deleteStudent(Node** & table, int & hashLength) {
     cin.get(idInput, 7);
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
+    //Do something with their input or give them feedback on their input
     if(strcmp(idInput, "Exit") == 0 || strcmp(idInput, "exit") == 0 || strcmp(idInput, "EXIT") == 0) {
       //Does the user want to quit, if so, exit the function
       cout << endl;
@@ -412,7 +431,9 @@ void deleteStudent(Node** & table, int & hashLength) {
 	  Node* placeholder = table[hashFunction(idInput, hashLength)];
 	  table[hashFunction(idInput, hashLength)] = table[hashFunction(idInput, hashLength)] -> next;
 	  delete placeholder;
+	  
 	} else {
+	  //go through linked list in hash table looking for an id match
 	  while(current -> next != NULL) {
 	    if(strcmp(current -> next -> student -> id, idInput) == 0) {
 	      //There's a match
@@ -430,9 +451,9 @@ void deleteStudent(Node** & table, int & hashLength) {
 	}
       }
       
-      //If after going through the whole vector and no match could be found
-      //let the user know that their id doesn't work before letting them
-      //try again
+      //If no match could be found after going through the whole linked list,
+      //let the user know that the student they're looking for doesn't exist
+      //before letting them try again
       if(!matchingIdFound) {
 	cout << "Sorry, I couldn't find a student with that id in the list." << endl;
 	cout << "This is what your current list is like:" << endl;
@@ -459,10 +480,6 @@ void printList(Node** & table, int & hashLength) {
   
   //Set precision for floats so that they always show two digits after the
   //decimal point
-  /*
-    Got help with this from the "Formatting Output" video in the Canvas
-    module "Introduction to C++: Video Tutorials".
-  */
   cout.setf(ios::fixed, ios::floatfield);
   cout.setf(ios::showpoint);
   cout.precision(2);
@@ -470,7 +487,8 @@ void printList(Node** & table, int & hashLength) {
   //Go through every slot in the hash table and print the student if there is
   //a node
   for(int i = 0; i < hashLength; i++) {
-    //if slot has nodes in linked list, go through each node in list
+    //if slot has a linked list with existing nodes, go through
+    //each node in list and print it out
     Node* current = table[i];
     while(current != NULL) {
       cout << current -> student -> firstName << " ";
@@ -504,8 +522,6 @@ int hashFunction(char* id, int & hashLength) {
 //hash table, and will rehash all of the old table's students into the new
 //bigger table
 void growTable(Node** & table, int & hashLength) {
-  cout << "REHASHING TABLE" << endl;
-  
   //local variables
   int newTableLength = hashLength * 2;
   Node** newTable = new Node*[newTableLength];
@@ -519,20 +535,22 @@ void growTable(Node** & table, int & hashLength) {
   //new table
   for(int i = 0; i < hashLength; i++) {
     while(table[i] != NULL) {
-      //If the old table slot contains a node...
-      //Make a placeholder node and add it to the new table
+      //If the old table slot contains a node make a placeholder node
+      //and add it to the new table
       Node* placeholder = table[i];
       table[i] = table[i] -> next; //go to next node in linked list
       placeholder -> next = NULL;
       char* id = placeholder -> student -> id;
       Node* current = newTable[hashFunction(id, newTableLength)];
+      
       if(current == NULL) {
-	//If the first node of the linked list in the new table is null
-	//set the placeholder node as the first node
+	//If the first node of the slot in the new table is null
+	//set the placeholder node as the head node of the slot
 	newTable[hashFunction(id, newTableLength)] = placeholder;
+	
       } else {
 	int newLinkCount = 1;
-	//Iterate through the linked list in the new table until the
+	//Iterate through the linked list in the new table's slot until the
 	//next node is null
 	while(current -> next != NULL) {
 	  newLinkCount++;
@@ -552,7 +570,7 @@ void growTable(Node** & table, int & hashLength) {
     }
   }
 
-  //set the new rehashed table as the current table
+  //set the new rehashed table as the current table and delete old table
   delete table;
   table = newTable;
   hashLength = newTableLength;
@@ -564,17 +582,27 @@ void growTable(Node** & table, int & hashLength) {
   }
 }
 
-//This function will randomly generate students into the list for
-//testing purposes
+//This function will randomly generate students into the list
 void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNames, vector<char*> & lastNames) {
   //local variables
   int newStudentNumber = 0;
+  /*
+    To get help with generating random number values to use for my
+    random student generator, Mr. Galbraith recommended that I looked
+    into rand() and srand() which I found cplusplus articles on.
+    URL: https://cplusplus.com/reference/cstdlib/srand/
+    URL: https://cplusplus.com/reference/cstdlib/rand/
+    Srand makes it so that I can make a random seed that rand can pull
+    from multiple times and get various different random numbers. This
+    is great for me since I can use this for picking random names in my
+    names vectors and generate a random id and gpa with the help of the
+    modulus (%) operator. 
+  */
   srand(time(NULL));
 
   //Ask the user to input the number of students they want generated
   cout << "How many students would you like to generate?" << endl;
   cout << "(Please input only a positive, non-zero integer number)" << endl;
-  cout << endl;
   cin >> newStudentNumber;
   cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -618,12 +646,6 @@ void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNam
     }
     gpa = float(rand() % 1000) / 200.0;
 
-    /*cout << firstName << endl;
-    cout << lastName << endl;
-    cout << id << endl;
-    cout << gpa << endl;
-    cout << endl;*/
-
     //Add the student attributes into the new student
     strcpy(addedStudent -> firstName, firstName);
     strcpy(addedStudent -> lastName, lastName);
@@ -631,25 +653,26 @@ void generateStudents(Node** & table, int & hashLength, vector<char*> & firstNam
     addedStudent -> gpa = gpa;
 
     //Add the new student into the new node, and add the new node into the
-    //hash table
+    //correct slot in the hash table
     newNode -> student = addedStudent;
     Node* current = table[hashFunction(addedStudent -> id, hashLength)];
     if(current == NULL) {
-      //If the first node of the linked list in the table is null set the new
-      //node as the first node (use table itself because current is a copy of
+      //If the first node of the slot in the table is null set the new
+      //node as the head node (use table itself because current is a copy of
       //the address in the table and we need to change the address in table)
       table[hashFunction(addedStudent -> id, hashLength)] = newNode;
     } else {
       int newLinkCount = 1;
       
-      //Iterate through the linked list in the table until the next node is null
+      //Iterate through the linked list in the table slot until the next node
+      //is null
       while(current -> next != NULL) {
 	newLinkCount++;
 	current = current -> next;
       }
       
-      //set the next pointer of the last node of the linked list to the new node
-      //and make the new last node the new node
+      //set the next pointer of the last node of the linked list to the
+      //new node and make the new last node the new node
       current -> next = newNode;
       
       //Check to see if there are more than 3 collisions, and if so make the
