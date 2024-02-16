@@ -45,12 +45,12 @@ const int emptyNode = -1;
 //Function prototypes
 void instructions();
 int askCommand();
-void addNodesManually(int* tree);
-void addNodesByFile(int* tree);
-void addNode(int input, int* tree, bool & full);
-void removeNode(int* tree);
-void removeAll(int* tree);
-void printTree(int* tree);
+void addNodesManually(int* tree, int & lastI);
+void addNodesByFile(int* tree, int & lastI);
+void addNode(int input, int* tree, int & lastI);
+void removeNode(int* tree, int & lastI);
+void removeAll(int* tree, int & lastI);
+void printTree(int* tree, int & lastI);
 
 //Start of main function
 int main() {
@@ -62,6 +62,7 @@ int main() {
     //Set everything in the heap to the empty node number
     heap[i] = emptyNode;
   }
+  int lastIndex = 0;
 
   //Tell the user how the program works
   instructions();
@@ -77,33 +78,33 @@ int main() {
       //If they want to add nodes to the tree manually, do so
       cout << "Adding nodes to tree manually." << endl;
       cout << endl;
-      addNodesManually(heap);
+      addNodesManually(heap, lastIndex);
       
     } else if(commandKey == 2) {
       //If they want to add nodes to the tree through a file, do so
       cout << "Adding nodes to tree via a file." << endl;
       cout << endl;
-      addNodesByFile(heap);
+      addNodesByFile(heap, lastIndex);
       
     } else if(commandKey == 3) {
       //If they want to remove the root node in the tree, do so
       cout << "Removing root node from the tree and printing it out." << endl;
       cout << endl;
-      removeNode(heap);
+      removeNode(heap, lastIndex);
       
     } else if(commandKey == 4) {
       //If they want to remove all the nodes in the tree and have them
       //printed in greatest to highest order, do so
       cout << "Removing all nodes from tree and printing them in order." << endl;
       cout << endl;
-      removeAll(heap);
+      removeAll(heap, lastIndex);
       
     } else if(commandKey == 5) {
       //If they want to print the current tree out and see how it's structured,
       //do so
       cout << "Printing out the current tree as it is." << endl;
       cout << endl;
-      printTree(heap);
+      printTree(heap, lastIndex);
       
     } else if(commandKey == 6) {
       //If they want to quit the program, do so
@@ -186,10 +187,9 @@ int askCommand() {
 }
 
 //This function will add nodes into the tree via manual input
-void addNodesManually(int* tree) {
+void addNodesManually(int* tree, int & lastI) {
   //local variables
   int numInput = 0;
-  bool treeFull = false;
 
   //Tell them what to input
   cout << "Please input an integer number between 1-1000 (inclusive)." << endl;
@@ -201,8 +201,23 @@ void addNodesManually(int* tree) {
   cout << endl;
 
   //read through their input and add their numbers to the tree
-  while((cin >> numInput) && numInput != -1 && !(treeFull)) {
-    addNode(numInput, tree, treeFull);
+  while((cin >> numInput) && numInput != -1 && lastI <= 100) {
+    if(numInput < 1) {
+      cout << numInput << " is lower than number range of 1-1000 and won't be added to tree." << endl;
+      cout << endl;
+    } else if(numInput > 1000) {
+      cout << numInput << " is higher than number range of 1-1000 and won't be added to tree." << endl;
+      cout << endl;
+    } else {
+      addNode(numInput, tree, lastI);
+    }
+  }
+
+  //tell the user the tree is full if it's indeed full
+  if(lastI > 100) {
+    cout << "The tree has been completely filled. Numbers " << endl;
+    cout << numInput << "and onward will not be added." << endl;
+    cout << endl;
   }
 
   //do some clean up
@@ -211,28 +226,83 @@ void addNodesManually(int* tree) {
 }
 
 //This function will add nodes into the tree via file input
-void addNodesByFile(int* tree) {
-  
-}
+void addNodesByFile(int* tree, int & lastI) {
+  //local variables
+  int numInput = 0;
+  char filename[31];
+  for(int i = 0; i < 31; i++) {
+    filename[i] = '\0';
+  }
 
-//This function will take the input and actually put it into the tree properly
-void addNode(int input, int* tree, bool & full) {
-  cout << input << endl;
+  //Tell them what to input
+  cout << "Please input the name of your file with integers numbered " << endl;
+  cout << "between 1-1000 (inclusive). Please only seperate your " << endl;
+  cout << "numbers using spaces or new lines, and include the file " << endl;
+  cout << "type tag at the end of your filename (ie .txt). Don't use " << endl;
+  cout << "a file with a name and tag longer than 30 characters." << endl;
+  cout << endl;
+
+  //take their input and open the file whose name they inputted
+  cin.getline(filename, 31);
+  ifstream fin(filename);
+
+  //read through their file and add their numbers to the tree
+  while((fin >> numInput) && numInput != -1 && lastI <= 100) {
+    if(numInput < 1) {
+      cout << numInput << " is lower than number range of 1-1000 and won't be added to tree." << endl;
+      cout << endl;
+    } else if(numInput > 1000) {
+      cout << numInput << " is higher than number range of 1-1000 and won't be added to tree." << endl;
+      cout << endl;
+    } else {
+      addNode(numInput, tree, lastI);
+    }
+  }
+
+  //tell the user the tree is full if it's indeed full
+  if(lastI > 100) {
+    cout << "The tree has been completely filled. Numbers " << endl;
+    cout << numInput << "and onward will not be added." << endl;
+    cout << endl;
+  }
+
+  //do some clean up
+  fin.close();
   cout << endl;
 }
 
-//This function will remove the root node of the tree and print it out
-void removeNode(int* tree) {
+//This function will take the input and actually put it into the tree properly
+void addNode(int input, int* tree, int & lastI) {
+  //add the new node to the last index
+  tree[lastI] = input;
 
+  //If the node is bigger than the node above it, move up the tree
+  
+
+  //increment the index of the last slot
+  lastI++;
+}
+
+
+//This function will remove the root node of the tree and print it out
+void removeNode(int* tree, int & lastI) {
+  //deincrement the index of the last slot
+  lastI--;
+
+  //
 }
 
 //This function will remove all the nodes of the tree and print them out
 //in order of greatest to least
-void removeAll(int* tree) {
-
+void removeAll(int* tree, int & lastI) {
+  //until lastI is 0 signalling that the last available slot is the
+  //first slot, keep removing nodes from the tree and printing them out
+  while(lastI != 0) {
+    removeNode(tree, lastI);
+  }
 }
 
 //This function will print out a visual representation of the tree
-void printTree(int* tree) {
+void printTree(int* tree, int & lastI) {
 
 }
