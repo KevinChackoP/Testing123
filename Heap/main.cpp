@@ -24,6 +24,16 @@
   commands for adding and removing nodes to my tree or printing my tree, and 
   for organizing my main function in relation the specific functions it uses. 
 
+  For getting the lower of two values from my child node's index divided by
+  2 I got help from cplusplus's documentation page on "floor"
+  URL: https://cplusplus.com/reference/cmath/floor/
+  This will take a floating point number and round it down to the nearest whole
+  integer value. This is useful for me because when adding a new node and
+  moving it up the tree I need to divide the node's index by two. If this
+  results in floating point number between two integers which how the heap
+  is set up I want the smaller of the two integers since that would give me
+  the index of my parent node. 
+  
   ADD MORE CITATIONS HERE
 */
 
@@ -62,7 +72,7 @@ int main() {
     //Set everything in the heap to the empty node number
     heap[i] = emptyNode;
   }
-  int lastIndex = 0;
+  int lastIndex = 1;
 
   //Tell the user how the program works
   instructions();
@@ -91,6 +101,7 @@ int main() {
       cout << "Removing root node from the tree and printing it out." << endl;
       cout << endl;
       removeNode(heap, lastIndex);
+      cout << endl;
       
     } else if(commandKey == 4) {
       //If they want to remove all the nodes in the tree and have them
@@ -274,10 +285,19 @@ void addNodesByFile(int* tree, int & lastI) {
 //This function will take the input and actually put it into the tree properly
 void addNode(int input, int* tree, int & lastI) {
   //add the new node to the last index
-  tree[lastI] = input;
+  tree[lastI - 1] = input;
 
-  //If the node is bigger than the node above it, move up the tree
-  
+  //keep track of the added node's index
+  int nodeI = lastI;
+
+  //If the node is bigger than its parent node, swap it with its parent node
+  //and keep doing this until it's at the root or it's smaller than its parent
+  while(tree[nodeI - 1] < tree[(int)(floor(nodeI / 2)) - 1] || nodeI == 1) {
+    int placeholder = tree[(int)(floor(nodeI / 2)) - 1];
+    tree[(int)(floor(nodeI / 2)) - 1] = tree[nodeI - 1];
+    tree[nodeI - 1] = placeholder;
+    nodeI = floor(nodeI / 2);
+  }
 
   //increment the index of the last slot
   lastI++;
@@ -286,20 +306,63 @@ void addNode(int input, int* tree, int & lastI) {
 
 //This function will remove the root node of the tree and print it out
 void removeNode(int* tree, int & lastI) {
-  //deincrement the index of the last slot
+  //deincrement the index of the last slot (for use in this function the
+  //last slot will serve as the last filled slot)
   lastI--;
+  
+  //print the root of the tree's value out before replacing it with the
+  //placeholder value to signal that the root is now empty
+  cout << tree[0] << endl;
+  tree[0] = -1;
 
-  //
+  //swap the root with the last filled slot of the tree, making it empty
+  int placeholder = tree[0];
+  tree[0] = tree[lastI - 1];
+  tree[lastI - 1] = placeholder;
+
+  //Keep track of the swapped last node
+  int nodeI = 1;
+  bool greater = false;
+
+  //If the node is smaller than at least one of its children nodes swap with 
+  //the larger of the two children until the nodes is bigger than both of
+  //its children or it's at a leaf
+  while(((nodeI * 2) + 1) <= 100 && !(greater)) {
+    //check if both children are bigger than the node
+    if(tree[nodeI - 1] < tree[(nodeI * 2) - 1] || tree[nodeI - 1] < tree[((nodeI * 2) + 1) - 1]) {
+      //check which child node is bigger and swap with the bigger node
+      if(tree[(nodeI * 2) - 1] >= tree[((nodeI * 2) + 1) - 1]) {
+	//If the left child is the bigger child (or if both children are the
+	//same value) swap with the left child
+	placeholder = tree[(nodeI * 2) - 1];
+	tree[(nodeI * 2) - 1] = tree[nodeI - 1];
+	tree[nodeI - 1] = placeholder;
+	nodeI = nodeI * 2;
+	
+      } else if(tree[(nodeI * 2) - 1] < tree[((nodeI * 2) + 1) - 1]) {
+	//If the right child is the bigger child swap with the right child
+	placeholder = tree[((nodeI * 2) + 1) - 1];
+	tree[((nodeI * 2) + 1) - 1] = tree[nodeI - 1];
+	tree[nodeI - 1] = placeholder;
+	nodeI = nodeI * 2 - 1;
+	
+      }
+    } else {
+      //if not, get out of the loop
+      greater = true;
+    }
+  }
 }
 
 //This function will remove all the nodes of the tree and print them out
 //in order of greatest to least
 void removeAll(int* tree, int & lastI) {
-  //until lastI is 0 signalling that the last available slot is the
+  //until lastI is 1 signalling that the last available slot is the
   //first slot, keep removing nodes from the tree and printing them out
-  while(lastI != 0) {
+  while(lastI != 1) {
     removeNode(tree, lastI);
   }
+  cout << endl;
 }
 
 //This function will print out a visual representation of the tree
