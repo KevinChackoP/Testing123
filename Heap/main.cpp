@@ -23,16 +23,6 @@
   modified these parts to get number inputs from a file, recieving the 
   commands for adding and removing nodes to my tree or printing my tree, and 
   for organizing my main function in relation the specific functions it uses. 
-
-  For getting the lower of two values from my child node's index divided by
-  2 I got help from cplusplus's documentation page on "floor"
-  URL: https://cplusplus.com/reference/cmath/floor/
-  This will take a floating point number and round it down to the nearest whole
-  integer value. This is useful for me because when adding a new node and
-  moving it up the tree I need to divide the node's index by two. If this
-  results in floating point number between two integers which how the heap
-  is set up I want the smaller of the two integers since that would give me
-  the index of my parent node. 
   
   ADD MORE CITATIONS HERE
 */
@@ -60,7 +50,7 @@ void addNodesByFile(int* tree, int & lastI);
 void addNode(int input, int* tree, int & lastI);
 void removeNode(int* tree, int & lastI);
 void removeAll(int* tree, int & lastI);
-void printTree(int* tree, int & lastI);
+void printTree(int* tree, int & lastI, int nodeI, int steps);
 
 //Start of main function
 int main() {
@@ -88,19 +78,48 @@ int main() {
       //If they want to add nodes to the tree manually, do so
       cout << "Adding nodes to tree manually." << endl;
       cout << endl;
-      addNodesManually(heap, lastIndex);
+      
+      if(lastIndex <= 100) {
+	//if the tree isn't full, continue
+	addNodesManually(heap, lastIndex);
+	
+      } else {
+	//if the tree is full let the user know
+	cout << "Sorry, the tree is currently full." << endl;
+	cout << "Please remove nodes before trying to add more." << endl;
+	cout << endl;
+      }
       
     } else if(commandKey == 2) {
       //If they want to add nodes to the tree through a file, do so
       cout << "Adding nodes to tree via a file." << endl;
       cout << endl;
-      addNodesByFile(heap, lastIndex);
+      
+      if(lastIndex <= 100) {
+	//if the tree isn't full, continue
+	addNodesByFile(heap, lastIndex);
+	
+      } else {
+	//if the tree is full let the user know
+	cout << "Sorry, the tree is currently full." << endl;
+	cout << "Please remove nodes before trying to add more." << endl;
+	cout << endl;
+      }
       
     } else if(commandKey == 3) {
       //If they want to remove the root node in the tree, do so
       cout << "Removing root node from the tree and printing it out." << endl;
       cout << endl;
-      removeNode(heap, lastIndex);
+      
+      if(lastIndex > 1) {
+	//if the tree isn't empty, continue
+	removeNode(heap, lastIndex);
+	
+      } else {
+	//if the tree is empty let the user know
+	cout << "Sorry, there currently aren't any nodes in the tree." << endl;
+	cout << "Please add nodes first before removing them." << endl;
+      }
       cout << endl;
       
     } else if(commandKey == 4) {
@@ -108,14 +127,34 @@ int main() {
       //printed in greatest to highest order, do so
       cout << "Removing all nodes from tree and printing them in order." << endl;
       cout << endl;
-      removeAll(heap, lastIndex);
+      
+      if(lastIndex > 1) {
+	//if the tree isn't empty, continue
+	removeAll(heap, lastIndex);
+	
+      } else {
+	//if the tree is empty let the user know
+	cout << "Sorry, there currently aren't any nodes in the tree." << endl;
+	cout << "Please add nodes first before removing them." << endl;
+	cout << endl;
+      }
       
     } else if(commandKey == 5) {
       //If they want to print the current tree out and see how it's structured,
       //do so
       cout << "Printing out the current tree as it is." << endl;
       cout << endl;
-      printTree(heap, lastIndex);
+      
+      if(lastIndex > 1) {
+	//if the tree isn't empty, continue
+	printTree(heap, lastIndex, 1, 0);
+	
+      } else {
+	//if the tree is empty let the user know
+	cout << "Sorry, there currently aren't any nodes in the tree." << endl;
+	cout << "Please add nodes first before printing the tree out." << endl;
+	cout << endl;
+      }
       
     } else if(commandKey == 6) {
       //If they want to quit the program, do so
@@ -226,8 +265,9 @@ void addNodesManually(int* tree, int & lastI) {
 
   //tell the user the tree is full if it's indeed full
   if(lastI > 100) {
+    cout << endl;
     cout << "The tree has been completely filled. Numbers " << endl;
-    cout << numInput << "and onward will not be added." << endl;
+    cout << numInput << " and onward will not be added." << endl;
     cout << endl;
   }
 
@@ -272,11 +312,12 @@ void addNodesByFile(int* tree, int & lastI) {
 
   //tell the user the tree is full if it's indeed full
   if(lastI > 100) {
+    cout << endl;
     cout << "The tree has been completely filled. Numbers " << endl;
-    cout << numInput << "and onward will not be added." << endl;
+    cout << numInput << " and onward will not be added." << endl;
     cout << endl;
   }
-
+  
   //do some clean up
   fin.close();
   cout << endl;
@@ -287,69 +328,82 @@ void addNode(int input, int* tree, int & lastI) {
   //add the new node to the last index
   tree[lastI - 1] = input;
 
-  //keep track of the added node's index
+  //keep track of the added node's index and if the current node is smaller
+  //than its parent node
   int nodeI = lastI;
+  bool smaller = false;
 
   //If the node is bigger than its parent node, swap it with its parent node
   //and keep doing this until it's at the root or it's smaller than its parent
-  while(tree[nodeI - 1] < tree[(int)(floor(nodeI / 2)) - 1] || nodeI == 1) {
-    int placeholder = tree[(int)(floor(nodeI / 2)) - 1];
-    tree[(int)(floor(nodeI / 2)) - 1] = tree[nodeI - 1];
-    tree[nodeI - 1] = placeholder;
-    nodeI = floor(nodeI / 2);
+  while(nodeI != 1 && !(smaller)) {
+    if(tree[nodeI - 1] > tree[(nodeI / 2) - 1]) {
+      //check to see if the node is bigger than its parent
+      int placeholder = tree[(nodeI / 2) - 1];
+      tree[(nodeI / 2) - 1] = tree[nodeI - 1];
+      tree[nodeI - 1] = placeholder;
+      nodeI = nodeI / 2;
+      
+    } else {
+      //if not, get out of the loop
+      smaller = true;
+    }
   }
 
-  //increment the index of the last slot
+  //increment the index of the last index slot
   lastI++;
 }
 
 
 //This function will remove the root node of the tree and print it out
 void removeNode(int* tree, int & lastI) {
-  //deincrement the index of the last slot (for use in this function the
-  //last slot will serve as the last filled slot)
-  lastI--;
+  //check that the tree isn't currently empty before attempting to
+  //remove a node
+  if(lastI > 1) {
+    //deincrement the index of the last slot (for use in this function the
+    //last slot will serve as the last filled slot)
+    lastI--;
   
-  //print the root of the tree's value out before replacing it with the
-  //placeholder value to signal that the root is now empty
-  cout << tree[0] << endl;
-  tree[0] = -1;
+    //print the root of the tree's value out before replacing it with the
+    //placeholder value to signal that the root is now empty
+    cout << tree[0] << endl;
+    tree[0] = emptyNode;
 
-  //swap the root with the last filled slot of the tree, making it empty
-  int placeholder = tree[0];
-  tree[0] = tree[lastI - 1];
-  tree[lastI - 1] = placeholder;
+    //swap the root with the last filled slot of the tree, making it empty
+    int placeholder = tree[0];
+    tree[0] = tree[lastI - 1];
+    tree[lastI - 1] = placeholder;
 
-  //Keep track of the swapped last node
-  int nodeI = 1;
-  bool greater = false;
+    //Keep track of the swapped last node
+    int nodeI = 1;
+    bool greater = false;
 
-  //If the node is smaller than at least one of its children nodes swap with 
-  //the larger of the two children until the nodes is bigger than both of
-  //its children or it's at a leaf
-  while(((nodeI * 2) + 1) <= 100 && !(greater)) {
-    //check if both children are bigger than the node
-    if(tree[nodeI - 1] < tree[(nodeI * 2) - 1] || tree[nodeI - 1] < tree[((nodeI * 2) + 1) - 1]) {
-      //check which child node is bigger and swap with the bigger node
-      if(tree[(nodeI * 2) - 1] >= tree[((nodeI * 2) + 1) - 1]) {
-	//If the left child is the bigger child (or if both children are the
-	//same value) swap with the left child
-	placeholder = tree[(nodeI * 2) - 1];
-	tree[(nodeI * 2) - 1] = tree[nodeI - 1];
-	tree[nodeI - 1] = placeholder;
-	nodeI = nodeI * 2;
+    //If the node is smaller than at least one of its children nodes swap with 
+    //the larger of the two children until the node is bigger than both of
+    //its children or it's at a leaf
+    while(((nodeI * 2) + 1) <= 100 && !(greater)) {
+      //check if both children are bigger than the node
+      if(tree[nodeI - 1] < tree[(nodeI * 2) - 1] || tree[nodeI - 1] < tree[((nodeI * 2) + 1) - 1]) {
+	//check which child node is bigger and swap with the bigger node
+	if(tree[(nodeI * 2) - 1] >= tree[((nodeI * 2) + 1) - 1]) {
+	  //If the left child is the bigger child (or if both children are the
+	  //same value) swap with the left child
+	  placeholder = tree[(nodeI * 2) - 1];
+	  tree[(nodeI * 2) - 1] = tree[nodeI - 1];
+	  tree[nodeI - 1] = placeholder;
+	  nodeI = nodeI * 2;
 	
-      } else if(tree[(nodeI * 2) - 1] < tree[((nodeI * 2) + 1) - 1]) {
-	//If the right child is the bigger child swap with the right child
-	placeholder = tree[((nodeI * 2) + 1) - 1];
-	tree[((nodeI * 2) + 1) - 1] = tree[nodeI - 1];
-	tree[nodeI - 1] = placeholder;
-	nodeI = nodeI * 2 - 1;
+	} else if(tree[(nodeI * 2) - 1] < tree[((nodeI * 2) + 1) - 1]) {
+	  //If the right child is the bigger child swap with the right child
+	  placeholder = tree[((nodeI * 2) + 1) - 1];
+	  tree[((nodeI * 2) + 1) - 1] = tree[nodeI - 1];
+	  tree[nodeI - 1] = placeholder;
+	  nodeI = nodeI * 2 - 1;
+	}
 	
+      } else {
+	//if not, get out of the loop
+	greater = true;
       }
-    } else {
-      //if not, get out of the loop
-      greater = true;
     }
   }
 }
@@ -359,13 +413,16 @@ void removeNode(int* tree, int & lastI) {
 void removeAll(int* tree, int & lastI) {
   //until lastI is 1 signalling that the last available slot is the
   //first slot, keep removing nodes from the tree and printing them out
-  while(lastI != 1) {
+  while(lastI > 1) {
     removeNode(tree, lastI);
   }
+  
   cout << endl;
 }
 
 //This function will print out a visual representation of the tree
-void printTree(int* tree, int & lastI) {
-
+void printTree(int* tree, int & lastI, int nodeI, int steps) {
+  //print the current node out, tabbing based on how many steps of recursion
+  //the function is in
+  
 }
