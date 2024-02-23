@@ -1,7 +1,17 @@
 /* 
-   This project... DESCRIBE WHAT THIS PROJECT DOES
+   This project creates a heap that can hold 100 numbers between integer values
+   of 1-1000. The user can then interact with the heap by entering commands
+   which allow them to add to the heap, remove from the heap, print the heap
+   out visually, or exit the program. The user can add numbers manually, or
+   they can add using a file with numbers seperated by spaces. The user can
+   also remove from the heap by removing only the root node of the heap and
+   printing it out, or removing all the nodes of the heap and printing them
+   out in order of greatest to least. Lastly, the user can print a visual
+   representation of the heap with each child being indented one step more
+   than their parent node. It should be noted that a heap is a binary search
+   tree that is ordered such that every node is larger than its child nodes.
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 2/22/2024
    Period 6, C++ / Data Structures
 */
 
@@ -23,8 +33,6 @@
   modified these parts to get number inputs from a file, recieving the 
   commands for adding and removing nodes to my tree or printing my tree, and 
   for organizing my main function in relation the specific functions it uses. 
-  
-  ADD MORE CITATIONS HERE
 */
 
 //imports
@@ -124,7 +132,7 @@ int main() {
       
     } else if(commandKey == 4) {
       //If they want to remove all the nodes in the tree and have them
-      //printed in greatest to highest order, do so
+      //printed in greatest to least order, do so
       cout << "Removing all nodes from tree and printing them out." << endl;
       cout << endl;
       
@@ -161,7 +169,7 @@ int main() {
       cout << "Ok then, I hope this was helpful!" << endl;
       cout << endl;
 
-      //change the boolean that determines if the program continues
+      //change the boolean that determines if the program continues running
       inUse = false;
     }
   }
@@ -252,17 +260,23 @@ void addNodesManually(int* tree, int & lastI) {
   //read through their input and add their numbers to the tree
   while((cin >> numInput) && numInput != -1 && lastI <= 100) {
     if(numInput < 1) {
+      //if their input is too low, let them know
       cout << numInput << " is lower than number range of 1-1000 and won't be added to tree." << endl;
       cout << endl;
+      
     } else if(numInput > 1000) {
+      //if their input is too high, let them know
       cout << numInput << " is higher than number range of 1-1000 and won't be added to tree." << endl;
       cout << endl;
+      
     } else {
+      //if their input is within the range, add it to the tree
       addNode(numInput, tree, lastI);
     }
   }
 
-  //tell the user the tree is full if it's indeed full
+  //tell the user the tree is full if the numbers added completely filled
+  //all the tree's available slots
   if(lastI > 100) {
     cout << endl;
     cout << "The tree has been completely filled. Numbers " << endl;
@@ -299,17 +313,23 @@ void addNodesByFile(int* tree, int & lastI) {
   //read through their file and add their numbers to the tree
   while((fin >> numInput) && numInput != -1 && lastI <= 100) {
     if(numInput < 1) {
+      //if their input is too low, let them know
       cout << numInput << " is lower than number range of 1-1000 and won't be added to tree." << endl;
       cout << endl;
+      
     } else if(numInput > 1000) {
+      //if their input is too high, let them know
       cout << numInput << " is higher than number range of 1-1000 and won't be added to tree." << endl;
       cout << endl;
+      
     } else {
+      //if their input is within the range, add it to the tree
       addNode(numInput, tree, lastI);
     }
   }
 
-  //tell the user the tree is full if it's indeed full
+  //tell the user the tree is full if the numbers added completely filled
+  //all the tree's available slots
   if(lastI > 100) {
     cout << endl;
     cout << "The tree has been completely filled. Numbers " << endl;
@@ -372,7 +392,8 @@ void removeNode(int* tree, int & lastI) {
     tree[0] = tree[lastI - 1];
     tree[lastI - 1] = placeholder;
 
-    //Keep track of the swapped last node
+    //Keep track of the swapped last node and whether it's bigger than both
+    //of its children nodes
     int nodeI = 1;
     bool greater = false;
 
