@@ -1,0 +1,8 @@
+/*
+  This program serves as the header for the Shunting Yard Program's nodes
+  class which will be used for the stack, queue, and expression tree. 
+  It defines everything for the node.cpp file to use.
+  Author: Kevin Chacko
+  Last Updated: WRITE DATE HERE
+  Period 5, C++ / Data Structures
+*/

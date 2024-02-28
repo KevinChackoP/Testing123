@@ -37,7 +37,7 @@ using namespace std;
 
 //Function prototypes
 void instructions();
-//ADD MORE FUNCTION PROTOTYPES HERE
+bool askRestart();
 
 //Start of main function
 int main() {
@@ -61,61 +61,21 @@ int main() {
 
     /*After a run of asking for an expression and converting it into the
     desired notation, ask the user if they'd like to continue using the
-    program.*/
-    //make variables for the continue or not input
-    char input[5];
-    for(int i = 0; i < 5; i++) {
-      input[i] = '\0';
-    }
-    bool validAnswer = false;
-
-    //Ask the user for their input
-    cout << "Would you like to continue converting mathematical " << endl;
-    cout << "expressions into other notations?" << endl;
-    cout << "(enter \"YES\" to continue or \"NO\" to stop)" << endl;
-    cout << endl;
-
-    //Keep asking them for an input until they give a valid answer
-    while(!validAnswer) {
-      //Ask for input
-      cin.getline(input, 5);
-
-      //Clean input up by making it all upper case
-      for(int i = 0; i < 5; i++) {
-	input[i] = toupper(input[i]);
-      }
-
-      //check whether their input is valid or not
-      if(strcmp(input, "YES") == 0 || strcmp(input, "Y") == 0) {
-	validAnswer = true;
-	inUse = true;
-	
-      } else if(strcmp(input, "NO") == 0 || strcmp(input, "N") == 0) {
-	validAnswer = true;
-	inUse = false;
-	
-      } else { //If their input is invalid, tell them and have them try again
-	cout << "Sorry, I don't understand what you mean." << endl;
-	cout << "Please input either \"YES\" to continue or " << endl;
-	cout << "\"NO\" to stop." << endl;
-	cout << endl;
-
-	for(int i = 0; i < 5; i++) {
-	  input[i] = '\0';
-	}
-      }
-    }
+    program and change things accordingly*/
+    inUse = askRestart();
 
     if(!inUse) {
       //If the user no longer wants to use the program, delete everything off
       //the heap and send the user off
       cout << "Ok then, I hope you found this program useful!" << endl;
+      cout << endl;
 
       //ADD DELETION PROCESSES FOR DATA STRUCTURES ON THE HEAP!!!
     } else {
       //if they want to continue using the program, reset anything that
       //needs to be reset for the next run
       cout << "Ok, well get everything read for you again!" << endl;
+      cout << endl;
 
       //ADD RESET PROCESSES
     }
@@ -137,3 +97,50 @@ void instructions() {
   cout << endl;
 }
 
+//This function asks the user after a cycle of the program if they'd like to
+//use the program again
+bool askRestart() {
+  //make variables for the continue or not input
+  char input[5];
+  for(int i = 0; i < 5; i++) {
+    input[i] = '\0';
+  }
+  bool validAnswer = false;
+
+  //Ask the user for their input
+  cout << "Would you like to continue converting mathematical " << endl;
+  cout << "expressions into other notations?" << endl;
+  cout << "(enter \"YES\" to continue or \"NO\" to stop)" << endl;
+  cout << endl;
+
+  //Keep asking them for an input until they give a valid answer
+  while(!validAnswer) {
+    //Ask for input
+    cin.getline(input, 5);
+
+    //Clean input up by making it all upper case
+    for(int i = 0; i < 5; i++) {
+      input[i] = toupper(input[i]);
+    }
+
+    //check whether their input is valid or not
+    if(strcmp(input, "YES") == 0 || strcmp(input, "Y") == 0) {
+      validAnswer = true;
+      return true;
+	
+    } else if(strcmp(input, "NO") == 0 || strcmp(input, "N") == 0) {
+      validAnswer = true;
+      return false;
+	
+    } else { //If their input is invalid, tell them and have them try again
+      cout << "Sorry, I don't understand what you mean." << endl;
+      cout << "Please input either \"YES\" to continue or " << endl;
+      cout << "\"NO\" to stop." << endl;
+      cout << endl;
+
+      for(int i = 0; i < 5; i++) {
+	input[i] = '\0';
+      }
+    }
+  }
+}
