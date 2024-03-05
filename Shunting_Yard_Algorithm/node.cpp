@@ -18,15 +18,21 @@ node::node(char inputChar) {
   //Set the next node to null (will be set by other class functions)
   nextNode = NULL;
   left = NULL;
-  right = NULL:
+  right = NULL;
 }
 
 //Destructor for node class
 node::~node() {
   //delete all the node pointers this node has
-  delete nextNode;
-  delete left;
-  delete right;
+  if(nextNode != NULL) {
+    delete nextNode;
+  }
+  if(left != NULL) {
+    delete left;
+  }
+  if(right != NULL) {
+    delete right;
+  }
 }
 
 //node value getter

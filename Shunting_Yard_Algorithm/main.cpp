@@ -33,6 +33,10 @@
 #include <math.h>
 #include <cstdlib>
 
+#include "node.h"
+#include "stack.h"
+#include "queue.h"
+
 using namespace std;
 
 //Function prototypes
@@ -43,6 +47,12 @@ bool askRestart();
 int main() {
   //local variable declarations
   bool inUse = true;
+  char eqnInput = '|';
+  for(int i = 0; i < 31; i++) {
+    input[i] = '\0';
+  }
+  stack* operatorsS = new stack();
+  queue* outputS = new queue();
 
   //Tell the user how the program works
   instructions();
@@ -52,7 +62,41 @@ int main() {
   while(inUse) {
     /*Ask the user to input an infix notation math expression and use 
      the shunting yard algorithm to get it in postfix.*/
-    //ADD STUFF HERE
+    //ask for input
+    cout << "Please input a mathematical expression in infix " << endl;
+    cout << "notation to convert into postfix notation. Seperate " << endl;
+    cout << "numbers, operators (+, -, x, /, ^), and parenthesis " << endl;
+    cout << "in your expression using spaces between each token. " << endl;
+    cout << "To signal the end of your mathematical expression input " << endl;
+    cout << "just add a \';\' right after your last token, no space " << endl;
+    cout << "before the semi-colon required." << endl;
+    cout << endl;
+
+    //take input and go through shunting yard algorithm
+    while((cin >> eqnInput) && eqnInput != ';') {
+      //check what the token they inputted is
+      if(eqnInput >= 48 && eqnInput <= 57) {
+	//if it's a number
+	
+      } else if(eqnInput == '+' || eqnInput == '-' || eqnInput == 'x'
+		eqnInput == '/' || eqnInput == '^') {
+	//if it's an operator
+	
+      } else if(eqnInput == '(') {
+	//if it's a left parenthesis
+	
+      } else if(eqnInput == ')') {
+	//if it's a right parenthesis
+
+      }
+    }
+    while(operatorsS -> peek() != NULL) {
+      //put the remaining things in the operator stack in the output queue
+      
+    }
+
+    //print out the whole output queue to show the postfix expression
+    
 
     /*Ask the user to convert their input into a different notation and 
       use the postfix output from the shunting yard algorithm to make a
@@ -93,7 +137,7 @@ void instructions() {
   cout << "your choice (infix, prefix, or postfix). Start by " << endl;
   cout << "inputting an infix expression, then it will be converted " << endl;
   cout << "into postfix. After that, input what format you want the " << endl;
-  cout << "expression to be in and it will be converted into that " << end;
+  cout << "expression to be in and it will be converted into that " << endl;
   cout << "notation. You can do this as many times as you'd like!" << endl;
   cout << endl;
 }
@@ -106,7 +150,6 @@ bool askRestart() {
   for(int i = 0; i < 5; i++) {
     input[i] = '\0';
   }
-  bool validAnswer = false;
 
   //Ask the user for their input
   cout << "Would you like to continue converting mathematical " << endl;
@@ -115,7 +158,7 @@ bool askRestart() {
   cout << endl;
 
   //Keep asking them for an input until they give a valid answer
-  while(!validAnswer) {
+  while(true) {
     //Ask for input
     cin.getline(input, 5);
 
@@ -126,11 +169,9 @@ bool askRestart() {
 
     //check whether their input is valid or not
     if(strcmp(input, "YES") == 0 || strcmp(input, "Y") == 0) {
-      validAnswer = true;
       return true;
 	
     } else if(strcmp(input, "NO") == 0 || strcmp(input, "N") == 0) {
-      validAnswer = true;
       return false;
 	
     } else { //If their input is invalid, tell them and have them try again

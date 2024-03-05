@@ -11,14 +11,16 @@
 #include "stack.h"
 
 //Constructor for stack class
-stack::stack(node* inputHead) {
-  //Assign stack's head node to it's linear linked list
-  head = inputHead;
+stack::stack() {
+  //Assign stack's head node to NULL
+  head = NULL;
 }
 
 //Destructor for stack class
 stack::~stack() {
-  delete head;
+  if(head != NULL) {
+    delete head;
+  }
 }
 
 //Push function for stack, will set the inputted new head node as the
@@ -43,5 +45,9 @@ char stack::pop() {
 
 //Peek function for stack, will return the value of the current head node
 char stack::peek() {
-  return (head -> getCharacter());
+  if(head == NULL) {
+    return NULL;
+  } else {
+    return (head -> getCharacter());
+  }
 }

@@ -21,7 +21,7 @@ class stack {
  //Public functions for stack
  public:
   //Constructor and Destructor
-  stack(node* inputHead);
+  stack();
   ~stack();
 
   //Stack specific functions
@@ -32,6 +32,6 @@ class stack {
  //Private variables and pointers for class
  private:
    node* head;
-}
+};
 
 #endif

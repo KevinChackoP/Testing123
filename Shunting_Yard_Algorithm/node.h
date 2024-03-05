@@ -8,8 +8,8 @@
 */
 
 //Implementation of a header guard for header file
-#ifndef STACK_H
-#define STACK_H
+#ifndef NODE_H
+#define NODE_H
 
 //imports
 #include <iostream>
@@ -44,6 +44,6 @@ class node {
    //for expression tree
    node* left;
    node* right;
-}
+};
 
 #endif
