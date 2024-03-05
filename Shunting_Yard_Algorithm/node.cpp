@@ -15,7 +15,7 @@ node::node(char inputChar) {
   //Assign node's character based on what was passed in
   mathChar = inputChar;
 
-  //Set the next node to null (will be set if pushed into stack)
+  //Set the next node to null (will be set by other class functions)
   nextNode = NULL;
   left = NULL;
   right = NULL:
@@ -23,5 +23,43 @@ node::node(char inputChar) {
 
 //Destructor for node class
 node::~node() {
-  nextNode = NULL;
+  //delete all the node pointers this node has
+  delete nextNode;
+  delete left;
+  delete right;
+}
+
+//node value getter
+char node::getCharacter() {
+  return mathChar;
+}
+
+//next node setter
+void node::setNext(node* newNext) {
+  nextNode = newNext;
+}
+
+//next node getter
+node* node::getNext() {
+  return nextNode;
+}
+
+//left node setter
+void node::setLeft(node* newLeft) {
+  left = newLeft;
+}
+
+//left node getter
+node* node::getLeft() {
+  return left;
+}
+
+//right node setter
+void node::setRight(node* newRight) {
+  right = newRight;
+}
+
+//right node getter
+node* node::getRight() {
+  return right;
 }

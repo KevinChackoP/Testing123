@@ -28,6 +28,10 @@ class node {
   char getCharacter();
   void setNext(node* newNext);
   node* getNext();
+  void setLeft(node* newLeft);
+  node* getLeft();
+  void setRight(node* newRight);
+  node* getRight();
 
  //Private variables and pointers for class
  private:
