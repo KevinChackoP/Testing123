@@ -38,6 +38,12 @@ char queue::dequeue() {
   node* tail = head;
   char data;
 
+  //check to make sure that the head isn't null
+  if(head == NULL) {
+    //if so, return a null character
+    return '\0';
+  }
+
   //check tail's next node
   if(tail -> getNext() != NULL) {
     //if the tail has a next node, keep going down the list until the tail

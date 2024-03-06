@@ -46,8 +46,11 @@ char stack::pop() {
 //Peek function for stack, will return the value of the current head node
 char stack::peek() {
   if(head == NULL) {
-    return NULL;
+    //if the head is null, return a null character
+    return '\0';
+    
   } else {
+    //if the head is a valid node, return the node's character
     return (head -> getCharacter());
   }
 }

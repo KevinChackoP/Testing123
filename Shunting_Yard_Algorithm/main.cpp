@@ -47,12 +47,9 @@ bool askRestart();
 int main() {
   //local variable declarations
   bool inUse = true;
-  char eqnInput = '|';
-  for(int i = 0; i < 31; i++) {
-    input[i] = '\0';
-  }
+  char eqnInput = 'b';
   stack* operatorsS = new stack();
-  queue* outputS = new queue();
+  queue* outputQ = new queue();
 
   //Tell the user how the program works
   instructions();
@@ -76,26 +73,71 @@ int main() {
     while((cin >> eqnInput) && eqnInput != ';') {
       //check what the token they inputted is
       if(eqnInput >= 48 && eqnInput <= 57) {
-	//if it's a number
+	//if it's a number, shift it into the output queue
+	node* newNode = new node(eqnInput);
+	outputQ -> enqueue(newNode);
 	
       } else if(eqnInput == '+' || eqnInput == '-' || eqnInput == 'x'
-		eqnInput == '/' || eqnInput == '^') {
-	//if it's an operator
+	|| eqnInput == '/' || eqnInput == '^') {
+	//if it's an operator...
+	node* newNode = new node(eqnInput);
+	while((operatorsS -> peek() != '(' && operatorsS -> peek() != '\0')
+	      && ((operatorsS -> peek() == '+' || operatorsS -> peek() == '-')
+		  && (eqnInput == '+' || eqnInput == '-'))
+	      || ((operatorsS -> peek() == 'x' || operatorsS -> peek() == '/')
+		  && (eqnInput == 'x' || eqnInput == '/' || eqnInput == '+'
+		      || eqnInput == '-'))
+	      || ((operatorsS -> peek() == '^')
+		  && (eqnInput == 'x' || eqnInput == '/' || eqnInput == '+'
+		      || eqnInput == '-'))) {
+	  //while the operator on the top of the stack isn't null or (,
+	  //And it has higher precedence than the current operator or
+	  //the same precedence as the current operator but is left-associative
+	  //pop it from the stack into the output queue to maintain order
+	  node* stackNode = new node(operatorsS -> pop());
+	  outputQ -> enqueue(stackNode);
+	}
+	//add the operator to the stack
+	operatorsS -> push(newNode);
 	
       } else if(eqnInput == '(') {
-	//if it's a left parenthesis
+	//if it's a left parenthesis, add it to the operator stack
+	node* newNode = new node(eqnInput);
+	operatorsS -> push(newNode);
 	
       } else if(eqnInput == ')') {
-	//if it's a right parenthesis
-
+	//if it's a right parenthesis...
+	while(operatorsS -> peek() != '(' && operatorsS -> peek() != '\0') {
+	  //Keep moving operators from the stack into the queue until you
+	  //run into a (, or the stack is empty (in which case there is a
+	  //parenthesis mismatch)
+	  node* stackNode = new node(operatorsS -> pop());
+	  outputQ -> enqueue(stackNode);
+	}
+	//Pop out and discard the ( if no parenthesis mismatch
+	if(operatorsS -> peek() != '\0') {
+	  operatorsS -> pop();
+	}
       }
     }
-    while(operatorsS -> peek() != NULL) {
+    while(operatorsS -> peek() != '\0') {
       //put the remaining things in the operator stack in the output queue
-      
+      //if they aren't parenthesis (in which case the parenthesis would
+      //be mismatched)
+      if(operatorsS -> peek() != '(' && operatorsS -> peek() != ')') {
+	node* stackNode = new node(operatorsS -> pop());
+	outputQ -> enqueue(stackNode);
+	
+      } else {
+	//Pop out and discard the ( or ) that were mismatched
+	operatorsS -> pop();
+      }
     }
 
     //print out the whole output queue to show the postfix expression
+    //THINKING ABOUT USING CSTRING TO HOLD THE CHARACTERS OF THE OUTPUT QUEUE
+    //AND PRINT OUT THE CSTRING, THEN USE THE CSTRING AND >> TO REREAD ALL THE
+    //CHARACTERS IN POSTFIX NOTATION TO THEN USE FOR THE EXPRESSION TREE
     
 
     /*Ask the user to convert their input into a different notation and 
