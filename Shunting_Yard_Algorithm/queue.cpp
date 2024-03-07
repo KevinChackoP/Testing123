@@ -62,10 +62,11 @@ char queue::dequeue() {
     
   } else {
     //the tail doesn't have a next node, meaning that the tail is the head,
-    //get its character and delete it.
-    data = tail -> getCharacter();
+    //get the head's character and delete it.
+    data = head -> getCharacter();
 
-    delete tail;
+    delete head;
+    head = NULL;
   }
 
   //return the deleted node's (actual tail node's) character

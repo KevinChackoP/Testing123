@@ -41,6 +41,7 @@ using namespace std;
 
 //Function prototypes
 void instructions();
+int askNotation();
 bool askRestart();
 
 //Start of main function
@@ -50,6 +51,9 @@ int main() {
   char eqnInput = 'b';
   stack* operatorsS = new stack();
   queue* outputQ = new queue();
+  char treeInput = 'b';
+  stack* expressionTree = new stack();
+  int notationKey = 0;
 
   //Tell the user how the program works
   instructions();
@@ -135,16 +139,53 @@ int main() {
     }
 
     //print out the whole output queue to show the postfix expression
-    //THINKING ABOUT USING CSTRING TO HOLD THE CHARACTERS OF THE OUTPUT QUEUE
-    //AND PRINT OUT THE CSTRING, THEN USE THE CSTRING AND >> TO REREAD ALL THE
-    //CHARACTERS IN POSTFIX NOTATION TO THEN USE FOR THE EXPRESSION TREE
-    
+    cout << endl;
+    cout << "Shunting Yard Postfix Output: " << endl;
+    while(treeInput != '\0') {
+      //print out each of the characters from the queue in order
+      treeInput = outputQ -> dequeue();
+      cout << treeInput << " ";
 
-    /*Ask the user to convert their input into a different notation and 
-      use the postfix output from the shunting yard algorithm to make a
-      binary expression tree which will convert the input into the desired
-      notation*/
-    //ADD STUFF HERE
+      //create the expression tree
+      node* treeNode = new node(treeInput);
+      if(treeInput >= 48 && treeInput <= 57) {
+	//if the tree input is an operand, push it into the tree stack
+	expressionTree -> push(treeNode);
+	
+      } else if(treeInput == '+' || treeInput == '-' || treeInput == 'x'
+	|| treeInput == '/' || treeInput == '^') {
+	//if the tree input is an operator, pop two values to make the children
+	//of the tree node and push the tree node back into the tree
+	node* rightChild = new node(expressionTree -> pop());
+	node* leftChild = new node(expressionTree -> pop());
+	treeNode -> setRight(rightChild);
+	treeNode -> setLeft(leftChild);
+	expressionTree -> push(treeNode);
+      }
+    }
+    cout << endl;
+    cout << endl;
+
+    /*Ask the user to convert their input into a different notation and use
+      the binary expression tree made from the shunting yard output queue
+      to convert the input into the desired notation*/
+    notationKey = askNotation();
+    if(notationKey == 1) {
+      //If they want prefix notation, print out the expression in prefix
+      cout << "Prefix Notation: " << endl;
+      //DO RECURSIVE PRINT FOR PREFIX NOTATION
+
+    } else if (notationKey == 2) {
+      //If they want postfix notation, print out the expression in postfix
+      cout << "Postfix Notation: " << endl;
+      //DO RECURSIVE PRINT FOR POSTFIX NOTATION
+
+    } else if (notationKey == 3) {
+      //If they want infix notation, print out the expression in infix
+      cout << "Infix Notation: " << endl;
+      //DO RECURSIVE PRINT FOR INFIX NOTATION
+      
+    }
 
     /*After a run of asking for an expression and converting it into the
     desired notation, ask the user if they'd like to continue using the
@@ -182,6 +223,52 @@ void instructions() {
   cout << "expression to be in and it will be converted into that " << endl;
   cout << "notation. You can do this as many times as you'd like!" << endl;
   cout << endl;
+}
+
+//This function asks the user for what notation they'd like to convert their
+//mathematical expression into
+int askNotation() {
+  //make an input array and clean it up
+  char input[6];
+  for(int i = 0; i < 6; i++) {
+    input[i] = '\0';
+  }
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+  //Tell them how to input a command and what each of the commands do
+  cout << "Please input which notation you'd like to convert the expression to." << endl;
+  cout << "Input PRE to convert to prefix notation." << endl;
+  cout << "Input POST to convert to postfix notation." << endl;
+  cout << "Input IN to convert to infix notation." << endl;
+  cout << endl;
+
+  //ask them for a command input, if the input is valid return an int for the
+  //command key, if invalid have them reinput their desired command.
+  while(true) {
+    //Ask for input
+    cin.get(input, 6);
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+
+    //Clean input up by making it all upper case
+    for(int i = 0; i < 6; i++) {
+      input[i] = toupper(input[i]);
+    }
+
+    //return the corresponding command key to their command
+    if(strcmp(input, "PRE") == 0) {
+      return 1;
+    } else if(strcmp(input, "POST") == 0) {
+      return 2;
+    } else if(strcmp(input, "IN") == 0) {
+      return 3;
+    } else { //If their command is invalid, tell them and have them try again
+      cout << "Sorry, I don't understand what you mean by that." << endl;
+      cout << "Please input one of the following notations: " << endl;
+      cout << "PRE, POST, IN." << endl;
+      cout << endl;
+    }
+  }
 }
 
 //This function asks the user after a cycle of the program if they'd like to
