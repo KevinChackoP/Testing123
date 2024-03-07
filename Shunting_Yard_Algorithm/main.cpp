@@ -19,9 +19,9 @@
   URL: https://en.wikipedia.org/wiki/Binary_expression_tree
   These pages gave me an overview on the structure of a Shunting 
   Yard Algorithm and a Binary Expression Tree, as well as some tips 
-  and psuedo-code on what my program should do to work. 
-
-  WRITE MORE CITATIONS HERE
+  and psuedo-code on what my program should do to work. I heavily 
+  borrowed from the structures they suggested I use in order to make 
+  the two algorithms of my program
 */
 
 //imports
@@ -74,6 +74,16 @@ int main() {
     cout << endl;
 
     //take input and go through shunting yard algorithm
+    /*
+      I got a lot of help with making my shunting yard from Wikipedia's 
+      "Shunting yard algorithm" article.
+      URL: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+      This had a few examples that I could test my shunting yard algorithm 
+      against in addition for giving me the structured psuedo code for how 
+      I should make my shunting yard for it to work effectivally. I used the 
+      while loop check structure they suggested I used in order to make my 
+      shunting yard algorithm.
+     */
     while((cin >> eqnInput) && eqnInput != ';') {
       //check what the token they inputted is
       if(eqnInput >= 48 && eqnInput <= 57) {
@@ -147,6 +157,16 @@ int main() {
       cout << treeInput << " ";
 
       //create the expression tree
+      /*
+	I got a lot of help with making my expression tree from Wikipedia's 
+	"Binary expression tree" article.
+	URL: https://en.wikipedia.org/wiki/Binary_expression_tree
+	This gave a step by step example for how to make a binary expression 
+	tree from a postfix notation expression, like the output of my 
+	shunting yard algorithm. Using this I was able to properly form 
+	my expression tree which I later use to convert the expression into 
+	whatever notation the user wants to convert to. 
+       */
       node* treeNode = new node(treeInput);
       if(treeInput >= 48 && treeInput <= 57) {
 	//if the tree input is an operand, push it into the tree stack
