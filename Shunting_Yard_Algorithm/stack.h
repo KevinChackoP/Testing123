@@ -29,6 +29,12 @@ class stack {
   char pop();
   char peek();
 
+  //Expression tree functions
+  node* popNode();
+  void prefixPrint(node* tokenNode);
+  void postfixPrint(node* tokenNode);
+  void infixPrint(node* tokenNode);
+
  //Private variables and pointers for class
  private:
    node* head;

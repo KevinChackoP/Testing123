@@ -156,8 +156,8 @@ int main() {
 	|| treeInput == '/' || treeInput == '^') {
 	//if the tree input is an operator, pop two values to make the children
 	//of the tree node and push the tree node back into the tree
-	node* rightChild = new node(expressionTree -> pop());
-	node* leftChild = new node(expressionTree -> pop());
+	node* rightChild = expressionTree -> popNode();
+	node* leftChild = expressionTree -> popNode();
 	treeNode -> setRight(rightChild);
 	treeNode -> setLeft(leftChild);
 	expressionTree -> push(treeNode);
@@ -173,18 +173,23 @@ int main() {
     if(notationKey == 1) {
       //If they want prefix notation, print out the expression in prefix
       cout << "Prefix Notation: " << endl;
-      //DO RECURSIVE PRINT FOR PREFIX NOTATION
+      expressionTree -> prefixPrint(NULL);
+      cout << endl;
+      cout << endl;
 
     } else if (notationKey == 2) {
       //If they want postfix notation, print out the expression in postfix
       cout << "Postfix Notation: " << endl;
-      //DO RECURSIVE PRINT FOR POSTFIX NOTATION
+      expressionTree -> postfixPrint(NULL);
+      cout << endl;
+      cout << endl;
 
     } else if (notationKey == 3) {
       //If they want infix notation, print out the expression in infix
       cout << "Infix Notation: " << endl;
-      //DO RECURSIVE PRINT FOR INFIX NOTATION
-      
+      expressionTree -> infixPrint(NULL);
+      cout << endl;
+      cout << endl;
     }
 
     /*After a run of asking for an expression and converting it into the
@@ -198,14 +203,21 @@ int main() {
       cout << "Ok then, I hope you found this program useful!" << endl;
       cout << endl;
 
-      //ADD DELETION PROCESSES FOR DATA STRUCTURES ON THE HEAP!!!
+      delete operatorsS;
+      delete outputQ;
+      delete expressionTree;
+  
     } else {
       //if they want to continue using the program, reset anything that
       //needs to be reset for the next run
-      cout << "Ok, well get everything read for you again!" << endl;
+      cout << "Ok, we'll get everything read for you again!" << endl;
       cout << endl;
-
-      //ADD RESET PROCESSES
+      eqnInput = 'b';
+      treeInput = 'b';
+      while ((expressionTree -> peek()) != '\0') {
+	expressionTree -> pop();
+      }
+      notationKey = 0;
     }
   }
 
