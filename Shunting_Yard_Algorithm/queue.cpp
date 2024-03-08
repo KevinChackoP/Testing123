@@ -3,7 +3,7 @@
   output queue class. It has all the functions that will be used in the
   main.cpp file.
   Author: Kevin Chacko
-  Last Updated: WRITE DATE HERE
+  Last Updated: 3/7/2024
   Period 5, C++ / Data Structures
 */
 
@@ -18,6 +18,7 @@ queue::queue() {
 
 //Destructor for queue class
 queue::~queue() {
+  //delete head of queue (will also delete all nodes in the queue)
   if(head != NULL) {
     delete head;
   }

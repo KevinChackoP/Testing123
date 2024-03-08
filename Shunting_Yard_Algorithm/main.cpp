@@ -1,7 +1,17 @@
 /* 
-   This project... WRITE PROJECT DESCRIPTION HERE
+   This project takens in a mathematical expression written in infix notation,
+   converts it into postfix notation, then finally converts it into whichever
+   notation the user wants it converted to. It does this by converting the
+   infix input of the user (using numbers 0-9, operators +, -, x, /, ^, and
+   parenthesis, all seperated by spaces) into postfix through using a shunting
+   yard algorithm. Then it prints out the output and while it prints through
+   the output it takes the tokens in as inputs to build a binary expression
+   tree. Finally, after taking another input asking what notation the user
+   wants the expression to be in (prefix, postfix, or infix), the program
+   will recursivally print through the expression tree to give the expression
+   in the desired notation.
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 3/7/2024
    Period 6, C++ / Data Structures
 */
 
@@ -21,7 +31,7 @@
   Yard Algorithm and a Binary Expression Tree, as well as some tips 
   and psuedo-code on what my program should do to work. I heavily 
   borrowed from the structures they suggested I use in order to make 
-  the two algorithms of my program
+  the algorithm and the data structure my program focuses on.
 */
 
 //imports
@@ -33,6 +43,7 @@
 #include <math.h>
 #include <cstdlib>
 
+//classes
 #include "node.h"
 #include "stack.h"
 #include "queue.h"
@@ -135,7 +146,7 @@ int main() {
       }
     }
     while(operatorsS -> peek() != '\0') {
-      //put the remaining things in the operator stack in the output queue
+      //put the remaining things in the operator stack into the output queue
       //if they aren't parenthesis (in which case the parenthesis would
       //be mismatched)
       if(operatorsS -> peek() != '(' && operatorsS -> peek() != ')') {
@@ -250,8 +261,8 @@ void instructions() {
   cout << "Hello, this is a program that will help you to convert " << endl;
   cout << "an infix mathematical expression into fix notation of " << endl;
   cout << "your choice (infix, prefix, or postfix). Start by " << endl;
-  cout << "inputting an infix expression, then it will be converted " << endl;
-  cout << "into postfix. After that, input what format you want the " << endl;
+  cout << "inputting an infix expression that will be converted " << endl;
+  cout << "into postfix. After that input what notation you want the " << endl;
   cout << "expression to be in and it will be converted into that " << endl;
   cout << "notation. You can do this as many times as you'd like!" << endl;
   cout << endl;
@@ -274,7 +285,7 @@ int askNotation() {
   cout << "Input IN to convert to infix notation." << endl;
   cout << endl;
 
-  //ask them for a command input, if the input is valid return an int for the
+  //Ask them for a command input, if the input is valid return an int for the
   //command key, if invalid have them reinput their desired command.
   while(true) {
     //Ask for input
@@ -287,7 +298,7 @@ int askNotation() {
       input[i] = toupper(input[i]);
     }
 
-    //return the corresponding command key to their command
+    //Return the corresponding command key to their command
     if(strcmp(input, "PRE") == 0) {
       return 1;
     } else if(strcmp(input, "POST") == 0) {
@@ -306,7 +317,7 @@ int askNotation() {
 //This function asks the user after a cycle of the program if they'd like to
 //use the program again
 bool askRestart() {
-  //make variables for the continue or not input
+  //Make variables for the continue or not input
   char input[5];
   for(int i = 0; i < 5; i++) {
     input[i] = '\0';
@@ -328,7 +339,7 @@ bool askRestart() {
       input[i] = toupper(input[i]);
     }
 
-    //check whether their input is valid or not
+    //Check whether their input is valid or not
     if(strcmp(input, "YES") == 0 || strcmp(input, "Y") == 0) {
       return true;
 	

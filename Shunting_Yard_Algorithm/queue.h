@@ -2,7 +2,7 @@
   This program serves as the header for the Shunting Yard Program's output
   queue class. It defines everything for the queue.cpp file to use.
   Author: Kevin Chacko
-  Last Updated: WRITE DATE HERE
+  Last Updated: 3/7/2024
   Period 5, C++ / Data Structures
 */
 

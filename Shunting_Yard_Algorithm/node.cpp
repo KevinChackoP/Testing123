@@ -3,7 +3,7 @@
   node class. It has all the functions that will be used in the stack, 
   queue, and expression tree.
   Author: Kevin Chacko
-  Last Updated: WRITE DATE HERE
+  Last Updated: 3/7/2024
   Period 5, C++ / Data Structures
 */
 
@@ -23,7 +23,7 @@ node::node(char inputChar) {
 
 //Destructor for node class
 node::~node() {
-  //delete all the node pointers this node has
+  //delete all the nodes the node points to
   if(nextNode != NULL) {
     delete nextNode;
   }

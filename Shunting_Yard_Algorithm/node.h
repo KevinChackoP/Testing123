@@ -3,7 +3,7 @@
   class which will be used for the stack, queue, and expression tree. 
   It defines everything for the node.cpp file to use.
   Author: Kevin Chacko
-  Last Updated: WRITE DATE HERE
+  Last Updated: 3/7/2024
   Period 5, C++ / Data Structures
 */
 

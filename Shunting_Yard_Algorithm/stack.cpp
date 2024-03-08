@@ -3,7 +3,7 @@
   operator stack class. It has all the functions that will be used in the 
   main.cpp file. 
   Author: Kevin Chacko
-  Last Updated: WRITE DATE HERE
+  Last Updated: 3/7/2024
   Period 5, C++ / Data Structures
 */
 
@@ -18,6 +18,7 @@ stack::stack() {
 
 //Destructor for stack class
 stack::~stack() {
+  //delete the head of the stack (will also delete all nodes in stack)
   if(head != NULL) {
     delete head;
   }
