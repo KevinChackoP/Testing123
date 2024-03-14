@@ -25,6 +25,7 @@
 #include <limits>
 #include <math.h>
 #include <cstdlib>
+#include <fstream>
 
 //classes
 #include "node.h"
@@ -34,12 +35,13 @@ using namespace std;
 //Function prototypes
 void instructions();
 int askCommand();
-void addNodesManually(node* tree);
-void addNodesByFile(node* tree);
-void addNode(node* tree, int input);
-void deleteNode(node* tree);
+void addNodesManually(node* & tree);
+void addNodesByFile(node* & tree);
+void addNode(node* & tree, int input);
+void deleteNode(node* & tree);
 void searchNode(node* tree);
-void printTree(node* tree);
+void printTree(node* tree, int steps);
+void deleteTree(node* tree);
 
 //Start of main function
 int main() {
@@ -93,12 +95,15 @@ int main() {
       cout << "Printing out the current tree as it is." << endl;
       cout << endl;
 
-      printTree(root);
+      printTree(root, 0);
       
     } else if(commandKey == 6) {
       //If they want to quit the program, do so
       cout << "Ok then, I hope this was helpful!" << endl;
       cout << endl;
+
+      //delete the tree which is on the heap
+      deleteTree(root);
 
       //change the boolean that determines if the program continues running
       inUse = false;
@@ -175,7 +180,7 @@ int askCommand() {
 }
 
 //This function will add nodes into the tree via manual input
-void addNodesManually(node* tree); {
+void addNodesManually(node* & tree) {
   //local variables
   int numInput = 0;
 
@@ -212,7 +217,7 @@ void addNodesManually(node* tree); {
 }
 
 //This function will add nodes into the tree via file input
-void addNodesByFile(node* tree) {
+void addNodesByFile(node* & tree) {
   //local variables
   int numInput = 0;
   char filename[31];
@@ -256,13 +261,71 @@ void addNodesByFile(node* tree) {
 }
 
 //This function will take the input and actually put it into the tree properly
-void addNode(node* tree, int input) {
-  
+void addNode(node* & tree, int input) {
+  //make the node for the new number being inputted
+  node* newNode = new node(input);
+
+  //Add the new node to the tree
+  if(tree == NULL) {
+    //If the tree root node is null, set the new node to be the root node
+    tree = newNode;
+    
+  } else {
+    //go down tree until the new node is added to correct place in tree
+    node* indexNode = tree;
+    bool added = false;
+    int steps = 0;
+
+    while(!added) {
+      steps++;
+      if(newNode -> getInt() < indexNode -> getInt()) {
+	//if the new node is smaller than the index node...
+	if(indexNode -> getLeft() == NULL) {
+	  //and the left node is NULL, set the new node to the left child node
+	  if(steps < 2) {
+	    //make changes to root node instead of index node because it will
+	    //be the new child of the root
+	    tree -> setLeft(newNode);
+	    added = true;
+
+	  } else {
+	    //make it the left child of the index node
+	    indexNode -> setLeft(newNode);
+	    added = true;
+	  }
+	} else {
+	  //otherwise, set the index node to its left child node
+	  indexNode = indexNode -> getLeft();
+	}
+	
+      } else {
+	//if the new node is greater than or equal to the index node...
+	if(indexNode -> getRight() == NULL) {
+	  //and the right node is NULL, set the new node to the right
+	  //child node
+	  if(steps < 2) {
+	    //make changes to root node instead of index node because it will
+	    //be the new child of the root
+	    tree -> setRight(newNode);
+	    added = true;
+
+	  } else {
+	    //make it the right child of the index node
+	    indexNode -> setRight(newNode);
+	    added = true;
+	  }
+	} else {
+	  //otherwise, set the index node to its right child node
+	  indexNode = indexNode -> getRight();
+	}
+      }
+    }
+  }
 }
 
 //This function will take a number input from the user and attempt to remove
 //a node of that number from the tree
-void deleteNode(node* tree) {
+void deleteNode(node* & tree) {
   
 }
 
@@ -273,6 +336,38 @@ void searchNode(node* tree) {
 }
 
 //This function will print out a visual representation of the tree
-void printTree(node* tree) {
-  
+void printTree(node* tree, int steps) {
+  //check to make sure node passed in isn't null
+  if(tree != NULL) {
+    //Do a new recursion step for the right child
+    printTree(tree -> getRight(), (steps + 1));
+
+    //print the current node out, tabbing based on how many steps of recursion
+    //the function is in
+    for(int i = 0; i < steps; i++) {
+      cout << "\t";
+    }
+    cout << tree -> getInt() << endl;
+
+    //Do a new recursion step for the left child
+    printTree(tree -> getLeft(), (steps + 1));
+  }
+}
+
+//This function will recursively delete all the nodes in the tree
+void deleteTree(node* tree) {
+  if(tree != NULL) {
+    //delete the children nodes
+    if(tree -> getLeft() != NULL) {
+      //if the left node exists, delete it
+      deleteTree(tree -> getLeft());
+    }
+    if(tree -> getRight() != NULL) {
+      //if the right node exists, delete it
+      deleteTree(tree -> getRight());
+    }
+
+    //delete the current node
+    delete tree;
+  }
 }

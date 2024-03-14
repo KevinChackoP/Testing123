@@ -1,9 +1,9 @@
 /*
-  This program serves as the cpp program for the Shunting Yard Program's
-  node class. It has all the functions that will be used in the stack, 
-  queue, and expression tree.
+  This program serves as the cpp program for the Binary Search Tree Program's
+  node class. It has all the functions that will be used to make and interact 
+  with the binary search tree.
   Author: Kevin Chacko
-  Last Updated: 3/7/2024
+  Last Updated: WRITE END DATE HERE
   Period 5, C++ / Data Structures
 */
 
@@ -22,16 +22,9 @@ node::node(int inputInt) {
 
 //Destructor for node class
 node::~node() {
-  //delete all the nodes the node points to
-  if(nextNode != NULL) {
-    delete nextNode;
-  }
-  if(left != NULL) {
-    delete left;
-  }
-  if(right != NULL) {
-    delete right;
-  }
+  //set the nodes the node points to to NULL
+  left = NULL;
+  right = NULL;
 }
 
 //node value getter
