@@ -38,6 +38,7 @@ int askCommand();
 void addNodesManually(node* & tree);
 void addNodesByFile(node* & tree);
 void addNode(node* & tree, int input);
+int nodeInput();
 void deleteNode(node* & tree);
 void searchNode(node* tree);
 void printTree(node* tree, int steps);
@@ -323,6 +324,43 @@ void addNode(node* & tree, int input) {
   }
 }
 
+//This function will take the user's input for what data they want to use
+//in order to find a node in the tree with that data in it
+int nodeInput() {
+  //make input variable
+  int input = -1;
+
+  //tell the user what to input for their first input
+  cout << "Please input an integer number between 1-999 (inclusive)." << endl;
+
+  //until the user enters a valid input, keep taking their input
+  while(input < 1 || input > 999) {
+    //take their input
+    cin >> input;
+
+    //check if their input is valid and tell them if it isn't
+    if(input < 1) {
+      //if their input is too low, let them know
+      cout << input << " is lower than the number range of 1-999." << endl;
+      cout << "Please input a positive integer greater than 0." << endl;
+      cout << endl;
+      
+    } else if(input > 999) {
+      //if their input is too high, let them know
+      cout << input << " is higher than the number range of 1-999." << endl;
+      cout << "Please input a positive integer smaller than 1000." << endl;
+      cout << endl;
+    }
+  }
+
+  //do some clean up
+  cin.ignore(numeric_limits<streamsize>::max(), '\n');
+  cout << endl;
+
+  //return their validated input
+  return input;
+}
+
 //This function will take a number input from the user and attempt to remove
 //a node of that number from the tree
 void deleteNode(node* & tree) {
@@ -332,7 +370,49 @@ void deleteNode(node* & tree) {
 //This function will take a number input from the user and attempt to find
 //a node of that number from the tree
 void searchNode(node* tree) {
-  
+  //Keep track of a node as you go down the tree searching for the desired node
+  node* index = tree;
+  int target;
+  bool targetFound = false;
+
+  //Ask the user for a number input
+  cout << "What node value would you like to search for in the tree?" << endl;
+  target = nodeInput();
+
+  //iterate through the tree until the target value is found in a node or
+  //until the end of the tree branch is reached
+  while(index != NULL && !(targetFound)) {
+    //check to see if the index node holds the target value
+    if(index -> getInt() == target) {
+      //if the index holds the target value, tell the user that the node they
+      //are looking for was found in the tree
+      cout << index -> getInt() << " was found in the tree!" << endl;
+      cout << endl;
+
+      //mark the target as found in the tree
+      targetFound = true;
+
+    } else {
+      //otherwise, go down the tree further
+      if(target < index -> getInt()) {
+	//if the target is smaller than the index's node's data, make the next
+	//index node the current index node's left child
+	index = index -> getLeft();
+	
+      } else if(target > index -> getInt()) {
+	//if the target is bigger than the index's node's data, make the next
+	//index node the current index node's right child
+	index = index -> getRight();	
+      }
+    }
+  }
+
+  //check to see if the target value was found in the tree
+  if(!(targetFound)) {
+    //if it wasn't, let the user know
+    cout << target << " was NOT found in the tree." << endl;
+    cout << endl;
+  }
 }
 
 //This function will print out a visual representation of the tree
