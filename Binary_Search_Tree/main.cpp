@@ -364,19 +364,89 @@ int nodeInput() {
 //This function will take a number input from the user and attempt to remove
 //a node of that number from the tree
 void deleteNode(node* & tree) {
-  
+  //local variables
+  node* index = tree;
+  node* prevIndex = tree;
+  int target;
+  bool targetFound = false;
+
+  //Ask the user for a number input
+  cout << "What is the node value for the node you would like to " << endl;
+  cout << "delete from the tree?" << endl;
+  target = nodeInput();
+
+  //Check the head node first to see if it's the target node
+  if(tree -> getInt() == target) {
+    //if it is, make the next largest node the new head
+    
+    node* temp = tree;
+    
+    //go right once then all the way left in the tree
+    index = index -> getRight();
+    while(index -> getLeft() != NULL) {
+      index = index -> getLeft();
+    }
+    
+    //set the new head as the leftmost node on the right of the head
+    //(which will be the next largest node after the head)
+    tree = index;
+    
+    //delete the old head
+    delete temp;
+  } else {
+    //otherwise set the index to the next node on the path to the target,
+    //offsetting it from the previous index node
+    //ADD MORE STUFF HERE
+  }
+
+  //iterate through the tree until the target value is found in a node or
+  //until the end of the tree branch is reached
+  while(index != NULL && !(targetFound)) {
+    //check to see if the index node holds the target value
+    if(index -> getInt() == target) {
+      //if the index holds the target value, tell the user that the node they
+      //are looking for was found in the tree
+      cout << index -> getInt() << " was found in the tree!" << endl;
+      cout << endl;
+
+      //mark the target as found in the tree
+      targetFound = true;
+
+    } else {
+      //otherwise, go down the tree further
+      if(target < index -> getInt()) {
+	//if the target is smaller than the index's node's data, make the next
+	//index node the current index node's left child
+	index = index -> getLeft();
+	
+      } else if(target > index -> getInt()) {
+	//if the target is bigger than the index's node's data, make the next
+	//index node the current index node's right child
+	index = index -> getRight();	
+      }
+    }
+  }
+
+  //check to see if the target value was found and deleted in the tree
+  if(!(targetFound)) {
+    //if it wasn't, let the user know
+    cout << target << " was NOT found in the tree and thus it " << endl;
+    cout << "couldn't be deleted from the tree." << endl;
+    cout << endl;
+  }
 }
 
 //This function will take a number input from the user and attempt to find
 //a node of that number from the tree
 void searchNode(node* tree) {
-  //Keep track of a node as you go down the tree searching for the desired node
+  //local variables
   node* index = tree;
   int target;
   bool targetFound = false;
 
   //Ask the user for a number input
-  cout << "What node value would you like to search for in the tree?" << endl;
+  cout << "What is the node value for the node you would like to " << endl;
+  cout << "search for in the tree?" << endl;
   target = nodeInput();
 
   //iterate through the tree until the target value is found in a node or
