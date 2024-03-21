@@ -3,9 +3,14 @@
   node class. It has all the functions that will be used to make and interact 
   with the binary search tree.
   Author: Kevin Chacko
-  Last Updated: WRITE END DATE HERE
+  Last Updated: 3/20/2024
   Period 5, C++ / Data Structures
 */
+
+/*
+  For this whole file I copy pasted my code from my Shunting Yard project's
+  node.cpp file and just modified the code to fit my BST.
+ */
 
 //imports
 #include "node.h"

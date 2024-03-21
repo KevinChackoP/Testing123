@@ -1,7 +1,17 @@
 /* 
-   This project... WRITE ABOUT WHAT THIS PROJECT DOES!!!
+   This project creates a binary search tree that the user can interact with.
+   The user can interact with the BST through entering commands to either
+   add manually to the tree, add to the tree via a file, delete a node from
+   the tree, search to see if a node is in the tree, or print the tree out
+   to have a visual look at it's structure. When the user is done, they can
+   enter the quit command to leave the program, of which doing so will delete
+   the tree off of the heap. This binary tree uses nodes the point to children
+   nodes being either left if they are smaller, or right if they are bigger.
+   The order of how the nodes are entered in matters, and the BST doesn't
+   try balancing itself, it will just add data to the next available slot
+   that fits the data.
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 3/20/2024
    Period 6, C++ / Data Structures
 */
 
@@ -14,7 +24,16 @@
   considered when making the binary search tree (its add, search, and 
   delete functions).
 
-  WRITE MORE CITATIONS HERE
+  For my node.h and node.cpp files I just copy pasted my code from my
+  Shunting Yard Algorithm project's node files and modified them to
+  better fit the needs of my BST in this project.
+
+  For the structure of my main function as well as many of my functions in
+  my program such as adding manually, adding by file, adding a node to the
+  tree, and printing out the tree I just copy pasted my code from my
+  Heap project. However, since I was using linked nodes with pointers rather
+  than an array, I more heavily modified the code and just followed some of
+  the basic processes to help build my BST program. 
 */
 
 //imports
