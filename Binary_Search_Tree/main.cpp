@@ -95,8 +95,18 @@ int main() {
       //do so
       cout << "Printing out the current tree as it is." << endl;
       cout << endl;
-
-      printTree(root, 0);
+      
+      if(root != NULL) {
+	//there is stuff in the tree, so continue printing
+	printTree(root, 0);
+	cout << endl;
+	
+      } else {
+	//the root is null and nothing will print, so tell the user that
+	cout << "The tree is currently empty! Please try printing " << endl;
+	cout << "out the tree after you've added nodes to it!" << endl;
+	cout << endl;
+      }
       
     } else if(commandKey == 6) {
       //If they want to quit the program, do so
@@ -374,7 +384,7 @@ void deleteNode(node* & tree) {
   if(tree == NULL) {
     //The tree is empty, so tell the user
     cout << "Sorry but the tree is empty! Please add nodes to the " << endl;
-    cout << "tree before trying to search for nodes in the tree!" << endl;
+    cout << "tree before trying to delete them from the tree!" << endl;
     cout << endl;
     
   } else {
@@ -386,8 +396,13 @@ void deleteNode(node* & tree) {
     //Check the head node first to see if it's the target node
     if(tree -> getInt() == target) {
       //if it is, make the next largest node the new head
+      cout << tree -> getInt() << " was found in the tree and " << endl;
+      cout << "will be removed from the tree." << endl;
+      cout << endl;
+      
+      //mark the target as found in the tree
       targetFound = true;
-    
+      
       //go right once then all the way left in the tree if possible
       if(tree -> getRight() != NULL) {
 	//if it is possible, do so
@@ -469,35 +484,203 @@ void deleteNode(node* & tree) {
 	//mark the target as found in the tree
 	targetFound = true;
 
-	//REMEMBER THAT IN ORDER TO KEEP YOUR TREE ORDERED YOU NEED TO
-	//GO RIGHT THEN ALL THE WAY LEFT OR LEFT THEN ALL THE WAY RIGHT
-	//TO GET THE NEXT SMALLEST OR BIGGEST NODE TO REPLACE THE NODE
-	//BEING DELETED, USE THE CODE YOU MADE FOR HEAD FOR THIS!!!
-
 	//fill the hole the index node would create in the tree
 	if(index == prevIndex -> getLeft()) {
 	  //if the index node is the left child of the previous index, replace
 	  //the previous index's left child with one of the index's children
-	  if(prevIndex == tree) {
-	    //if the previous index is the root, replace from the root instead
-	    if(index -> getRight() != NULL) {
-	      //if the right child isn't null, replace with the right child
-	      tree -> setLeft(index -> getRight());
-	    } else {
-	      //if the left child isn't null or at least both children are
-	      //null, replace with the left child
-	      tree -> setLeft(index -> getLeft());
+	  if(index -> getRight() != NULL) {
+	    //if the right child isn't null, replace with the right child
+	    //or the right child's leftmost child
+	    node* replacement = index -> getRight();
+	    node* prevReplacement = index -> getRight();
+	    while(replacement -> getLeft() != NULL) {
+	      prevReplacement = replacement;
+	      replacement = replacement -> getLeft();
 	    }
+	      
+	    //fill the hole the replacement will make when it's moved
+	    if(replacement == prevReplacement) {
+	      //if the best replacement is just the right child of the
+	      //index, have the previous index just point directly to it
+	      //and set its left child to the index's left child
+	      index -> getRight() -> setLeft(index -> getLeft());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setLeft(index -> getRight());
+	      } else {
+		//otherwise just replace from the previous index
+		prevIndex -> setLeft(index -> getRight());
+	      }
+	    } else {
+	      //set the replacement's parent's new left child as the
+	      //replacement's right child
+	      prevReplacement -> setLeft(replacement -> getRight());
+
+	      //actually replace the index node with the replacement node
+	      replacement -> setRight(index -> getRight());
+	      replacement -> setLeft(index -> getLeft());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setLeft(replacement);
+	      } else {
+		//otherwise just replace from the previous index node
+		prevIndex -> setLeft(replacement);
+	      }
+	    }
+	      
+	  } else if(index -> getLeft() != NULL) {
+	    //if the right child is null but left child isn't null, replace
+	    //with the left child or the left child's rightmost child
+	    node* replacement = index -> getLeft();
+	    node* prevReplacement = index -> getLeft();
+	    while(replacement -> getRight() != NULL) {
+	      prevReplacement = replacement;
+	      replacement = replacement -> getRight();
+	    }
+	      
+	    //fill the hole the replacement will make when it's moved
+	    if(replacement == prevReplacement) {
+	      //if the best replacement is just the left child of the
+	      //index, have the previous node just point directly to it
+	      //and set its right child to the index's right child
+	      index -> getLeft() -> setRight(index -> getRight());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setLeft(index -> getLeft());
+	      } else {
+		//otherwise, just replace from the previous index
+		prevIndex -> setLeft(index -> getLeft());
+	      }
+	    } else {
+	      //set the replacement's parent's new right child as the
+	      //replacement's left child
+	      prevReplacement -> setRight(replacement -> getLeft());
+
+	      //actually replace the index node with the replacement node
+	      replacement -> setRight(index -> getRight());
+	      replacement -> setLeft(index -> getLeft());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setLeft(replacement);
+	      } else {
+		//otherwise just replace from the previous index node
+		prevIndex -> setLeft(replacement);
+	      }
+	    }
+
 	  } else {
-	    //if the previous index isn't the tree, replace from it
-	    if(index -> getRight() != NULL) {
-	      //if the right child isn't null, replace with the right child
-	      tree -> setLeft(index -> getRight());
-	    } else {
-	      //if the left child isn't null or at least both children are
-	      //null, replace with the left child
+	    //if both children are null, just replace with the left child
+	    if(prevIndex == tree) {
+	      //if the previous index is the root, replace from the
+	      //root instead
 	      tree -> setLeft(index -> getLeft());
+	    } else {
+	      //otherwise just replace from the previous index
+	      prevIndex -> setLeft(index -> getLeft());
+	    } 
+	  }
+	  
+	} else if(index == prevIndex -> getRight()) {
+	  //if the index node is the right child of the previous index, replace
+	  //the previous index's right child with one of the index's children
+	  if(index -> getRight() != NULL) {
+	    //if the right child isn't null, replace with the right child
+	    //or the right child's leftmost child
+	    node* replacement = index -> getRight();
+	    node* prevReplacement = index -> getRight();
+	    while(replacement -> getLeft() != NULL) {
+	      prevReplacement = replacement;
+	      replacement = replacement -> getLeft();
 	    }
+	      
+	    //fill the hole the replacement will make when it's moved
+	    if(replacement == prevReplacement) {
+	      //if the best replacement is just the right child of the
+	      //index, have the previous index just point directly to it
+	      //and set its left child to the index's left child
+	      index -> getRight() -> setLeft(index -> getLeft());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setRight(index -> getRight());
+	      } else {
+		//otherwise just replace from the previous index
+		prevIndex -> setRight(index -> getRight());
+	      }
+	    } else {
+	      //set the replacement's parent's new left child as the
+	      //replacement's right child
+	      prevReplacement -> setLeft(replacement -> getRight());
+
+	      //actually replace the index node with the replacement node
+	      replacement -> setRight(index -> getRight());
+	      replacement -> setLeft(index -> getLeft());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setRight(replacement);
+	      } else {
+		//otherwise just replace from the previous index node
+		prevIndex -> setRight(replacement);
+	      }
+	    }
+	      
+	  } else if(index -> getLeft() != NULL) {
+	    //if the right child is null but left child isn't null, replace
+	    //with the left child or the left child's rightmost child
+	    node* replacement = index -> getLeft();
+	    node* prevReplacement = index -> getLeft();
+	    while(replacement -> getRight() != NULL) {
+	      prevReplacement = replacement;
+	      replacement = replacement -> getRight();
+	    }
+	      
+	    //fill the hole the replacement will make when it's moved
+	    if(replacement == prevReplacement) {
+	      //if the best replacement is just the left child of the
+	      //index, have the previous node just point directly to it
+	      //and set its right child to the index's right child
+	      index -> getLeft() -> setRight(index -> getRight());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setRight(index -> getLeft());
+	      } else {
+		//otherwise, just replace from the previous index
+		prevIndex -> setRight(index -> getLeft());
+	      }
+	    } else {
+	      //set the replacement's parent's new right child as the
+	      //replacement's left child
+	      prevReplacement -> setRight(replacement -> getLeft());
+
+	      //actually replace the index node with the replacement node
+	      replacement -> setRight(index -> getRight());
+	      replacement -> setLeft(index -> getLeft());
+	      if(prevIndex == tree) {
+		//if the previous index is the root, replace from the
+		//root instead
+		tree -> setRight(replacement);
+	      } else {
+		//otherwise just replace from the previous index node
+		prevIndex -> setRight(replacement);
+	      }
+	    }
+
+	  } else {
+	    //if both children are null, just replace with the left child
+	    if(prevIndex == tree) {
+	      //if the previous index is the root, replace from the
+	      //root instead
+	      tree -> setRight(index -> getLeft());
+	    } else {
+	      //otherwise just replace from the previous index
+	      prevIndex -> setRight(index -> getLeft());
+	    } 
 	  }
 	}
 
