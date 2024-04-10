@@ -39,21 +39,16 @@ using namespace std;
 
 //Function Prototypes
 int askCommand();
-void addNodesManually(node* & tree);
-void addNodesByFile(node* & tree);
-void addNode(node* & tree, int input);
+void addNodesManually(redBlackTree* & tree);
+void addNodesByFile(redBlackTree* & tree);
 int nodeInput();
-void deleteNode(node* & tree);
-void searchNode(node* tree);
-void printTree(node* tree, int steps);
-void deleteTree(node* tree);
 
 //Start of main function
 int main() {
   //local variable declarations
   bool inUse = true;
   int commandKey = 0;
-  node* root = NULL;
+  redBlackTree* redBlack = new redBlackTree();
   
   //Tell the user how the program works
   instructions();
@@ -71,28 +66,54 @@ int main() {
       cout << "Adding nodes to the tree manually." << endl;
       cout << endl;
 
-      addNodesManually(root);
+      addNodesManually(redBlack);
       
     } else if(commandKey == 2) {
       //If they want to add nodes to the tree through a file, do so
       cout << "Adding nodes to the tree via a file." << endl;
       cout << endl;
       
-      addNodesByFile(root);
+      addNodesByFile(redBlack);
 
     } else if(commandKey == 3) {
       //If they want to delete a node from the tree, do so
       cout << "Deleting a node from the tree." << endl;
       cout << endl;
 
-      deleteNode(root);
+      //check to make sure the tree isn't empty before deleting
+      if(redBlack -> isTreeEmpty()) {
+	//The tree is empty, so tell the user
+	cout << "Sorry but the tree is empty! Please add nodes to the " << endl;
+	cout << "tree before trying to delete them from the tree!" << endl;
+	cout << endl;
+	
+      } else {
+	//Ask the user for a number input
+	cout << "What is the node value for the node you would like to " << endl;
+	cout << "delete from the tree?" << endl;
+	int userInput = nodeInput();
+	redBlack -> deleteNode(userInput);
+      }
 
     } else if(commandKey == 4) {
       //If they want to search for whether a node is in the tree or not, do so
       cout << "Searching for a node in the tree." << endl;
       cout << endl;
 
-      searchNode(root);
+      //check to make sure the tree isn't empty before searching
+      if(redBlack -> isTreeEmpty()) {
+	//The tree is empty, so tell the user
+	cout << "Sorry but the tree is empty! Please add nodes to the " << endl;
+	cout << "tree before trying to search for nodes in the tree!" << endl;
+	cout << endl;
+	
+      } else {
+	//Ask the user for a number input
+	cout << "What is the node value for the node you would like to " << endl;
+	cout << "search for in the tree?" << endl;
+	int userInput = nodeInput();
+	redBlack -> searchNode(userInput);
+      }
 
     } else if(commandKey == 5) {
       //If they want to print the current tree out and see how it's structured,
@@ -100,9 +121,9 @@ int main() {
       cout << "Printing out the current tree as it is." << endl;
       cout << endl;
       
-      if(root != NULL) {
+      if(!(redBlack -> isTreeEmpty())) {
 	//there is stuff in the tree, so continue printing
-	printTree(root, 0);
+	redBlack -> printTree();
 	cout << endl;
 	
       } else {
@@ -118,7 +139,7 @@ int main() {
       cout << endl;
 
       //delete the tree which is on the heap
-      deleteTree(root);
+      delete redBlack;
 
       //change the boolean that determines if the program continues running
       inUse = false;
@@ -133,8 +154,8 @@ int main() {
 void instructions() {
   cout << "Hello, this is a program helps you make a red-black tree that " << endl;
   cout << "holds numbers between 1-999 (inclusive). You can use various " << endl;
-  cout << "commands to interact with the binary search tree. You can interact " << endl;
-  cout << "with the binary search tree by manually adding numbers to the tree," << endl;
+  cout << "commands to interact with the red-black tree. You can interact " << endl;
+  cout << "with the red-black tree by manually adding numbers to the tree," << endl;
   cout << "using a file with various numbers between 1-999 seperated by " << endl;
   cout << "spaces to add to the tree, deleting a node from the tree, searching" << endl;
   cout << "for a node in the tree to see if it's there, and printing out the " << endl;
@@ -195,7 +216,7 @@ int askCommand() {
 }
 
 //This function will add nodes into the tree via manual input
-void addNodesManually(node* & tree) {
+void addNodesManually(redBlackTree* & tree) {
   //local variables
   int numInput = 0;
 
@@ -222,7 +243,7 @@ void addNodesManually(node* & tree) {
       
     } else {
       //if their input is within the range, add it to the tree
-      addNode(tree, numInput);
+      tree -> addNode(numInput);
     }
   }
 
@@ -232,7 +253,7 @@ void addNodesManually(node* & tree) {
 }
 
 //This function will add nodes into the tree via file input
-void addNodesByFile(node* & tree) {
+void addNodesByFile(redBlackTree* & tree) {
   //local variables
   int numInput = 0;
   char filename[31];
@@ -266,76 +287,13 @@ void addNodesByFile(node* & tree) {
       
     } else {
       //if their input is within the range, add it to the tree
-      addNode(tree, numInput);
+      tree -> addNode(numInput);
     }
   }
 
   //do some clean up
   fin.close();
   cout << endl;
-}
-
-//This function will take the input and actually put it into the tree properly
-void addNode(node* & tree, int input) {
-  //make the node for the new number being inputted
-  node* newNode = new node(input);
-
-  //Add the new node to the tree
-  if(tree == NULL) {
-    //If the tree root node is null, set the new node to be the root node
-    tree = newNode;
-    
-  } else {
-    //go down tree until the new node is added to correct place in tree
-    node* indexNode = tree;
-    bool added = false;
-    int steps = 0;
-
-    while(!added) {
-      steps++;
-      if(newNode -> getInt() < indexNode -> getInt()) {
-	//if the new node is smaller than the index node...
-	if(indexNode -> getLeft() == NULL) {
-	  //and the left node is NULL, set the new node to the left child node
-	  if(steps < 2) {
-	    //make changes to root node instead of index node because it will
-	    //be the new child of the root
-	    tree -> setLeft(newNode);
-	    added = true;
-
-	  } else {
-	    //make it the left child of the index node
-	    indexNode -> setLeft(newNode);
-	    added = true;
-	  }
-	} else {
-	  //otherwise, set the index node to its left child node
-	  indexNode = indexNode -> getLeft();
-	}
-	
-      } else {
-	//if the new node is greater than or equal to the index node...
-	if(indexNode -> getRight() == NULL) {
-	  //and the right node is NULL, set the new node to the right
-	  //child node
-	  if(steps < 2) {
-	    //make changes to root node instead of index node because it will
-	    //be the new child of the root
-	    tree -> setRight(newNode);
-	    added = true;
-
-	  } else {
-	    //make it the right child of the index node
-	    indexNode -> setRight(newNode);
-	    added = true;
-	  }
-	} else {
-	  //otherwise, set the index node to its right child node
-	  indexNode = indexNode -> getRight();
-	}
-      }
-    }
-  }
 }
 
 //This function will take the user's input for what data they want to use
@@ -373,442 +331,4 @@ int nodeInput() {
 
   //return their validated input
   return input;
-}
-
-//This function will take a number input from the user and attempt to remove
-//a node of that number from the tree
-void deleteNode(node* & tree) {
-  //local variables
-  node* index = tree;
-  node* prevIndex = tree;
-  int target;
-  bool targetFound = false;
-
-  //Make sure the tree isn't empty before trying to delete from the tree
-  if(tree == NULL) {
-    //The tree is empty, so tell the user
-    cout << "Sorry but the tree is empty! Please add nodes to the " << endl;
-    cout << "tree before trying to delete them from the tree!" << endl;
-    cout << endl;
-    
-  } else {
-    //Ask the user for a number input
-    cout << "What is the node value for the node you would like to " << endl;
-    cout << "delete from the tree?" << endl;
-    target = nodeInput();
-
-    //Check the head node first to see if it's the target node
-    if(tree -> getInt() == target) {
-      //if it is, make the next largest node the new head
-      cout << tree -> getInt() << " was found in the tree and " << endl;
-      cout << "will be removed from the tree." << endl;
-      cout << endl;
-      
-      //mark the target as found in the tree
-      targetFound = true;
-      
-      //go right once then all the way left in the tree if possible
-      if(tree -> getRight() != NULL) {
-	//if it is possible, do so
-	index = index -> getRight();
-	prevIndex = prevIndex -> getRight();
-	while(index -> getLeft() != NULL) {
-	  prevIndex = index;
-	  index = index -> getLeft();
-	}
-
-	//fill the hole the index node will make when it's moved to the head
-	if(prevIndex == index) {
-	  tree -> setRight(index -> getRight());
-	} else {
-	  prevIndex -> setLeft(index -> getRight());
-	}
-	
-      } else if(tree -> getLeft() != NULL) {
-	//if it isn't, try going left first then all the way right to get
-	//the next smallest node
-	index = index -> getLeft();
-	prevIndex = prevIndex -> getLeft();
-	while(index -> getRight() != NULL) {
-	  prevIndex = index;
-	  index = index -> getRight();
-	}
-
-	//fill the hole the index node will make when it's moved to the head
-	if(prevIndex == index) {
-	  tree -> setLeft(index -> getLeft());
-	} else {
-	  prevIndex -> setRight(index -> getLeft());
-	}
-	
-      } else {
-	//If the head is the only node in the tree, delete only it
-	node* temp = tree;
-	tree = NULL;
-	delete temp;
-      }
-
-      //if the head wasn't the only node in the tree, set it to the index node
-      if(tree != NULL) {
-	//set the new head as the index node
-	node* temp = tree;
-	tree = index;
-	index -> setLeft(temp -> getLeft());
-	index -> setRight(temp -> getRight());
-    
-	//delete the old head
-	delete temp;
-      }
-    
-    } else {
-      //otherwise set the index to the next node on the path to the target,
-      //offsetting it from the previous index node
-      if(target < index -> getInt()) {
-	//if the target is less than the head node, make the index the left
-	//child of the head
-	index = index -> getLeft();
-      
-      } else {
-	//if the target is greater than the head node, make the index the right
-	//child of the head
-	index = index -> getRight();
-      }
-    }
-
-    //iterate through the tree until the target value is found in a node or
-    //until the end of the tree branch is reached
-    while(index != NULL && !(targetFound)) {
-      //check to see if the index node holds the target value
-      if(index -> getInt() == target) {
-	//if the index holds the target value, remove it from the tree
-	cout << index -> getInt() << " was found in the tree and " << endl;
-	cout << "will be removed from the tree." << endl;
-	cout << endl;
-
-	//mark the target as found in the tree
-	targetFound = true;
-
-	//fill the hole the index node would create in the tree
-	if(index == prevIndex -> getLeft()) {
-	  //if the index node is the left child of the previous index, replace
-	  //the previous index's left child with one of the index's children
-	  if(index -> getRight() != NULL) {
-	    //if the right child isn't null, replace with the right child
-	    //or the right child's leftmost child
-	    node* replacement = index -> getRight();
-	    node* prevReplacement = index -> getRight();
-	    while(replacement -> getLeft() != NULL) {
-	      prevReplacement = replacement;
-	      replacement = replacement -> getLeft();
-	    }
-	      
-	    //fill the hole the replacement will make when it's moved
-	    if(replacement == prevReplacement) {
-	      //if the best replacement is just the right child of the
-	      //index, have the previous index just point directly to it
-	      //and set its left child to the index's left child
-	      index -> getRight() -> setLeft(index -> getLeft());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setLeft(index -> getRight());
-	      } else {
-		//otherwise just replace from the previous index
-		prevIndex -> setLeft(index -> getRight());
-	      }
-	    } else {
-	      //set the replacement's parent's new left child as the
-	      //replacement's right child
-	      prevReplacement -> setLeft(replacement -> getRight());
-
-	      //actually replace the index node with the replacement node
-	      replacement -> setRight(index -> getRight());
-	      replacement -> setLeft(index -> getLeft());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setLeft(replacement);
-	      } else {
-		//otherwise just replace from the previous index node
-		prevIndex -> setLeft(replacement);
-	      }
-	    }
-	      
-	  } else if(index -> getLeft() != NULL) {
-	    //if the right child is null but left child isn't null, replace
-	    //with the left child or the left child's rightmost child
-	    node* replacement = index -> getLeft();
-	    node* prevReplacement = index -> getLeft();
-	    while(replacement -> getRight() != NULL) {
-	      prevReplacement = replacement;
-	      replacement = replacement -> getRight();
-	    }
-	      
-	    //fill the hole the replacement will make when it's moved
-	    if(replacement == prevReplacement) {
-	      //if the best replacement is just the left child of the
-	      //index, have the previous node just point directly to it
-	      //and set its right child to the index's right child
-	      index -> getLeft() -> setRight(index -> getRight());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setLeft(index -> getLeft());
-	      } else {
-		//otherwise, just replace from the previous index
-		prevIndex -> setLeft(index -> getLeft());
-	      }
-	    } else {
-	      //set the replacement's parent's new right child as the
-	      //replacement's left child
-	      prevReplacement -> setRight(replacement -> getLeft());
-
-	      //actually replace the index node with the replacement node
-	      replacement -> setRight(index -> getRight());
-	      replacement -> setLeft(index -> getLeft());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setLeft(replacement);
-	      } else {
-		//otherwise just replace from the previous index node
-		prevIndex -> setLeft(replacement);
-	      }
-	    }
-
-	  } else {
-	    //if both children are null, just replace with the left child
-	    if(prevIndex == tree) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      tree -> setLeft(index -> getLeft());
-	    } else {
-	      //otherwise just replace from the previous index
-	      prevIndex -> setLeft(index -> getLeft());
-	    } 
-	  }
-	  
-	} else if(index == prevIndex -> getRight()) {
-	  //if the index node is the right child of the previous index, replace
-	  //the previous index's right child with one of the index's children
-	  if(index -> getRight() != NULL) {
-	    //if the right child isn't null, replace with the right child
-	    //or the right child's leftmost child
-	    node* replacement = index -> getRight();
-	    node* prevReplacement = index -> getRight();
-	    while(replacement -> getLeft() != NULL) {
-	      prevReplacement = replacement;
-	      replacement = replacement -> getLeft();
-	    }
-	      
-	    //fill the hole the replacement will make when it's moved
-	    if(replacement == prevReplacement) {
-	      //if the best replacement is just the right child of the
-	      //index, have the previous index just point directly to it
-	      //and set its left child to the index's left child
-	      index -> getRight() -> setLeft(index -> getLeft());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setRight(index -> getRight());
-	      } else {
-		//otherwise just replace from the previous index
-		prevIndex -> setRight(index -> getRight());
-	      }
-	    } else {
-	      //set the replacement's parent's new left child as the
-	      //replacement's right child
-	      prevReplacement -> setLeft(replacement -> getRight());
-
-	      //actually replace the index node with the replacement node
-	      replacement -> setRight(index -> getRight());
-	      replacement -> setLeft(index -> getLeft());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setRight(replacement);
-	      } else {
-		//otherwise just replace from the previous index node
-		prevIndex -> setRight(replacement);
-	      }
-	    }
-	      
-	  } else if(index -> getLeft() != NULL) {
-	    //if the right child is null but left child isn't null, replace
-	    //with the left child or the left child's rightmost child
-	    node* replacement = index -> getLeft();
-	    node* prevReplacement = index -> getLeft();
-	    while(replacement -> getRight() != NULL) {
-	      prevReplacement = replacement;
-	      replacement = replacement -> getRight();
-	    }
-	      
-	    //fill the hole the replacement will make when it's moved
-	    if(replacement == prevReplacement) {
-	      //if the best replacement is just the left child of the
-	      //index, have the previous node just point directly to it
-	      //and set its right child to the index's right child
-	      index -> getLeft() -> setRight(index -> getRight());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setRight(index -> getLeft());
-	      } else {
-		//otherwise, just replace from the previous index
-		prevIndex -> setRight(index -> getLeft());
-	      }
-	    } else {
-	      //set the replacement's parent's new right child as the
-	      //replacement's left child
-	      prevReplacement -> setRight(replacement -> getLeft());
-
-	      //actually replace the index node with the replacement node
-	      replacement -> setRight(index -> getRight());
-	      replacement -> setLeft(index -> getLeft());
-	      if(prevIndex == tree) {
-		//if the previous index is the root, replace from the
-		//root instead
-		tree -> setRight(replacement);
-	      } else {
-		//otherwise just replace from the previous index node
-		prevIndex -> setRight(replacement);
-	      }
-	    }
-
-	  } else {
-	    //if both children are null, just replace with the left child
-	    if(prevIndex == tree) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      tree -> setRight(index -> getLeft());
-	    } else {
-	      //otherwise just replace from the previous index
-	      prevIndex -> setRight(index -> getLeft());
-	    } 
-	  }
-	}
-
-	//actually delete the index node
-	delete index;
-
-      } else {
-	//otherwise, go down the tree further
-	if(target < index -> getInt()) {
-	  //if the target is smaller than the index's node's data, make the
-	  //next index node the current index node's left child
-	  prevIndex = index;
-	  index = index -> getLeft();
-	
-	} else if(target > index -> getInt()) {
-	  //if the target is bigger than the index's node's data, make the next
-	  //index node the current index node's right child
-	  prevIndex = index;
-	  index = index -> getRight();	
-	}
-      }
-    }
-
-    //check to see if the target value was found and deleted in the tree
-    if(!(targetFound)) {
-      //if it wasn't, let the user know
-      cout << target << " was NOT found in the tree and thus it " << endl;
-      cout << "couldn't be deleted from the tree." << endl;
-      cout << endl;
-    }
-  }
-}
-
-//This function will take a number input from the user and attempt to find
-//a node of that number from the tree
-void searchNode(node* tree) {
-  //local variables
-  node* index = tree;
-  int target;
-  bool targetFound = false;
-
-  //check to make sure the tree isn't empty before searching
-  if(tree == NULL) {
-    //The tree is empty, so tell the user
-    cout << "Sorry but the tree is empty! Please add nodes to the " << endl;
-    cout << "tree before trying to search for nodes in the tree!" << endl;
-    cout << endl;
-    
-  } else {
-    //Ask the user for a number input
-    cout << "What is the node value for the node you would like to " << endl;
-    cout << "search for in the tree?" << endl;
-    target = nodeInput();
-
-    //iterate through the tree until the target value is found in a node or
-    //until the end of the tree branch is reached
-    while(index != NULL && !(targetFound)) {
-      //check to see if the index node holds the target value
-      if(index -> getInt() == target) {
-	//if the index holds the target value, tell the user that the node they
-	//are looking for was found in the tree
-	cout << index -> getInt() << " was found in the tree!" << endl;
-	cout << endl;
-
-	//mark the target as found in the tree
-	targetFound = true;
-
-      } else {
-	//otherwise, go down the tree further
-	if(target < index -> getInt()) {
-	  //if the target is smaller than the index's node's data, make the
-	  //next index node the current index node's left child
-	  index = index -> getLeft();
-	
-	} else if(target > index -> getInt()) {
-	  //if the target is bigger than the index's node's data, make the next
-	  //index node the current index node's right child
-	  index = index -> getRight();	
-	}
-      }
-    }
-
-    //check to see if the target value was found in the tree
-    if(!(targetFound)) {
-      //if it wasn't, let the user know
-      cout << target << " was NOT found in the tree." << endl;
-      cout << endl;
-    }
-  }
-}
-
-//This function will print out a visual representation of the tree
-void printTree(node* tree, int steps) {
-  //check to make sure node passed in isn't null
-  if(tree != NULL) {
-    //Do a new recursion step for the right child
-    printTree(tree -> getRight(), (steps + 1));
-
-    //print the current node out, tabbing based on how many steps of recursion
-    //the function is in
-    for(int i = 0; i < steps; i++) {
-      cout << "\t";
-    }
-    cout << tree -> getInt() << endl;
-
-    //Do a new recursion step for the left child
-    printTree(tree -> getLeft(), (steps + 1));
-  }
-}
-
-//This function will recursively delete all the nodes in the tree
-void deleteTree(node* tree) {
-  if(tree != NULL) {
-    //delete the children nodes
-    if(tree -> getLeft() != NULL) {
-      //if the left node exists, delete it
-      deleteTree(tree -> getLeft());
-    }
-    if(tree -> getRight() != NULL) {
-      //if the right node exists, delete it
-      deleteTree(tree -> getRight());
-    }
-
-    //delete the current node
-    delete tree;
-  }
 }
