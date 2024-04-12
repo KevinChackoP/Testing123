@@ -32,12 +32,13 @@
 #include <fstream>
 
 //classes
-#include "redBlackTree.h";
+#include "redBlackTree.h"
 
 //create std shortcut
 using namespace std;
 
 //Function Prototypes
+void instructions();
 int askCommand();
 void addNodesManually(redBlackTree* & tree);
 void addNodesByFile(redBlackTree* & tree);

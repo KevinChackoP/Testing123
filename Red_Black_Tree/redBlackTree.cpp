@@ -14,7 +14,7 @@
 */
 
 //imports
-#include "RedBlackTree.h"
+#include "redBlackTree.h"
 
 //Constructor for redBlackTree class
 redBlackTree::redBlackTree() {
@@ -24,7 +24,7 @@ redBlackTree::redBlackTree() {
 //Destructor for redBlackTree class
 redBlackTree::~redBlackTree() {
   deleteTreeStep(root);
-  root = NULL
+  root = NULL;
 }
 
 //This function will take the input given by the user and put it
@@ -34,13 +34,13 @@ void redBlackTree::addNode(int input) {
   node* newNode = new node(input);
 
   //Add the new node to the tree
-  if(tree == NULL) {
+  if(root == NULL) {
     //If the tree root node is null, set the new node to be the root node
-    tree = newNode;
+    root = newNode;
     
   } else {
     //go down tree until the new node is added to correct place in tree
-    node* indexNode = tree;
+    node* indexNode = root;
     bool added = false;
     int steps = 0;
 
@@ -50,17 +50,8 @@ void redBlackTree::addNode(int input) {
 	//if the new node is smaller than the index node...
 	if(indexNode -> getLeft() == NULL) {
 	  //and the left node is NULL, set the new node to the left child node
-	  if(steps < 2) {
-	    //make changes to root node instead of index node because it will
-	    //be the new child of the root
-	    tree -> setLeft(newNode);
-	    added = true;
-
-	  } else {
-	    //make it the left child of the index node
-	    indexNode -> setLeft(newNode);
-	    added = true;
-	  }
+	  indexNode -> setLeft(newNode);
+	  added = true;
 	} else {
 	  //otherwise, set the index node to its left child node
 	  indexNode = indexNode -> getLeft();
@@ -71,17 +62,8 @@ void redBlackTree::addNode(int input) {
 	if(indexNode -> getRight() == NULL) {
 	  //and the right node is NULL, set the new node to the right
 	  //child node
-	  if(steps < 2) {
-	    //make changes to root node instead of index node because it will
-	    //be the new child of the root
-	    tree -> setRight(newNode);
-	    added = true;
-
-	  } else {
-	    //make it the right child of the index node
-	    indexNode -> setRight(newNode);
-	    added = true;
-	  }
+	  indexNode -> setRight(newNode);
+	  added = true;
 	} else {
 	  //otherwise, set the index node to its right child node
 	  indexNode = indexNode -> getRight();
@@ -121,6 +103,8 @@ void redBlackTree::deleteNode(int target) {
 
       //fill the hole the index node will make when it's moved to the head
       if(prevIndex == index) {
+	//the removed node is the root's right child, so root is actual
+	//prevIndex
 	root -> setRight(index -> getRight());
       } else {
 	prevIndex -> setLeft(index -> getRight());
@@ -138,6 +122,8 @@ void redBlackTree::deleteNode(int target) {
 
       //fill the hole the index node will make when it's moved to the head
       if(prevIndex == index) {
+	//the removed node is the root's left child, so root is actual
+	//prevIndex
 	root -> setLeft(index -> getLeft());
       } else {
 	prevIndex -> setRight(index -> getLeft());
@@ -210,14 +196,7 @@ void redBlackTree::deleteNode(int target) {
 	    //index, have the previous index just point directly to it
 	    //and set its left child to the index's left child
 	    index -> getRight() -> setLeft(index -> getLeft());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setLeft(index -> getRight());
-	    } else {
-	      //otherwise just replace from the previous index
-	      prevIndex -> setLeft(index -> getRight());
-	    }
+	    prevIndex -> setLeft(index -> getRight());
 	  } else {
 	    //set the replacement's parent's new left child as the
 	    //replacement's right child
@@ -226,14 +205,7 @@ void redBlackTree::deleteNode(int target) {
 	    //actually replace the index node with the replacement node
 	    replacement -> setRight(index -> getRight());
 	    replacement -> setLeft(index -> getLeft());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setLeft(replacement);
-	    } else {
-	      //otherwise just replace from the previous index node
-	      prevIndex -> setLeft(replacement);
-	    }
+	    prevIndex -> setLeft(replacement);
 	  }
 	      
 	} else if(index -> getLeft() != NULL) {
@@ -252,14 +224,7 @@ void redBlackTree::deleteNode(int target) {
 	    //index, have the previous node just point directly to it
 	    //and set its right child to the index's right child
 	    index -> getLeft() -> setRight(index -> getRight());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setLeft(index -> getLeft());
-	    } else {
-	      //otherwise, just replace from the previous index
-	      prevIndex -> setLeft(index -> getLeft());
-	    }
+	    prevIndex -> setLeft(index -> getLeft());
 	  } else {
 	    //set the replacement's parent's new right child as the
 	    //replacement's left child
@@ -268,26 +233,12 @@ void redBlackTree::deleteNode(int target) {
 	    //actually replace the index node with the replacement node
 	    replacement -> setRight(index -> getRight());
 	    replacement -> setLeft(index -> getLeft());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setLeft(replacement);
-	    } else {
-	      //otherwise just replace from the previous index node
-	      prevIndex -> setLeft(replacement);
-	    }
+	    prevIndex -> setLeft(replacement);
 	  }
 
 	} else {
 	  //if both children are null, just replace with the left child
-	  if(prevIndex == root) {
-	    //if the previous index is the root, replace from the
-	    //root instead
-	    root -> setLeft(index -> getLeft());
-	  } else {
-	    //otherwise just replace from the previous index
-	    prevIndex -> setLeft(index -> getLeft());
-	  } 
+	  prevIndex -> setLeft(index -> getLeft());
 	}
 	  
       } else if(index == prevIndex -> getRight()) {
@@ -309,14 +260,7 @@ void redBlackTree::deleteNode(int target) {
 	    //index, have the previous index just point directly to it
 	    //and set its left child to the index's left child
 	    index -> getRight() -> setLeft(index -> getLeft());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setRight(index -> getRight());
-	    } else {
-	      //otherwise just replace from the previous index
-	      prevIndex -> setRight(index -> getRight());
-	    }
+	    prevIndex -> setRight(index -> getRight());
 	  } else {
 	    //set the replacement's parent's new left child as the
 	    //replacement's right child
@@ -325,14 +269,7 @@ void redBlackTree::deleteNode(int target) {
 	    //actually replace the index node with the replacement node
 	    replacement -> setRight(index -> getRight());
 	    replacement -> setLeft(index -> getLeft());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setRight(replacement);
-	    } else {
-	      //otherwise just replace from the previous index node
-	      prevIndex -> setRight(replacement);
-	    }
+	    prevIndex -> setRight(replacement);
 	  }
 	      
 	} else if(index -> getLeft() != NULL) {
@@ -351,14 +288,7 @@ void redBlackTree::deleteNode(int target) {
 	    //index, have the previous node just point directly to it
 	    //and set its right child to the index's right child
 	    index -> getLeft() -> setRight(index -> getRight());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setRight(index -> getLeft());
-	    } else {
-	      //otherwise, just replace from the previous index
-	      prevIndex -> setRight(index -> getLeft());
-	    }
+	    prevIndex -> setRight(index -> getLeft());
 	  } else {
 	    //set the replacement's parent's new right child as the
 	    //replacement's left child
@@ -367,26 +297,12 @@ void redBlackTree::deleteNode(int target) {
 	    //actually replace the index node with the replacement node
 	    replacement -> setRight(index -> getRight());
 	    replacement -> setLeft(index -> getLeft());
-	    if(prevIndex == root) {
-	      //if the previous index is the root, replace from the
-	      //root instead
-	      root -> setRight(replacement);
-	    } else {
-	      //otherwise just replace from the previous index node
-	      prevIndex -> setRight(replacement);
-	    }
+	    prevIndex -> setRight(replacement);
 	  }
 
 	} else {
 	  //if both children are null, just replace with the left child
-	  if(prevIndex == root) {
-	    //if the previous index is the root, replace from the
-	    //root instead
-	    root -> setRight(index -> getLeft());
-	  } else {
-	    //otherwise just replace from the previous index
-	    prevIndex -> setRight(index -> getLeft());
-	  } 
+	  prevIndex -> setRight(index -> getLeft());
 	}
       }
 
@@ -464,54 +380,45 @@ void redBlackTree::searchNode(int target) {
 
 //This function will print out a visual representation of the tree
 void redBlackTree::printTree() {
-  if(root != NULL) {
-    //there is stuff in the tree, so continue printing
-    printTree(root, 0);
-    cout << endl;
-    
-  } else {
-    //the root is null and nothing will print, so tell the user that
-    cout << "The tree is currently empty! Please try printing " << endl;
-    cout << "out the tree after you've added nodes to it!" << endl;
-    cout << endl;
-  }
+  //there is stuff in the tree, so start the recursive print
+  printTreeStep(root, 0);
 }
 
 //This function recursivally goes through a step of printing out the current
 //node passed in and its children
 void redBlackTree::printTreeStep(node* index, int steps) {
   //check to make sure node passed in isn't null
-  if(tree != NULL) {
+  if(index != NULL) {
     //Do a new recursion step for the right child
-    printTree(tree -> getRight(), (steps + 1));
+    printTreeStep(index -> getRight(), (steps + 1));
 
     //print the current node out, tabbing based on how many steps of recursion
     //the function is in
     for(int i = 0; i < steps; i++) {
       cout << "\t";
     }
-    cout << tree -> getInt() << endl;
+    cout << index -> getInt() << endl;
 
     //Do a new recursion step for the left child
-    printTree(tree -> getLeft(), (steps + 1));
+    printTreeStep(index -> getLeft(), (steps + 1));
   }
 }
 
 //This function recursivally deletes all the nodes in the tree
-void redBlackTree::deleteTreeStep(node* tree) {
-  if(tree != NULL) {
+void redBlackTree::deleteTreeStep(node* index) {
+  if(index != NULL) {
     //delete the children nodes
-    if(tree -> getLeft() != NULL) {
+    if(index -> getLeft() != NULL) {
       //if the left node exists, delete it
-      deleteTree(tree -> getLeft());
+      deleteTreeStep(index -> getLeft());
     }
-    if(tree -> getRight() != NULL) {
+    if(index -> getRight() != NULL) {
       //if the right node exists, delete it
-      deleteTree(tree -> getRight());
+      deleteTreeStep(index -> getRight());
     }
 
     //delete the current node
-    delete tree;
+    delete index;
   }
 }
 

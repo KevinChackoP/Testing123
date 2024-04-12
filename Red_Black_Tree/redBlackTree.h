@@ -36,8 +36,8 @@ class redBlackTree {
   void deleteNode(int target);
   void searchNode(int target);
   void printTree();
-  void printTreeStep(node* tree, int steps);
-  void deleteTreeStep(node* tree);
+  void printTreeStep(node* index, int steps);
+  void deleteTreeStep(node* index);
   bool isTreeEmpty();
 
   //Red-Black Tree functions
@@ -45,6 +45,6 @@ class redBlackTree {
  //Private variables and pointers for class
  private:
   node* root;
-}
+};
 
 #endif
