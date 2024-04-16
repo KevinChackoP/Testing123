@@ -51,6 +51,7 @@ void redBlackTree::addNode(int input) {
 	if(indexNode -> getLeft() == NULL) {
 	  //and the left node is NULL, set the new node to the left child node
 	  indexNode -> setLeft(newNode);
+	  newNode -> setParent(indexNode);
 	  added = true;
 	} else {
 	  //otherwise, set the index node to its left child node
@@ -63,6 +64,7 @@ void redBlackTree::addNode(int input) {
 	  //and the right node is NULL, set the new node to the right
 	  //child node
 	  indexNode -> setRight(newNode);
+	  newNode -> setParent(indexNode);
 	  added = true;
 	} else {
 	  //otherwise, set the index node to its right child node
@@ -70,6 +72,36 @@ void redBlackTree::addNode(int input) {
 	}
       }
     }
+  }
+
+  //Go through Red-Black Tree insertion cases
+  insertionCases(newNode);
+}
+
+//This function goes through the red-black tree cases upon insertion
+void insertionCases(node* index) {
+  //CASE 1: if the node was added to the root, set it black
+  if(index == root) {
+    index -> setBlack();
+    return;
+  }
+  
+  //CASE 2: if the parent is black, do nothing
+  if(index -> getParent() -> getColor() == 0) {
+    return;
+  } else {
+    //CASE 3: parent and uncle nodes are red
+    if(index -> getParent() -> getParent() -> getLeft() == index -> getParent) {
+      //parent is the left child of the grandparent
+      //WRITE MORE STUFF HERE
+
+    } else if(index -> getParent() -> getParent() -> getRight() == index -> getParent) {
+      //parent is the right child of the grandparent
+      //WRITE MORE STUFF HERE
+    }
+    //change parent and uncle nodes to black
+    
+    //make grandparent node red and recursivally call it through the cases
   }
 }
 
@@ -397,6 +429,15 @@ void redBlackTree::printTreeStep(node* index, int steps) {
     for(int i = 0; i < steps; i++) {
       cout << "\t";
     }
+
+    //state the color of the node first
+    if(index -> getColor() == 0) {
+      cout << "B-";
+    } else {
+      cout << "R-";
+    }
+
+    //print the value of the current node
     cout << index -> getInt() << endl;
 
     //Do a new recursion step for the left child
@@ -408,15 +449,9 @@ void redBlackTree::printTreeStep(node* index, int steps) {
 void redBlackTree::deleteTreeStep(node* index) {
   if(index != NULL) {
     //delete the children nodes
-    if(index -> getLeft() != NULL) {
-      //if the left node exists, delete it
-      deleteTreeStep(index -> getLeft());
-    }
-    if(index -> getRight() != NULL) {
-      //if the right node exists, delete it
-      deleteTreeStep(index -> getRight());
-    }
-
+    deleteTreeStep(index -> getLeft());
+    deleteTreeStep(index -> getRight());
+    
     //delete the current node
     delete index;
   }

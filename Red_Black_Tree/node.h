@@ -32,19 +32,28 @@ class node {
   
   //Node specific functions
   int getInt();
+  void setBlack();
+  void setRed();
+  int getColor();
   void setLeft(node* newLeft);
   node* getLeft();
   void setRight(node* newRight);
   node* getRight();
+  void setParent(node* newParent);
+  node* getParent();
 
  //Private variables and pointers for class
  private:
-   //node data
-   int number;
-   
-   //for node children
-   node* left;
-   node* right;
+  //node data
+  int number;
+  int color; //black = 0, red = 1
+  
+  //for node children
+  node* left;
+  node* right;
+  
+  //for node parent
+  node* parent;
 };
 
 #endif

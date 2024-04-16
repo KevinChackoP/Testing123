@@ -41,6 +41,7 @@ class redBlackTree {
   bool isTreeEmpty();
 
   //Red-Black Tree functions
+  void insertionCases(node* index);
 
  //Private variables and pointers for class
  private:

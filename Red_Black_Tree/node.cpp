@@ -20,9 +20,15 @@ node::node(int inputInt) {
   //Assign node's number based on what was passed in
   number = inputInt;
 
+  //Set the node's color to red
+  color = 1;
+
   //Set the children to null (will be set later on in program)
   left = NULL;
   right = NULL;
+
+  //Set the parent to null (will also be set later on in program)
+  parent = NULL;
 }
 
 //Destructor for node class
@@ -30,11 +36,27 @@ node::~node() {
   //set the nodes the node points to to NULL
   left = NULL;
   right = NULL;
+  parent = NULL;
 }
 
 //node value getter
 int node::getInt() {
   return number;
+}
+
+//node color black setter
+void node::setBlack() {
+  color = 0;
+}
+
+//node color red setter
+void node::setRed() {
+  color = 1;
+}
+
+//node color getter
+int node::getColor() {
+  return color;
 }
 
 //left node setter
@@ -55,4 +77,14 @@ void node::setRight(node* newRight) {
 //right node getter
 node* node::getRight() {
   return right;
+}
+
+//parent node setter
+void node::setParent(node* newParent) {
+  parent = newParent;
+}
+
+//parent node getter
+node* node::getParent() {
+  return parent;
 }
