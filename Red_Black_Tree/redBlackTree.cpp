@@ -79,7 +79,7 @@ void redBlackTree::addNode(int input) {
 }
 
 //This function goes through the red-black tree cases upon insertion
-void insertionCases(node* index) {
+void redBlackTree::insertionCases(node* index) {
   //CASE 1: if the node was added to the root, set it black
   if(index == root) {
     index -> setBlack();
@@ -90,18 +90,88 @@ void insertionCases(node* index) {
   if(index -> getParent() -> getColor() == 0) {
     return;
   } else {
-    //CASE 3: parent and uncle nodes are red
-    if(index -> getParent() -> getParent() -> getLeft() == index -> getParent) {
-      //parent is the left child of the grandparent
-      //WRITE MORE STUFF HERE
-
-    } else if(index -> getParent() -> getParent() -> getRight() == index -> getParent) {
-      //parent is the right child of the grandparent
-      //WRITE MORE STUFF HERE
+    //Parent is red, so it must have a parent itself that is black
+    node* parent = index -> getParent();
+    node* grandparent = index -> getParent() -> getParent();
+    node* uncle;
+    bool parentLeft = false;
+    bool indexLeft = false;
+    if(parent == grandparent -> getLeft()) {
+      //if the parent is the left child of the grandparent, set the uncle
+      //as the right child and mark the parent as the left child
+      uncle = grandparent -> getRight();
+      parentLeft = true;
+    } else if(parent == grandparent -> getRight()) {
+      //if the parent is the right child of the grandparent, set the uncle
+      //as the left child and mark the parent as not the left child (so it's
+      //the right child)
+      uncle = grandparent -> getLeft();
+      parentLeft = false;
     }
-    //change parent and uncle nodes to black
+    if(index == parent -> getLeft()) {
+      //the current node is the left child of the parent, so mark it as that
+      indexLeft = true;
+    } else if(index == parent -> getRight()) {
+      //the current node is the right child of the parent, so mark it as not
+      //the left child (so therefore the right child)
+      indexLeft = false;
+    }
     
-    //make grandparent node red and recursivally call it through the cases
+    if(uncle != NULL) {
+      //CASE 3: parent and uncle nodes are red
+      if(uncle -> getColor() == 1) {
+	//change parent and uncle nodes to black
+	parent -> setBlack();
+	uncle -> setBlack();
+    
+	//make grandparent node red and recursivally call it through the cases
+	grandparent -> setRed();
+	insertionCases(grandparent);
+	return;
+      } else if(uncle -> getColor() == 0) {
+	//CASE 4: parent is red while uncle is black (exists case)
+	//AND parent is left while node is right or parent is right while
+	//node is left
+	if(parentLeft && !(indexLeft)) {
+	  rightRotation(parent);
+
+	} else if(!(parentLeft) && indexLeft) {
+	  leftRotation(parent);
+	}
+	insertionCases(parent);
+
+	//CASE 5: parent is red while uncle is black (exists case)
+	//AND parent is left and node is left or parent is right while
+	//node is right
+	if(parentLeft && indexLeft) {
+	  rightRotation(grandparent);
+
+	} else if(!(parentLeft) && !(indexLeft)) {
+	  leftRotation(grandparent);
+	}
+      }
+    } else {
+      //CASE 4: parent is red while uncle is black (is NULL case)
+      //AND parent is left while node is right or parent is right while
+      //node is left
+      if(parentLeft && !(indexLeft)) {
+	rightRotation(parent);
+
+      } else if(!(parentLeft) && indexLeft) {
+	leftRotation(parent);
+      }
+      insertionCases(parent);
+
+      //CASE 5: parent is red while uncle is black (is NULL case)
+      //AND parent is left and node is left or parent is right while
+      //node is right
+      if(parentLeft && indexLeft) {
+	rightRotation(grandparent);
+
+      } else if(!(parentLeft) && !(indexLeft)) {
+	leftRotation(grandparent);
+      }
+    }
   }
 }
 
