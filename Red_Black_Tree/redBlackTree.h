@@ -42,6 +42,8 @@ class redBlackTree {
 
   //Red-Black Tree functions
   void insertionCases(node* index);
+  void rightRotation(node* pivot);
+  void leftRotation(node* pivot);
 
  //Private variables and pointers for class
  private:

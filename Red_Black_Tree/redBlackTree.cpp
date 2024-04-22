@@ -138,6 +138,7 @@ void redBlackTree::insertionCases(node* index) {
 	} else if(!(parentLeft) && indexLeft) {
 	  leftRotation(parent);
 	}
+	//Run recursion cases on parent (will lead into case 5)
 	insertionCases(parent);
 
 	//CASE 5: parent is red while uncle is black (exists case)
@@ -149,6 +150,9 @@ void redBlackTree::insertionCases(node* index) {
 	} else if(!(parentLeft) && !(indexLeft)) {
 	  leftRotation(grandparent);
 	}
+	//swap colors of parent and grandparent
+	parent -> setBlack();
+	grandparent -> setRed();
       }
     } else {
       //CASE 4: parent is red while uncle is black (is NULL case)
@@ -160,6 +164,7 @@ void redBlackTree::insertionCases(node* index) {
       } else if(!(parentLeft) && indexLeft) {
 	leftRotation(parent);
       }
+      //Run recursion cases on parent (will lead into case 5)
       insertionCases(parent);
 
       //CASE 5: parent is red while uncle is black (is NULL case)
@@ -171,6 +176,63 @@ void redBlackTree::insertionCases(node* index) {
       } else if(!(parentLeft) && !(indexLeft)) {
 	leftRotation(grandparent);
       }
+      //swap colors of parent and grandparent
+      parent -> setBlack();
+      grandparent -> setRed();
+    }
+  }
+}
+
+//This function will rotate the tree right at the pivot node
+void redBlackTree::rightRotation(node* pivot) {
+  //make local variables for nodes involved in rotation
+  node* parent = pivot -> getParent();
+  node* leftChild = pivot -> getLeft();
+
+  //move pivot right
+  pivot -> setLeft(leftChild -> getRight());
+  if(pivot -> getLeft() != NULL) {
+    pivot -> getLeft() -> setParent(pivot);
+  }
+  pivot -> setParent(leftChild);
+
+  //move left child of pivot up
+  leftChild -> setRight(pivot);
+  leftChild -> setParent(parent);
+
+  //make pivot's parent's new left/right child the pivot's left child
+  if(parent != NULL) {
+    if(parent -> getLeft() == pivot) {
+      parent -> setLeft(leftChild);
+    } else if(parent -> getRight() == pivot) {
+      parent -> setRight(leftChild);
+    }
+  }
+}
+
+//This function will rotate the tree left at the pivot node
+void redBlackTree::leftRotation(node* pivot) {
+  //make local variables for nodes involved in rotation
+  node* parent = pivot -> getParent();
+  node* rightChild = pivot -> getRight();
+
+  //move pivot left
+  pivot -> setRight(rightChild -> getLeft());
+  if(pivot -> getRight() != NULL) {
+    pivot -> getRight() -> setParent(pivot);
+  }
+  pivot -> setParent(rightChild);
+
+  //move right child of pivot up
+  rightChild -> setLeft(pivot);
+  rightChild -> setParent(parent);
+
+  //make pivot's parent's new left/right child the pivot's right child
+  if(parent != NULL) {
+    if(parent -> getLeft() == pivot) {
+      parent -> setLeft(rightChild);
+    } else if(parent -> getRight() == pivot) {
+      parent -> setRight(rightChild);
     }
   }
 }
