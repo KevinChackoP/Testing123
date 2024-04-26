@@ -148,13 +148,19 @@ void redBlackTree::insertionCases(node* index) {
 	if(parentLeft && indexLeft) {
 	  rightRotation(grandparent);
 
+	  //swap colors of parent and grandparent
+	  parent -> setBlack();
+	  grandparent -> setRed();
+
 	} else if(!(parentLeft) && !(indexLeft)) {
 	  leftRotation(grandparent);
+
+	  //swap colors of parent and grandparent
+	  parent -> setBlack();
+	  grandparent -> setRed();
 	}
-	//swap colors of parent and grandparent
-	parent -> setBlack();
-	grandparent -> setRed();
       }
+      
     } else {
       //CASE 4: parent is red while uncle is black (is NULL case)
       //AND parent is left while node is right or parent is right while
@@ -173,28 +179,27 @@ void redBlackTree::insertionCases(node* index) {
       //node is right
       if(parentLeft && indexLeft) {
 	rightRotation(grandparent);
+	
+	//swap colors of parent and grandparent
+	parent -> setBlack();
+	grandparent -> setRed();
 
       } else if(!(parentLeft) && !(indexLeft)) {
 	leftRotation(grandparent);
+
+	//swap colors of parent and grandparent
+	parent -> setBlack();
+	grandparent -> setRed();
       }
-      //swap colors of parent and grandparent
-      parent -> setBlack();
-      grandparent -> setRed();
     }
   }
 }
 
 //This function will rotate the tree right at the pivot node
 void redBlackTree::rightRotation(node* pivot) {
-  cout << "In right rotation function!" << endl;
-  
   //make local variables for nodes involved in rotation
   node* parent = pivot -> getParent();
   node* leftChild = pivot -> getLeft();
-
-  cout << "Pivot: " << pivot -> getInt() << endl;
-  cout << "Parent: " << parent -> getInt() << endl;
-  cout << "Left Child: " << leftChild -> getInt() << endl;
 
   //move pivot right
   pivot -> setLeft(leftChild -> getRight());
@@ -220,14 +225,10 @@ void redBlackTree::rightRotation(node* pivot) {
   if(pivot == root) {
     root = leftChild;
   }
-
-  cout << "Exiting right rotation function!" << endl;
 }
 
 //This function will rotate the tree left at the pivot node
 void redBlackTree::leftRotation(node* pivot) {
-  cout << "In left rotation function!" << endl;
-  
   //make local variables for nodes involved in rotation
   node* parent = pivot -> getParent();
   node* rightChild = pivot -> getRight();
@@ -256,8 +257,6 @@ void redBlackTree::leftRotation(node* pivot) {
   if(pivot == root) {
     root = rightChild;
   }
-
-  cout << "Exiting left rotation function!" << endl;
 }
 
 //This function will attempt to remove a node of the inputted number
