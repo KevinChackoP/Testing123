@@ -1,7 +1,20 @@
 /* 
-   This project...
+   This project creates a red-black tree that the user can interact with via 
+   commands. The tree can hold nodes of values 1-999 (inclusive) and will 
+   have a left child, right child, and parent, along with a red or black value.
+   The red black tree will follow these principles: a node is either red or 
+   black, the root is black, all leaves (NULL children) are black, both 
+   children of every red node are black, every simple path from a given node to
+   any of its descendant leaves contains the same number of black nodes. The 
+   user can interact with the tree by add nodes manually, adding nodes via a 
+   file of space seperated numbers, they can search to see if a node is in the 
+   tree, they can delete a node from the tree, and they can print out a 
+   visualization of the tree. Whatever they do to the tree, the tree will 
+   try to automatically balance itself so that there aren't much more nodes 
+   down certain paths of the tree over other paths. This tree however assumes 
+   that all nodes are unique with no repeating numbers. 
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 4/30/2024
    Period 6, C++ / Data Structures
 */
 
@@ -18,7 +31,15 @@
   Binary_Search_Tree project and modified them to better fit the red-black.
   The same also goes for what I made my structure of this main.cpp file.
 
-  ADD MORE CITATIONS HERE!!!
+  In going through how to program my red-black tree's processes and insertion 
+  cases, I got help from Algorithm Tutor's article on "Red Black Trees (with 
+  implementation in C++, Java, and Python)". 
+  URL: https://algorithmtutor.com/Data-Structures/Tree/Red-Black-Trees/
+  This offers a step-by-step explaination of the processes red-black tree 
+  uses for its different cases while also offering some sudo-code to follow 
+  to make my program. This helped me immensely in visualizing tree rotations 
+  and in the steps my insertion process has to go through in order to properly 
+  insert a new node into the tree.
 */
 
 //imports
@@ -54,13 +75,13 @@ int main() {
   //Tell the user how the program works
   instructions();
 
-  //Put them through the loop of interacting with the binary search tree
+  //Put them through the loop of interacting with the red-black tree
   //until they are done with it
   while(inUse) {
     //ask the user to choose a command
     commandKey = askCommand();
 
-    //Based on their command, do something with the binary search tree or
+    //Based on their command, do something with the red-black tree or
     //quit the program
     if(commandKey == 1) {
       //If they want to add nodes to the tree manually, do so
@@ -92,6 +113,7 @@ int main() {
 	//Ask the user for a number input
 	cout << "What is the node value for the node you would like to " << endl;
 	cout << "delete from the tree?" << endl;
+	
 	int userInput = nodeInput();
 	redBlack -> deleteNode(userInput);
       }
@@ -112,6 +134,7 @@ int main() {
 	//Ask the user for a number input
 	cout << "What is the node value for the node you would like to " << endl;
 	cout << "search for in the tree?" << endl;
+	
 	int userInput = nodeInput();
 	redBlack -> searchNode(userInput);
       }

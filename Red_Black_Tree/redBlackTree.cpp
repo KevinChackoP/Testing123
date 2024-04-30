@@ -3,7 +3,7 @@
   RedBlackTree class. It has all the functions that will be used to make 
   and interact with the red-black tree.
   Author: Kevin Chacko
-  Last Updated: WRITE END DATE HERE
+  Last Updated: 4/30/2024
   Period 5, C++ / Data Structures
 */
 
@@ -611,10 +611,13 @@ void redBlackTree::deleteTreeStep(node* index) {
   }
 }
 
+//This function checks if the tree is empty and returns true if it is
 bool redBlackTree::isTreeEmpty() {
   if(root == NULL) {
+    //the root's null, so the tree is too!
     return true;
   } else {
+    //the root isn't null, so the tree shouldn't be empty.
     return false;
   }
 }
