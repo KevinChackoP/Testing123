@@ -39,6 +39,11 @@ node::~node() {
   parent = NULL;
 }
 
+//node value setter
+void node::setInt(int newValue) {
+  number = newValue;
+}
+
 //node value getter
 int node::getInt() {
   return number;

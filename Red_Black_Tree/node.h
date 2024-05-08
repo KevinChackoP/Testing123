@@ -31,6 +31,7 @@ class node {
   ~node();
   
   //Node specific functions
+  void setInt(int newValue);
   int getInt();
   void setBlack();
   void setRed();

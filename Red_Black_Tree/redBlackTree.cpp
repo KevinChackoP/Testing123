@@ -294,7 +294,7 @@ void redBlackTree::deleteNode(int target) {
       //mark the target as found in the tree
       targetFound = true;
 
-      //fill the hole the index node would create in the tree
+      //Find the replacement for the index node
       if(index == index -> getParent() -> getLeft()) {
 	//if the index node is the left child of its parent, replace
 	//the parent's left child with one of the index's children
@@ -305,24 +305,13 @@ void redBlackTree::deleteNode(int target) {
 	  while(replacement -> getLeft() != NULL) {
 	    replacement = replacement -> getLeft();
 	  }
-	      
-	  //fill the hole the replacement will make when it's moved
-	  if(replacement == index -> getRight()) {
-	    //if the best replacement is just the right child of the
-	    //index, have the index's parent just point directly to it
-	    //and set its left child to the index's left child
-	    replacement -> setLeft(index -> getLeft());
-	    index -> getParent() -> setLeft(index -> getRight());
-	  } else {
-	    //set the replacement's parent's new left child as the
-	    //replacement's right child
-	    replacement -> getParent() -> setLeft(replacement -> getRight());
 
-	    //actually replace the index node with the replacement node
-	    replacement -> setRight(index -> getRight());
-	    replacement -> setLeft(index -> getLeft());
-	    index -> getParent() -> setLeft(replacement);
-	  }
+	  //replace the index node's value with the replacement node's value
+	  index -> setInt(replacement -> getInt());
+
+	  //run red-black tree deletion cases on replacement node to actually
+	  //delete the replacement node and maintain red-black tree rules
+	  deletionCases(replacement);
 	      
 	} else if(index -> getLeft() != NULL) {
 	  //if the right child is null but left child isn't null, replace
@@ -331,28 +320,17 @@ void redBlackTree::deleteNode(int target) {
 	  while(replacement -> getRight() != NULL) {
 	    replacement = replacement -> getRight();
 	  }
-	      
-	  //fill the hole the replacement will make when it's moved
-	  if(replacement == index -> getLeft()) {
-	    //if the best replacement is just the left child of the
-	    //index, have the index's parent just point directly to it
-	    //and set its right child to the index's right child
-	    replacement -> setRight(index -> getRight());
-	    index -> getParent() -> setLeft(index -> getLeft());
-	  } else {
-	    //set the replacement's parent's new right child as the
-	    //replacement's left child
-	    replacement -> getParent -> setRight(replacement -> getLeft());
 
-	    //actually replace the index node with the replacement node
-	    replacement -> setRight(index -> getRight());
-	    replacement -> setLeft(index -> getLeft());
-	    index -> getParent() -> setLeft(replacement);
-	  }
+	  //replace the index node's value with the replacement node's value
+	  index -> setInt(replacement -> getInt());
+
+	  //run red-black tree deletion cases on replacement node to actually
+	  //delete the replacement node and maintain red-black tree rules
+	  deletionCases(replacement);
 
 	} else {
-	  //if both children are null, just replace with the left child
-	  index -> getParent() -> setLeft(index -> getLeft());
+	  //if both children are null, just run deletion cases on the index
+	  deletionCases(index);
 	}
 	  
       } else if(index == index -> getParent() -> getRight()) {
@@ -365,24 +343,13 @@ void redBlackTree::deleteNode(int target) {
 	  while(replacement -> getLeft() != NULL) {
 	    replacement = replacement -> getLeft();
 	  }
-	      
-	  //fill the hole the replacement will make when it's moved
-	  if(replacement == index -> getRight()) {
-	    //if the best replacement is just the right child of the
-	    //index, have the index's parent just point directly to it
-	    //and set its left child to the index's left child
-	    replacement -> setLeft(index -> getLeft());
-	    index -> getParent() -> setRight(index -> getRight());
-	  } else {
-	    //set the replacement's parent's new left child as the
-	    //replacement's right child
-	    replacement -> getParent() -> setLeft(replacement -> getRight());
 
-	    //actually replace the index node with the replacement node
-	    replacement -> setRight(index -> getRight());
-	    replacement -> setLeft(index -> getLeft());
-	    index -> getParent() -> setRight(replacement);
-	  }
+	  //replace the index node's value with the replacement node's value
+	  index -> setInt(replacement -> getInt());
+
+	  //run red-black tree deletion cases on replacement node to actually
+	  //delete the replacement node and maintain red-black tree rules
+	  deletionCases(replacement);
 	      
 	} else if(index -> getLeft() != NULL) {
 	  //if the right child is null but left child isn't null, replace
@@ -391,33 +358,19 @@ void redBlackTree::deleteNode(int target) {
 	  while(replacement -> getRight() != NULL) {
 	    replacement = replacement -> getRight();
 	  }
-	      
-	  //fill the hole the replacement will make when it's moved
-	  if(replacement == index -> getLeft()) {
-	    //if the best replacement is just the left child of the
-	    //index, have the index's parent just point directly to it
-	    //and set its right child to the index's right child
-	    replacement -> setRight(index -> getRight());
-	    index -> getParent() -> setRight(index -> getLeft());
-	  } else {
-	    //set the replacement's parent's new right child as the
-	    //replacement's left child
-	    replacement -> getParent() -> setRight(replacement -> getLeft());
 
-	    //actually replace the index node with the replacement node
-	    replacement -> setRight(index -> getRight());
-	    replacement -> setLeft(index -> getLeft());
-	    index -> getParent() -> setRight(replacement);
-	  }
+	  //replace the index node's value with the replacement node's value
+	  index -> setInt(replacement -> getInt());
 
+	  //run red-black tree deletion cases on replacement node to actually
+	  //delete the replacement node and maintain red-black tree rules
+	  deletionCases(replacement);
+	  
 	} else {
-	  //if both children are null, just replace with the left child
-	  index -> getParent() -> setRight(index -> getLeft());
+	  //if both children are null, just run deletion cases on the index
+	  deletionCases(index);
 	}
       }
-
-      //actually delete the index node
-      delete index;
 
     } else {
       //otherwise, go down the tree further
@@ -434,18 +387,67 @@ void redBlackTree::deleteNode(int target) {
     }
   }
 
-  //If the index has no parent, signalling that it is at the root, make
-  //it the new root of the tree
-  if(index -> getParent == NULL && targetFound) {
-    root = index;
-  }
-
   //check to see if the target value was found and deleted in the tree
   if(!(targetFound)) {
     //if it wasn't, let the user know
     cout << target << " was NOT found in the tree and thus it " << endl;
     cout << "couldn't be deleted from the tree." << endl;
     cout << endl;
+  }
+}
+
+//This function goes through the red-black tree cases upon insertion
+void redBlackTree::deletionCases(node* & index) {
+  if(index -> getLeft() != NULL) {
+    //continue deletion process with the left child
+    if(index -> getColor() == 1) {
+      //Case 1:
+      //if the index is red, delete it and replace it with its left child
+      if(index == index -> getParent() -> getLeft()) {
+	index -> getParent() -> setLeft(index -> getLeft());
+      } else if(index == index -> getParent() -> getRight()) {
+	index -> getParent() -> setRight(index -> getLeft());
+      }
+    } else if(index -> getLeft() -> getColor() == 1) {
+      //if the index is black but the left child is red, make the left child
+      //black before having it replace the index node
+      //WRITE MORE HERE
+    } else {
+      //if the index and its child are black, run double black deletion cases
+      doubleBlackDeletionCases(index);
+    }
+
+  } else if(index -> getRight() != NULL) {
+    //continue deletion process with the right child
+    //WRITE MORE HERE
+    
+  } else {
+    //continue deletion process with black child being null
+    if(index -> getColor() == 1) {
+      //Case 1: 
+      //if the index is red, delete index node and replace it with null child
+      if(index == index -> getParent() -> getLeft()) {
+	index -> getParent() -> setLeft(NULL);
+      } else if(index == index -> getParent() -> getRight()) {
+	index -> getParent() -> setRight(NULL);
+      }
+
+      delete index;
+      
+    } else if(index -> getColor() == 0) {
+      //if the index is black, first check if it has a parent
+      if(index -> getParent() == NULL) {
+	//if its parent is null that means it must be the root, so just
+	//delete it and make the root null, signalling that the tree is empty
+	delete index;
+	root = NULL;
+	
+      } else {
+	//if its parent isn't null, continue with double black cases
+	//Case 3:
+	doubleBlackDeletionCases(index);
+      }
+    }
   }
 }
 
