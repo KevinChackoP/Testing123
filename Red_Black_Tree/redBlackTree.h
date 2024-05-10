@@ -45,7 +45,7 @@ class redBlackTree {
   void rightRotation(node* pivot);
   void leftRotation(node* pivot);
   void deletionCases(node* & index);
-  void doubleBlackDeletionCases(node* & index);
+  void doubleBlackDeletionCases(node* parent, bool leftChild, node* sibling, node* closeNephew, node* farNephew);
 
  //Private variables and pointers for class
  private:

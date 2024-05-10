@@ -405,21 +405,64 @@ void redBlackTree::deletionCases(node* & index) {
       //if the index is red, delete it and replace it with its left child
       if(index == index -> getParent() -> getLeft()) {
 	index -> getParent() -> setLeft(index -> getLeft());
+	index -> getLeft() -> setParent(index -> getParent());
       } else if(index == index -> getParent() -> getRight()) {
 	index -> getParent() -> setRight(index -> getLeft());
+	index -> getLeft() -> setParent(index -> getParent());
       }
+      
+      delete index;
+      
     } else if(index -> getLeft() -> getColor() == 1) {
+      //Case 2:
       //if the index is black but the left child is red, make the left child
       //black before having it replace the index node
-      //WRITE MORE HERE
-    } else {
-      //if the index and its child are black, run double black deletion cases
-      doubleBlackDeletionCases(index);
+      index -> getLeft() -> setBlack();
+      
+      if(index == index -> getParent() -> getLeft()) {
+	index -> getParent() -> setLeft(index -> getLeft());
+	index -> getLeft() -> setParent(index -> getParent());
+      } else if(index == index -> getParent() -> getRight()) {
+	index -> getParent() -> setRight(index -> getLeft());
+	index -> getLeft() -> setParent(index -> getParent());
+      }
+      
+      delete index;
+      
     }
 
   } else if(index -> getRight() != NULL) {
     //continue deletion process with the right child
-    //WRITE MORE HERE
+    if(index -> getColor() == 1) {
+      //Case 1:
+      //if the index is red, delete it and replace it with its right child
+      if(index == index -> getParent() -> getLeft()) {
+	index -> getParent() -> setLeft(index -> getRight());
+	index -> getRight() -> setParent(index -> getParent());
+      } else if(index == index -> getParent() -> getRight()) {
+	index -> getParent() -> setRight(index -> getRight());
+	index -> getRight() -> setParent(index -> getParent());
+      }
+      
+      delete index;
+      
+    } else if(index -> getRight() -> getColor() == 1) {
+      //Case 2:
+      //if the index is black but the right child is red, make the right child
+      //black before having it replace the index node
+      index -> getright() -> setBlack();
+      
+      if(index == index -> getParent() -> getLeft()) {
+	index -> getParent() -> setLeft(index -> getRight());
+	index -> getRight() -> setParent(index -> getParent());
+      } else if(index == index -> getParent() -> getRight()) {
+	index -> getParent() -> setRight(index -> getRight());
+	index -> getRight() -> setParent(index -> getParent());
+      }
+      
+      delete index;
+      
+    }
     
   } else {
     //continue deletion process with black child being null
@@ -445,9 +488,43 @@ void redBlackTree::deletionCases(node* & index) {
       } else {
 	//if its parent isn't null, continue with double black cases
 	//Case 3:
+	//Find the parent, sibling, close nephew, and far nephew of the node
+	//before deleting the node
+	node* parent = index -> getParent();
+	bool leftChild = false;
+	node* sibling;
+	node* closeNephew;
+	node* farNephew;
+
+	if(parent -> getLeft() == index) {
+	  leftChild = true;
+	  sibling = parent -> getRight();
+	  closeNephew = sibling -> getLeft();
+	  farNephew = sibling -> getRight();
+	  parent -> setLeft() = NULL;
+	  
+	} else if(parent -> getRight() == index) {
+	  leftChild = false;
+	  sibling = parent -> getLeft();
+	  closeNephew = sibling -> getRight();
+	  farNephew = sibling -> getLeft();
+	  parent -> setRight() = NULL;
+	}
+
+	delete index;
+	index = NULL;
 	doubleBlackDeletionCases(index);
       }
     }
+  }
+}
+
+//This function will recursively fix the tree for the double black deletion
+//case before deleting the double black node
+void redBlackTree::doubleBlackDeletionCases(node* parent, bool leftChild, node* sibling, node* closeNephew, node* farNephew) {
+  //Case 1: the index is now the new root of the tree
+  if(parent == NULL) {
+
   }
 }
 
