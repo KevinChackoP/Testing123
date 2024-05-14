@@ -486,34 +486,16 @@ void redBlackTree::deletionCases(node* & index) {
 	root = NULL;
 	
       } else {
-	//if its parent isn't null, continue with double black cases
 	//Case 3:
-	//Find the parent, sibling, close nephew, and far nephew of the node
-	//before deleting the node
-	node* parent = index -> getParent();
-	bool leftChild = false;
-	node* sibling;
-	node* closeNephew;
-	node* farNephew;
+	//both the index node and its child node (a null node) are black
+	//so when we delete it, it creates a double black node
 
-	if(parent -> getLeft() == index) {
-	  leftChild = true;
-	  sibling = parent -> getRight();
-	  closeNephew = sibling -> getLeft();
-	  farNephew = sibling -> getRight();
-	  parent -> setLeft() = NULL;
-	  
-	} else if(parent -> getRight() == index) {
-	  leftChild = false;
-	  sibling = parent -> getLeft();
-	  closeNephew = sibling -> getRight();
-	  farNephew = sibling -> getLeft();
-	  parent -> setRight() = NULL;
-	}
+	//fix the tree that was messed up due to the double black case
+	doubleBlackDeletionCases(index);
 
+	//delete the node after the tree has been fixed
 	delete index;
 	index = NULL;
-	doubleBlackDeletionCases(index);
       }
     }
   }
@@ -521,11 +503,79 @@ void redBlackTree::deletionCases(node* & index) {
 
 //This function will recursively fix the tree for the double black deletion
 //case before deleting the double black node
-void redBlackTree::doubleBlackDeletionCases(node* parent, bool leftChild, node* sibling, node* closeNephew, node* farNephew) {
+void redBlackTree::doubleBlackDeletionCases(node* index) {
+  //Find the parent, sibling, close nephew, and far nephew of the index node
+  //to help with fixing the tree
+  node* parent = index -> getParent();
+  bool leftChild = false;
+  node* sibling;
+  node* closeNephew;
+  node* farNephew;
+
+  if(parent -> getLeft() == index) {
+    leftChild = true;
+    sibling = parent -> getRight();
+    closeNephew = sibling -> getLeft();
+    farNephew = sibling -> getRight();
+    parent -> setLeft() = NULL;
+	  
+  } else if(parent -> getRight() == index) {
+    leftChild = false;
+    sibling = parent -> getLeft();
+    closeNephew = sibling -> getRight();
+    farNephew = sibling -> getLeft();
+    parent -> setRight() = NULL;
+  }
+  
   //Case 1: the index is now the new root of the tree
   if(parent == NULL) {
+    root = index;
 
+    //Base case
+    return;
   }
+
+  //Case 2: the index's parent, sibling, and nephews are all black, so just
+  //recolor the sibling to be red and recursivally call through parent
+  if(parent -> getColor() == 0 && sibling -> getColor() == 0 && closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
+    sibling -> setRed();
+    doubleBlackDeletionCases(parent);
+    
+    return;
+  }
+
+  //Case 3: The sibling is red and therefore the parent and the siblings'
+  //children are black, so rotate the parent toward the index node and
+  //color the rotated parent red and the rotated sibling black
+  if(sibling -> getColor() == 1) {
+    if(leftChild) {
+      //if the index is the left child, rotate from the parent left
+      leftRotation(parent);
+    } else {
+      //otherwise rotate the parent right
+      rightRotation(parent);
+    }
+
+    parent -> setRed();
+    sibling -> setBlack();
+
+    //To finish, recursivally call through index
+    doubleBlackDeletionCases(index);
+
+    return;
+  }
+
+  //Case 4: The parent is red but the sibling and it's children are black, so
+  //just make the parent black and the sibling red and you're done
+  if(parent -> getColor() == 1 && sibling -> getColor() == 0 && closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
+    parent -> setBlack();
+    sibling -> setRed();
+
+    //Base case
+    return;
+  }
+
+  //Case 5: 
 }
 
 //This function will attempt to find a node of the inputted number
