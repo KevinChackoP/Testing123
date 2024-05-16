@@ -494,6 +494,14 @@ void redBlackTree::deletionCases(node* & index) {
 	doubleBlackDeletionCases(index);
 
 	//delete the node after the tree has been fixed
+	//MAKE SURE THAT THIS PART DOES SEG FAULT AND THAT YOU PROPERLY DELETE
+	//THE INDEX NODE AFTER YOU FIX THE TREE
+	node* parent = index -> getParent();
+	if(parent -> getLeft() == index) {
+	  parent -> setLeft(NULL);
+	} else if(parent -> getRight() == index) {
+	  parent -> setRight(NULL);
+	}
 	delete index;
 	index = NULL;
       }
@@ -511,6 +519,9 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
   node* sibling;
   node* closeNephew;
   node* farNephew;
+
+  //KEEP IN MIND THAT THE NEPHEWS CAN BE NULL SO YOU'LL NEED TO ADJUST YOUR
+  //CHECKS TO FIRST MAKE SURE THEY AREN'T NULL
 
   if(parent -> getLeft() == index) {
     leftChild = true;
@@ -575,7 +586,53 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
     return;
   }
 
-  //Case 5: 
+  //Case 5: The sibiling is black and the close nephew is red while the far
+  //nephew is black, so rotate the sibling node away from index node and
+  //and recolor the sibling to be red and the close nephew to be black
+  if(sibling -> getColor() == 0 && closeNephew -> getColor() == 1 && farNephew -> getColor() == 0) {
+    if(leftChild) {
+      //if the index is the left child, rotate from the sibling right
+      rightRotation(sibling);
+    } else {
+      //otherwise rotate the sibling child left
+      leftRotation(parent);
+    }
+
+    sibling -> setRed();
+    closeNephew -> setBlack();
+
+    //To finish, recursivally call through index
+    doubleBlackDeletionCases(index);
+
+    return;
+  }
+
+  //Case 6: The sibling is black and the far nephew is red, so to finish fixing
+  //the tree do a rotation at the parent toward the index node and recolor by
+  //making the parent black, making the sibling whatever the parent was before,
+  //and making the far nephew black
+  if(sibling -> getColor() == 0 && closeNephew -> getColor() == 1 && farNephew -> getColor() == 0) {
+    if(leftChild) {
+      //if the index is the left child, rotate from the sibling right
+      rightRotation(sibling);
+    } else {
+      //otherwise rotate the sibling child left
+      leftRotation(parent);
+    }
+
+    if(parent -> getColor() == 0) {
+      //if the parent was black, make the sibling black
+      sibling -> setBlack();
+    } else {
+      //otherwise make the sibling red
+      sibling -> setRed();
+    }
+    parent -> setBlack();
+    farNephew -> setBlack();
+
+    //Base case
+    return;
+  }
 }
 
 //This function will attempt to find a node of the inputted number
