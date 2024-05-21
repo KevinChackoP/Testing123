@@ -295,81 +295,39 @@ void redBlackTree::deleteNode(int target) {
       targetFound = true;
 
       //Find the replacement for the index node
-      if(index == index -> getParent() -> getLeft()) {
-	//if the index node is the left child of its parent, replace
-	//the parent's left child with one of the index's children
-	if(index -> getRight() != NULL) {
-	  //if the right child isn't null, replace with the right child
-	  //or the right child's leftmost child
-	  node* replacement = index -> getRight();
-	  while(replacement -> getLeft() != NULL) {
-	    replacement = replacement -> getLeft();
-	  }
-
-	  //replace the index node's value with the replacement node's value
-	  index -> setInt(replacement -> getInt());
-
-	  //run red-black tree deletion cases on replacement node to actually
-	  //delete the replacement node and maintain red-black tree rules
-	  deletionCases(replacement);
-	      
-	} else if(index -> getLeft() != NULL) {
-	  //if the right child is null but left child isn't null, replace
-	  //with the left child or the left child's rightmost child
-	  node* replacement = index -> getLeft();
-	  while(replacement -> getRight() != NULL) {
-	    replacement = replacement -> getRight();
-	  }
-
-	  //replace the index node's value with the replacement node's value
-	  index -> setInt(replacement -> getInt());
-
-	  //run red-black tree deletion cases on replacement node to actually
-	  //delete the replacement node and maintain red-black tree rules
-	  deletionCases(replacement);
-
-	} else {
-	  //if both children are null, just run deletion cases on the index
-	  deletionCases(index);
+      if(index -> getRight() != NULL) {
+	//if the right child isn't null, replace with the right child
+	//or the right child's leftmost child
+	node* replacement = index -> getRight();
+	while(replacement -> getLeft() != NULL) {
+	  replacement = replacement -> getLeft();
 	}
-	  
-      } else if(index == index -> getParent() -> getRight()) {
-	//if the index node is the right child of its parent, replace
-	//its parent's right child with one of the index's children
-	if(index -> getRight() != NULL) {
-	  //if the right child isn't null, replace with the right child
-	  //or the right child's leftmost child
-	  node* replacement = index -> getRight();
-	  while(replacement -> getLeft() != NULL) {
-	    replacement = replacement -> getLeft();
-	  }
 
-	  //replace the index node's value with the replacement node's value
-	  index -> setInt(replacement -> getInt());
+	//replace the index node's value with the replacement node's value
+	index -> setInt(replacement -> getInt());
 
-	  //run red-black tree deletion cases on replacement node to actually
-	  //delete the replacement node and maintain red-black tree rules
-	  deletionCases(replacement);
+	//run red-black tree deletion cases on replacement node to actually
+	//delete the replacement node and maintain red-black tree rules
+	deletionCases(replacement);
 	      
-	} else if(index -> getLeft() != NULL) {
-	  //if the right child is null but left child isn't null, replace
-	  //with the left child or the left child's rightmost child
-	  node* replacement = index -> getLeft();
-	  while(replacement -> getRight() != NULL) {
-	    replacement = replacement -> getRight();
-	  }
-
-	  //replace the index node's value with the replacement node's value
-	  index -> setInt(replacement -> getInt());
-
-	  //run red-black tree deletion cases on replacement node to actually
-	  //delete the replacement node and maintain red-black tree rules
-	  deletionCases(replacement);
-	  
-	} else {
-	  //if both children are null, just run deletion cases on the index
-	  deletionCases(index);
+      } else if(index -> getLeft() != NULL) {
+	//if the right child is null but left child isn't null, replace
+	//with the left child or the left child's rightmost child
+	node* replacement = index -> getLeft();
+	while(replacement -> getRight() != NULL) {
+	  replacement = replacement -> getRight();
 	}
+
+	//replace the index node's value with the replacement node's value
+	index -> setInt(replacement -> getInt());
+
+	//run red-black tree deletion cases on replacement node to actually
+	//delete the replacement node and maintain red-black tree rules
+	deletionCases(replacement);
+
+      } else {
+	//if both children are null, just run deletion cases on the index
+	deletionCases(index);
       }
 
     } else {
@@ -450,7 +408,7 @@ void redBlackTree::deletionCases(node* & index) {
       //Case 2:
       //if the index is black but the right child is red, make the right child
       //black before having it replace the index node
-      index -> getright() -> setBlack();
+      index -> getRight() -> setBlack();
       
       if(index == index -> getParent() -> getLeft()) {
 	index -> getParent() -> setLeft(index -> getRight());
@@ -494,8 +452,6 @@ void redBlackTree::deletionCases(node* & index) {
 	doubleBlackDeletionCases(index);
 
 	//delete the node after the tree has been fixed
-	//MAKE SURE THAT THIS PART DOES SEG FAULT AND THAT YOU PROPERLY DELETE
-	//THE INDEX NODE AFTER YOU FIX THE TREE
 	node* parent = index -> getParent();
 	if(parent -> getLeft() == index) {
 	  parent -> setLeft(NULL);
@@ -503,7 +459,6 @@ void redBlackTree::deletionCases(node* & index) {
 	  parent -> setRight(NULL);
 	}
 	delete index;
-	index = NULL;
       }
     }
   }
@@ -512,32 +467,13 @@ void redBlackTree::deletionCases(node* & index) {
 //This function will recursively fix the tree for the double black deletion
 //case before deleting the double black node
 void redBlackTree::doubleBlackDeletionCases(node* index) {
-  //Find the parent, sibling, close nephew, and far nephew of the index node
-  //to help with fixing the tree
+  //Define local variables to be used in deletion cases
   node* parent = index -> getParent();
   bool leftChild = false;
   node* sibling;
   node* closeNephew;
   node* farNephew;
 
-  //KEEP IN MIND THAT THE NEPHEWS CAN BE NULL SO YOU'LL NEED TO ADJUST YOUR
-  //CHECKS TO FIRST MAKE SURE THEY AREN'T NULL
-
-  if(parent -> getLeft() == index) {
-    leftChild = true;
-    sibling = parent -> getRight();
-    closeNephew = sibling -> getLeft();
-    farNephew = sibling -> getRight();
-    parent -> setLeft() = NULL;
-	  
-  } else if(parent -> getRight() == index) {
-    leftChild = false;
-    sibling = parent -> getLeft();
-    closeNephew = sibling -> getRight();
-    farNephew = sibling -> getLeft();
-    parent -> setRight() = NULL;
-  }
-  
   //Case 1: the index is now the new root of the tree
   if(parent == NULL) {
     root = index;
@@ -546,13 +482,56 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
     return;
   }
 
+  //Assign the variables values if case 1 isn't called (the parent exists!)
+  if(parent -> getLeft() == index) {
+    leftChild = true;
+    sibling = parent -> getRight();
+    closeNephew = sibling -> getLeft();
+    farNephew = sibling -> getRight();
+	  
+  } else if(parent -> getRight() == index) {
+    leftChild = false;
+    sibling = parent -> getLeft();
+    closeNephew = sibling -> getRight();
+    farNephew = sibling -> getLeft();
+  }
+
   //Case 2: the index's parent, sibling, and nephews are all black, so just
   //recolor the sibling to be red and recursivally call through parent
-  if(parent -> getColor() == 0 && sibling -> getColor() == 0 && closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
-    sibling -> setRed();
-    doubleBlackDeletionCases(parent);
+  if(parent -> getColor() == 0 && sibling -> getColor() == 0) {
+    if(closeNephew == NULL && farNephew == NULL) {
+      sibling -> setRed();
+      doubleBlackDeletionCases(parent);
+      
+      return;
+    }
     
-    return;
+    if(closeNephew != NULL) {
+      if(closeNephew -> getColor() == 0 && farNephew == NULL) {
+	sibling -> setRed();
+	doubleBlackDeletionCases(parent);
+	
+	return;
+      }
+    }
+
+    if(farNephew != NULL) {
+      if(closeNephew == NULL && farNephew -> getColor() == 0) {
+	sibling -> setRed();
+	doubleBlackDeletionCases(parent);
+	
+	return;
+      }
+    }
+
+    if(closeNephew != NULL && farNephew != NULL) {
+      if(closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
+	sibling -> setRed();
+	doubleBlackDeletionCases(parent);
+	
+	return;
+      }
+    } 
   }
 
   //Case 3: The sibling is red and therefore the parent and the siblings'
@@ -578,60 +557,117 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
 
   //Case 4: The parent is red but the sibling and it's children are black, so
   //just make the parent black and the sibling red and you're done
-  if(parent -> getColor() == 1 && sibling -> getColor() == 0 && closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
-    parent -> setBlack();
-    sibling -> setRed();
+  if(parent -> getColor() == 1 && sibling -> getColor() == 0) {
+    if(closeNephew == NULL && farNephew == NULL) {
+      parent -> setBlack();
+      sibling -> setRed();
 
-    //Base case
-    return;
+      //Base case
+      return;
+    }
+
+    if(closeNephew != NULL) {
+      if(closeNephew -> getColor() == 0 && farNephew == NULL) {
+	parent -> setBlack();
+	sibling -> setRed();
+	
+	//Base case
+	return;
+      }
+    }
+
+    if(farNephew != NULL) {
+      if(closeNephew == NULL && farNephew -> getColor() == 0) {
+	parent -> setBlack();
+	sibling -> setRed();
+	
+	//Base case
+	return;
+      }
+    }
+
+    if(closeNephew != NULL && farNephew != NULL) {
+      if(closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
+	parent -> setBlack();
+	sibling -> setRed();
+	
+	//Base case
+	return;
+      }
+    }
   }
 
   //Case 5: The sibiling is black and the close nephew is red while the far
   //nephew is black, so rotate the sibling node away from index node and
   //and recolor the sibling to be red and the close nephew to be black
-  if(sibling -> getColor() == 0 && closeNephew -> getColor() == 1 && farNephew -> getColor() == 0) {
-    if(leftChild) {
-      //if the index is the left child, rotate from the sibling right
-      rightRotation(sibling);
-    } else {
-      //otherwise rotate the sibling child left
-      leftRotation(parent);
+  if(sibling -> getColor() == 0 && closeNephew != NULL) {
+    if(closeNephew -> getColor() == 1) {
+      if(farNephew == NULL) {
+	if(leftChild) {
+	  //if the index is the left child, rotate from the sibling right
+	  rightRotation(sibling);
+	} else {
+	  //otherwise rotate the sibling left
+	  leftRotation(sibling);
+	}
+
+	sibling -> setRed();
+	closeNephew -> setBlack();
+
+	//To finish, recursivally call through index
+	doubleBlackDeletionCases(index);
+
+	return;
+	
+      } else {
+	if(farNephew -> getColor() == 0) {
+	  if(leftChild) {
+	    //if the index is the left child, rotate from the sibling right
+	    rightRotation(sibling);
+	  } else {
+	    //otherwise rotate the sibling left
+	    leftRotation(sibling);
+	  }
+
+	  sibling -> setRed();
+	  closeNephew -> setBlack();
+
+	  //To finish, recursivally call through index
+	  doubleBlackDeletionCases(index);
+
+	  return;
+	}
+      }
     }
-
-    sibling -> setRed();
-    closeNephew -> setBlack();
-
-    //To finish, recursivally call through index
-    doubleBlackDeletionCases(index);
-
-    return;
   }
 
   //Case 6: The sibling is black and the far nephew is red, so to finish fixing
   //the tree do a rotation at the parent toward the index node and recolor by
   //making the parent black, making the sibling whatever the parent was before,
   //and making the far nephew black
-  if(sibling -> getColor() == 0 && closeNephew -> getColor() == 1 && farNephew -> getColor() == 0) {
-    if(leftChild) {
-      //if the index is the left child, rotate from the sibling right
-      rightRotation(sibling);
-    } else {
-      //otherwise rotate the sibling child left
-      leftRotation(parent);
-    }
+  if(sibling -> getColor() == 0 && farNephew != NULL) {
+    if(farNephew -> getColor() == 1) {
+      if(leftChild) {
+	//if the index is the left child, rotate from the parent left
+	leftRotation(parent);
+      } else {
+	//otherwise rotate the parent right
+	rightRotation(parent);
+      }
 
-    if(parent -> getColor() == 0) {
-      //if the parent was black, make the sibling black
-      sibling -> setBlack();
-    } else {
-      //otherwise make the sibling red
-      sibling -> setRed();
-    }
-    parent -> setBlack();
-    farNephew -> setBlack();
+      if(parent -> getColor() == 0) {
+	//if the parent was black, make the sibling black
+	sibling -> setBlack();
+      } else {
+	//otherwise make the sibling red
+	sibling -> setRed();
+      }
+      parent -> setBlack();
+      farNephew -> setBlack();
 
-    //Base case
-    return;
+      //Base case
+      return;
+    }
   }
 }
 
