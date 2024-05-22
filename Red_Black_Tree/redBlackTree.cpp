@@ -3,7 +3,7 @@
   RedBlackTree class. It has all the functions that will be used to make 
   and interact with the red-black tree.
   Author: Kevin Chacko
-  Last Updated: 4/30/2024
+  Last Updated: 5/22/2024
   Period 5, C++ / Data Structures
 */
 
@@ -259,23 +259,9 @@ void redBlackTree::leftRotation(node* pivot) {
   }
 }
 
-//This function will attempt to remove a node of the inputted number
-//from the tree
-/*
-  CHANGES THAT NEED TO BE MADE:
-  We run the normal BST deletion process on the target node, except what 
-  we want to do is move the value of the replacement node into the "deleted" 
-  node that had the target value we were looking for. In effect though, this 
-  makes the replacement node the ACTUAL DELETED NODE which we need to run the 
-  red-black tree deletion cases on. So, you should go through the BST process 
-  as normal, but keep track of the replacement node. Then when you are done 
-  you should pass the replacement node into the deletion cases! Then for 
-  The deletion cases you can actually move the nodes themselves around, not 
-  just their values. When you get to your node with single child system, M 
-  is the replacement node, C is its child, and when you get into the cases 
-  where both M and C are black, N is node C which was as a node moved into 
-  M since replacement node M was actually deleted.
-*/
+//This function will remove a node of the inputted number from the tree
+//and fix the tree up afterward, or if the inputted number couldn't be
+//found it will do nothing
 void redBlackTree::deleteNode(int target) {
   //local variables
   node* index = root;
@@ -356,6 +342,8 @@ void redBlackTree::deleteNode(int target) {
 
 //This function goes through the red-black tree cases upon insertion
 void redBlackTree::deletionCases(node* & index) {
+  //check to see what children the index node has to run deletion processes
+  //off of
   if(index -> getLeft() != NULL) {
     //continue deletion process with the left child
     if(index -> getColor() == 1) {
@@ -465,7 +453,7 @@ void redBlackTree::deletionCases(node* & index) {
 }
 
 //This function will recursively fix the tree for the double black deletion
-//case before deleting the double black node
+//case before the double black node is deleted
 void redBlackTree::doubleBlackDeletionCases(node* index) {
   //Define local variables to be used in deletion cases
   node* parent = index -> getParent();
@@ -499,13 +487,16 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
   //Case 2: the index's parent, sibling, and nephews are all black, so just
   //recolor the sibling to be red and recursivally call through parent
   if(parent -> getColor() == 0 && sibling -> getColor() == 0) {
+    //both nephews are black via null
     if(closeNephew == NULL && farNephew == NULL) {
       sibling -> setRed();
       doubleBlackDeletionCases(parent);
       
       return;
     }
-    
+
+    //The close nephew is black via color while the far nephew is black
+    //via null
     if(closeNephew != NULL) {
       if(closeNephew -> getColor() == 0 && farNephew == NULL) {
 	sibling -> setRed();
@@ -515,6 +506,8 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
       }
     }
 
+    //The far nephew is black via color while the close nephew is black
+    //via null
     if(farNephew != NULL) {
       if(closeNephew == NULL && farNephew -> getColor() == 0) {
 	sibling -> setRed();
@@ -524,6 +517,7 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
       }
     }
 
+    //both nephews are black via color
     if(closeNephew != NULL && farNephew != NULL) {
       if(closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
 	sibling -> setRed();
@@ -546,10 +540,11 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
       rightRotation(parent);
     }
 
+    //swap parent and sibling colors
     parent -> setRed();
     sibling -> setBlack();
 
-    //To finish, recursivally call through index
+    //recursivally call through index (leads into cases 4, 5, and 6)
     doubleBlackDeletionCases(index);
 
     return;
@@ -558,7 +553,9 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
   //Case 4: The parent is red but the sibling and it's children are black, so
   //just make the parent black and the sibling red and you're done
   if(parent -> getColor() == 1 && sibling -> getColor() == 0) {
+    //both nephews are black via null
     if(closeNephew == NULL && farNephew == NULL) {
+      //swap colors of parent and sibling
       parent -> setBlack();
       sibling -> setRed();
 
@@ -566,8 +563,11 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
       return;
     }
 
+    //The close nephew is black via color while the far nephew is black
+    //via null
     if(closeNephew != NULL) {
       if(closeNephew -> getColor() == 0 && farNephew == NULL) {
+	//swap colors of parent and sibling
 	parent -> setBlack();
 	sibling -> setRed();
 	
@@ -576,8 +576,11 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
       }
     }
 
+    //The far nephew is black via color while the close nephew is black
+    //via null
     if(farNephew != NULL) {
       if(closeNephew == NULL && farNephew -> getColor() == 0) {
+	//swap colors of parent and sibling
 	parent -> setBlack();
 	sibling -> setRed();
 	
@@ -586,8 +589,10 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
       }
     }
 
+    //both nephews are black via color
     if(closeNephew != NULL && farNephew != NULL) {
       if(closeNephew -> getColor() == 0 && farNephew -> getColor() == 0) {
+	//swap colors of parent and sibling
 	parent -> setBlack();
 	sibling -> setRed();
 	
@@ -603,6 +608,7 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
   if(sibling -> getColor() == 0 && closeNephew != NULL) {
     if(closeNephew -> getColor() == 1) {
       if(farNephew == NULL) {
+	//far nephew is black via null
 	if(leftChild) {
 	  //if the index is the left child, rotate from the sibling right
 	  rightRotation(sibling);
@@ -611,15 +617,17 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
 	  leftRotation(sibling);
 	}
 
+	//swap colors of sibling and close nephew
 	sibling -> setRed();
 	closeNephew -> setBlack();
 
-	//To finish, recursivally call through index
+	//Recursivally call through index
 	doubleBlackDeletionCases(index);
 
 	return;
 	
       } else {
+	//far nephew is black via color
 	if(farNephew -> getColor() == 0) {
 	  if(leftChild) {
 	    //if the index is the left child, rotate from the sibling right
@@ -629,10 +637,11 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
 	    leftRotation(sibling);
 	  }
 
+	  //swap colors of sibling and close nephew
 	  sibling -> setRed();
 	  closeNephew -> setBlack();
 
-	  //To finish, recursivally call through index
+	  //Recursivally call through index
 	  doubleBlackDeletionCases(index);
 
 	  return;
@@ -662,6 +671,8 @@ void redBlackTree::doubleBlackDeletionCases(node* index) {
 	//otherwise make the sibling red
 	sibling -> setRed();
       }
+
+      //set parent and far nephew black
       parent -> setBlack();
       farNephew -> setBlack();
 

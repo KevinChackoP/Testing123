@@ -14,7 +14,7 @@
    down certain paths of the tree over other paths. This tree however assumes 
    that all nodes are unique with no repeating numbers. 
    Author: Kevin Chacko
-   Last Updated: 4/30/2024
+   Last Updated: 5/22/2024
    Period 6, C++ / Data Structures
 */
 

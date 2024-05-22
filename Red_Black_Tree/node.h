@@ -3,7 +3,7 @@
   class which will be used to make up the red-black tree. It defines 
   everything for the node.cpp file to use.
   Author: Kevin Chacko
-  Last Updated: 4/30/2024
+  Last Updated: 5/22/2024
   Period 5, C++ / Data Structures
 */
 

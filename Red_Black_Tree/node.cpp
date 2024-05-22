@@ -3,7 +3,7 @@
   node class. It has all the functions that will be used to make and modify
   the nodes for the Red-Black Tree.
   Author: Kevin Chacko
-  Last Updated: 4/30/2024
+  Last Updated: 5/22/2024
   Period 5, C++ / Data Structures
 */
 
