@@ -448,19 +448,271 @@ void addEdge(char vertices[20], int adjacencyTable[][20]) {
   }
 }
 
-//
+//this function removes a vertex from the graph and deletes all the
+//edges between it and other vertices
 void removeVertex(char vertices[20], int adjacencyTable[][20]) {
+  //continue on with adding a vertex
+  char input = '-';
+  bool validInput = false;
+  int vertexCount = 0;
 
+  //check to make sure there are vertices to delete in the graph
+  for(int i = 0; i < 20; i++) {
+    if(vertices[i] != '-') {
+      vertexCount++;
+    }
+  }
+
+  if(vertexCount >= 1) {
+    while(!(validInput)) {
+      //keep taking the user's input until they give a valid input
+      cout << "Please enter a character from A-Z for the vertex " << endl;
+      cout << "you want to remove from the graph." << endl;
+      cin >> input;
+      cin.ignore(numeric_limits<streamsize>::max(), '\n');
+      cout << endl;
+      input = toupper(input);
+
+      if(isalpha(input)) {
+	//go through graph to find the vertex
+	for(int i = 0; i < 20; i++) {
+	  if(vertices[i] == input) {
+	    validInput = true;
+
+	    //vertex was found so remove it from the graph 
+	    cout << "vertex " << input << " was found and will be deleted." << endl;
+	    cout << endl;
+
+	    //first delete the edges related to the vertex
+	    for(int j = 0; j < 20; j++) {
+	      adjacencyTable[i][j] = 0;
+	      adjacencyTable[j][i] = 0;
+	    }
+
+	    //next delete the vertex itself
+	    vertices[i] = '-';
+	  }
+	}
+
+	if(!(validInput)) {
+	  //the vertex wasn't found in the graph, so tell the user
+	  cout << "Sorry but that vertex isn't in the graph, so " << endl;
+	  cout << "it can't be deleted. Please try a different " << endl;
+	  cout << "vertex label or enter 0 to quit." << endl;
+	  cout << endl;
+	}
+	
+      } else if(input == '0') {
+	//the user no longer wants to remove a vertex from the graph
+	validInput = true;
+
+	cout << "Quitting removing vertex from graph." << endl;
+	cout << endl;
+	
+      } else {
+	//User's input wasn't an alphabetic character, so tell them
+	cout << "That isn't a valid vertex name. Please label " << endl;
+	cout << "your vertex a character from A-Z. Alternativally, " << endl;
+	cout << "if you no longer want to remove a vertex from " << endl;
+	cout << "the graph, please enter 0 to quit." << endl;
+	cout << endl;
+      }
+    }
+    
+  } else {
+    cout << "There aren't any vertices to be deleted from the graph." << endl;
+    cout << "Please try to delete vertices from the graph after " << endl;
+    cout << "adding a few to the graph." << endl;
+    cout << endl;
+  }
 }
 
-//
+//This function will remove the directed edge between two vertices
 void removeEdge(char vertices[20], int adjacencyTable[][20]) {
+  char vertex1 = '-';
+  char vertex2 = '-';
+  char input = '-';
+  bool validInput = false;
+  bool continueDel = false;
+  int vertexCount = 0;
 
+  //make sure there are enough vertices to initiate edge deletion
+  for(int i = 0; i < 20; i++) {
+    if(vertices[i] != '-') {
+      vertexCount++;
+    }
+  }
+
+  if(vertexCount < 2) {
+    cout << "Sorry but your graph doesn't have enough vertices to " << endl;
+    cout << "remove edges between them. Please try again after " << endl;
+    cout << "you've added at least 2 vertices to the graph." << endl;
+    cout << endl;
+  } else {
+    continueDel = true;
+  }
+
+  //take user's two inputs for the vertices they want to remove an edge between
+  while(!(validInput) && continueDel) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter a character from A-Z for the vertex " << endl;
+    cout << "you want the edge you're deleting to start from." << endl;
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+    input = toupper(input);
+
+    if(isalpha(input)) {
+      //go through graph to find vertex
+      for(int i = 0; i < 20; i++) {
+	if(vertices[i] == input) {
+	  validInput = true;
+	  vertex1 = input;
+	  cout << "Vertex " << input << " was found in the graph!" << endl;
+	  cout << endl;
+	}
+      }
+
+      if(!(validInput)) {
+	//the user's inputted vertex doesn't exist in the graph, so tell them
+	cout << "Sorry but " << input << " wasn't found in the " << endl;
+	cout << "graph. Please try again or enter 0 to quit." << endl;
+	cout << endl;
+      }
+	
+    } else if(input == '0') {
+      //the user no longer wants to delete an edge from the graph
+      validInput = true;
+      continueDel = false;
+
+      cout << "Quitting deleting edge from graph." << endl;
+      cout << endl;
+	
+    } else {
+      //User's input wasn't an alphabetic character, so tell them
+      cout << "That isn't a valid vertex name. Please enter a " << endl;
+      cout << "character from A-Z for the vertex. Alternativally, " << endl;
+      cout << "if you no longer want to delete an edge from the " << endl;
+      cout << "graph, please enter 0 to quit." << endl;
+      cout << endl;
+    }
+  }
+
+  input = '-';
+  validInput = false;
+  while(!(validInput) && continueDel) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter a character from A-Z for the vertex " << endl;
+    cout << "you want the edge you're deleting to end at." << endl;
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+    input = toupper(input);
+
+    if(isalpha(input)) {
+      if(input != vertex1) {
+	//go through graph to find vertex
+	for(int i = 0; i < 20; i++) {
+	  if(vertices[i] == input) {
+	    validInput = true;
+	    vertex2 = input;
+	    cout << "Vertex " << input << " was found in the graph!" << endl;
+	    cout << endl;
+	  }
+	}
+
+	if(!(validInput)) {
+	  //the user's inputted vertex doesn't exist in the graph, so tell them
+	  cout << "Sorry but " << input << " wasn't found in the " << endl;
+	  cout << "graph. Please try again or enter 0 to quit." << endl;
+	  cout << endl;
+	}
+	
+      } else {
+	//The user inputted the same vertex from the starting vertex as the
+	//ending vertex which you can't do to delete an edge, so tell them
+	cout << "The ending vertex you entered is the same as the " << endl;
+	cout << "starting vertex which can't be possible. Please " << endl;
+	cout << "choose a different vertex to be your ending vertex." << endl;
+	cout << endl;
+      }
+	
+    } else if(input == '0') {
+      //the user no longer wants to delete an edge from the graph
+      validInput = true;
+      continueDel = false;
+
+      cout << "Quitting deleting edge from graph." << endl;
+      cout << endl;
+	
+    } else {
+      //User's input wasn't an alphabetic character, so tell them
+      cout << "That isn't a valid vertex name. Please enter a " << endl;
+      cout << "character from A-Z for the vertex. Alternativally, " << endl;
+      cout << "if you no longer want to delete an edge from the " << endl;
+      cout << "graph, please enter 0 to quit." << endl;
+      cout << endl;
+    }
+  }
+
+  //delete the edge from the starting vertex to the ending vertex
+  if(continueDel) {
+    for(int i = 0; i < 20; i++) {
+      for(int j = 0; j < 20; j++) {
+	if(vertices[j] == vertex1 && vertices[i] == vertex2) {
+	  if(adjacencyTable[j][i] != 0) {
+	    //check if the edge exists before deleting
+	    cout << "Edge between vertex " << vertex1 << " and " << endl;
+	    cout << vertex2 << " exists and will be deleted." << endl;
+	    cout << endl;
+
+	    //delete it
+	    adjacencyTable[j][i] = 0;
+	  
+	  } else {
+	    //the edge doesn't exist, so let the user know
+	    cout << "Sorry but an edge from " << vertex1 << " directed " << endl;
+	    cout << "to " << vertex2 << " doesn't exist, so it won't be " << endl;
+	    cout << "deleted from the graph." << endl;
+	    cout << endl;
+	  }
+	}
+      }
+    }
+  }
 }
 
-//
+//This function uses Dijkstra's shortest path algorithm to find the shortest
+//path between two vertices in the graph as desired by the user
 void findShortestPath(char vertices[20], int adjacencyTable[][20]) {
+  //local variable declarations
+  char visited[20];
+  for(int i = 0; i < 20; i++) {
+    visited[i] = '-';
+  }
+  char unvisited[20];
+  for(int i = 0; i < 20; i++) {
+    unvisited[i] = vertices[i];
+  }
+  int shortestDistance[20];
+  for(int i = 0; i < 20; i++) {
+    shortestDistance[i] = 100000;
+  }
+  char previousVertex[20];
+  for(int i = 0; i < 20; i++) {
+    previousVertex[i] = '-';
+  }
 
+  //Take user input for which vertices they want to find the shortest path
+  //between
+  
+
+  //Go through unvisited list and run through dijkstra's algorithm
+  for(int i = 0; i < 20; i++) {
+    if(unvisited[i] != '-') {
+      //if the vertex exists
+    }
+  }
 }
 
 //This function prints out the graph as an adjacency table
