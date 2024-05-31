@@ -274,9 +274,178 @@ void addVertex(char vertices[20]) {
   }
 }
 
-//
+//This function adds an weighted directed edge between two vertices
 void addEdge(char vertices[20], int adjacencyTable[][20]) {
+  char vertex1 = '-';
+  char vertex2 = '-';
+  char input = '-';
+  int weight = 0;
+  bool validInput = false;
+  bool continueAdd = false;
+  int vertexCount = 0;
 
+  //make sure there are enough vertices to initiate edge adding
+  for(int i = 0; i < 20; i++) {
+    if(vertices[i] != '-') {
+      vertexCount++;
+    }
+  }
+
+  if(vertexCount < 2) {
+    cout << "Sorry but your graph doesn't have enough vertices to " << endl;
+    cout << "add edges between them. Please try again after you've " << endl;
+    cout << "added at least 2 vertices to the graph." << endl;
+    cout << endl;
+  } else {
+    continueAdd = true;
+  }
+
+  //take user's two inputs for the vertices they want to add the edge between
+  while(!(validInput) && continueAdd) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter a character from A-Z for the vertex " << endl;
+    cout << "you want the edge to start from." << endl;
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+    input = toupper(input);
+
+    if(isalpha(input)) {
+      //go through graph to find vertex
+      for(int i = 0; i < 20; i++) {
+	if(vertices[i] == input) {
+	  validInput = true;
+	  vertex1 = input;
+	  cout << "Vertex " << input << " was found in the graph!" << endl;
+	  cout << endl;
+	}
+      }
+
+      if(!(validInput)) {
+	//the user's inputted vertex doesn't exist in the graph, so tell them
+	cout << "Sorry but " << input << " wasn't found in the " << endl;
+	cout << "graph. Please try again or enter 0 to quit." << endl;
+	cout << endl;
+      }
+	
+    } else if(input == '0') {
+      //the user no longer wants to add an edge to graph
+      validInput = true;
+      continueAdd = false;
+
+      cout << "Quitting adding edge to graph." << endl;
+      cout << endl;
+	
+    } else {
+      //User's input wasn't an alphabetic character, so tell them
+      cout << "That isn't a valid vertex name. Please enter a " << endl;
+      cout << "character from A-Z for the vertex. Alternativally, " << endl;
+      cout << "if you no longer want to add an edge to the graph, " << endl;
+      cout << "please enter 0 to quit." << endl;
+      cout << endl;
+    }
+  }
+
+  input = '-';
+  validInput = false;
+  while(!(validInput) && continueAdd) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter a character from A-Z for the vertex " << endl;
+    cout << "you want the edge to end at." << endl;
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+    input = toupper(input);
+
+    if(isalpha(input)) {
+      if(input != vertex1) {
+	//go through graph to find vertex
+	for(int i = 0; i < 20; i++) {
+	  if(vertices[i] == input) {
+	    validInput = true;
+	    vertex2 = input;
+	    cout << "Vertex " << input << " was found in the graph!" << endl;
+	    cout << endl;
+	  }
+	}
+
+	if(!(validInput)) {
+	  //the user's inputted vertex doesn't exist in the graph, so tell them
+	  cout << "Sorry but " << input << " wasn't found in the " << endl;
+	  cout << "graph. Please try again or enter 0 to quit." << endl;
+	  cout << endl;
+	}
+	
+      } else {
+	//The user inputted the same vertex from the starting vertex as the
+	//ending vertex which you can't do to make an edge, so tell them
+	cout << "The ending vertex you entered is the same as the " << endl;
+	cout << "starting vertex which can't be possible. Please " << endl;
+	cout << "choose a different vertex to be your ending vertex." << endl;
+	cout << endl;
+      }
+	
+    } else if(input == '0') {
+      //the user no longer wants to add an edge to graph
+      validInput = true;
+      continueAdd = false;
+
+      cout << "Quitting adding edge to graph." << endl;
+      cout << endl;
+	
+    } else {
+      //User's input wasn't an alphabetic character, so tell them
+      cout << "That isn't a valid vertex name. Please enter a " << endl;
+      cout << "character from A-Z for the vertex. Alternativally, " << endl;
+      cout << "if you no longer want to add an edge to the graph, " << endl;
+      cout << "please enter 0 to quit." << endl;
+      cout << endl;
+    }
+  }
+
+  //Ask the user to input a weight to give to the edge
+  validInput = false;
+  while(!(validInput) && continueAdd) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter an integer value greater than 0 and less " << endl;
+    cout << "than 999 to be the weight you're applying to this edge." << endl;
+    cin >> weight;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+
+    if(weight <= 0) {
+      //the user's inputted weight is too small, so let them know
+      cout << "Your weight that you are applying is too small." << endl;
+      cout << "Please input a weight greater than 0.";
+      cout << endl;
+      
+    } else if(weight > 999) {
+      //the user's inputted weight is too small, so let them know
+      cout << "Your weight that you are applying is too big." << endl;
+      cout << "Please input a weight less than 1000.";
+      cout << endl;
+      
+    } else {
+      //the user's input is just right, so set it as the new weight
+      validInput = true;
+
+      //add the edge to the adjacency list
+      for(int i = 0; i < 20; i++) {
+	for(int j = 0; j < 20; j++) {
+	  if(vertices[j] == vertex1 && vertices[i] == vertex2) {
+	    if(adjacencyTable[j][i] != 0) {
+	      //check if the edge has been made before, if so, tell the user
+	      cout << "Edge between vertices has already been made " << endl;
+	      cout << "before, so old edge will be overridden." << endl;
+	      cout << endl;
+	    }
+
+	    adjacencyTable[j][i] = weight;
+	  }
+	}
+      }
+    }
+  }
 }
 
 //
@@ -314,7 +483,7 @@ void printGraph(char vertices[20], int adjacencyTable[][20]) {
     cout << vertices[i] << '\t';
     for(int j = 0; j < 20; j++) {
       //output all the data in the table
-      cout << adjacencyTable[i][j] << '\t';
+      cout << adjacencyTable[j][i] << '\t';
     }
     cout << endl;
     cout << endl;
