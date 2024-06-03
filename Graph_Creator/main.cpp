@@ -1,7 +1,16 @@
 /* 
-   This project...
+   This project creates a graph that the user can interact with via commands.
+   The graph can hold vertices (named as single character, upper case
+   alphabetic letters) that are connected by directed (one-way) and 
+   weighted (hold values) edges. Edges have weights from 1-999 inclusive.
+   The user can interact with the graph by adding vertices, adding edges
+   between two vertices, deleting vertices, deleting edges between two
+   vertices, finding the shortest path between two vertices (using Dijkstra's
+   Shortest Path Algorithm), and printing the graph out as an adjacency table.
+   When the user is done interacting with the graph, they can quit to exit
+   the program. 
    Author: Kevin Chacko
-   Last Updated: WRITE END DATE HERE
+   Last Updated: 6/2/2024
    Period 6, C++ / Data Structures
 */
 
@@ -17,8 +26,6 @@
   This video helped walk me through the process of Dijkstra's model and how
   it handles the graph and its data to find the shorted path, something which
   I used for my Find Shortest Path function.
-
-  ADD MORE CITATIONS HERE
 */
 
 //imports
@@ -702,15 +709,250 @@ void findShortestPath(char vertices[20], int adjacencyTable[][20]) {
   for(int i = 0; i < 20; i++) {
     previousVertex[i] = '-';
   }
+  char vertex1 = '-';
+  char vertex2 = '-';
+  char input = '-';
+  bool validInput = false;
+  bool continueFind = false;
+  int vertexCount = 0;
+  char currentVertex = '-';
 
+  //make sure there are enough vertices to initiate finding the shortest
+  //path between
+  for(int i = 0; i < 20; i++) {
+    if(vertices[i] != '-') {
+      vertexCount++;
+    }
+  }
+
+  if(vertexCount < 2) {
+    cout << "Sorry but your graph doesn't have enough vertices to " << endl;
+    cout << "find the shortest path between them. Please try again " << endl;
+    cout << "after you've added at least 2 vertices to the graph." << endl;
+    cout << endl;
+  } else {
+    continueFind = true;
+  }
+  
   //Take user input for which vertices they want to find the shortest path
   //between
-  
+  while(!(validInput) && continueFind) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter a character from A-Z for the vertex " << endl;
+    cout << "you want the path to start from." << endl;
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+    input = toupper(input);
+
+    if(isalpha(input)) {
+      //go through graph to find vertex
+      for(int i = 0; i < 20; i++) {
+	if(vertices[i] == input) {
+	  validInput = true;
+	  vertex1 = input;
+	  cout << "Vertex " << input << " was found in the graph!" << endl;
+	  cout << endl;
+	}
+      }
+
+      if(!(validInput)) {
+	//the user's inputted vertex doesn't exist in the graph, so tell them
+	cout << "Sorry but " << input << " wasn't found in the " << endl;
+	cout << "graph. Please try again or enter 0 to quit." << endl;
+	cout << endl;
+      }
+	
+    } else if(input == '0') {
+      //the user no longer wants to find the shortest path between two
+      //vertices in the graph
+      validInput = true;
+      continueFind = false;
+
+      cout << "Quitting finding shortest path in graph." << endl;
+      cout << endl;
+	
+    } else {
+      //User's input wasn't an alphabetic character, so tell them
+      cout << "That isn't a valid vertex name. Please enter a " << endl;
+      cout << "character from A-Z for the vertex. Alternativally, " << endl;
+      cout << "if you no longer want to add an edge to the graph, " << endl;
+      cout << "please enter 0 to quit." << endl;
+      cout << endl;
+    }
+  }
+
+  input = '-';
+  validInput = false;
+  while(!(validInput) && continueFind) {
+    //keep taking the user's input until they give a valid input
+    cout << "Please enter a character from A-Z for the vertex " << endl;
+    cout << "you want the path to end at." << endl;
+    cin >> input;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cout << endl;
+    input = toupper(input);
+
+    if(isalpha(input)) {
+      if(input != vertex1) {
+	//go through graph to find vertex
+	for(int i = 0; i < 20; i++) {
+	  if(vertices[i] == input) {
+	    validInput = true;
+	    vertex2 = input;
+	    cout << "Vertex " << input << " was found in the graph!" << endl;
+	    cout << endl;
+	  }
+	}
+
+	if(!(validInput)) {
+	  //the user's inputted vertex doesn't exist in the graph, so tell them
+	  cout << "Sorry but " << input << " wasn't found in the " << endl;
+	  cout << "graph. Please try again or enter 0 to quit." << endl;
+	  cout << endl;
+	}
+	
+      } else {
+	//The user inputted the same vertex from the starting vertex as the
+	//ending vertex which you can't do to make a path, so tell them
+	cout << "The ending vertex you entered is the same as the " << endl;
+	cout << "starting vertex which can't be possible. Please " << endl;
+	cout << "choose a different vertex to be your ending vertex." << endl;
+	cout << endl;
+      }
+	
+    } else if(input == '0') {
+      //the user no longer wants to find the shortest path between two
+      //vertices in the graph
+      validInput = true;
+      continueFind = false;
+
+      cout << "Quitting finding shortest path in graph." << endl;
+      cout << endl;
+	
+    } else {
+      //User's input wasn't an alphabetic character, so tell them
+      cout << "That isn't a valid vertex name. Please enter a " << endl;
+      cout << "character from A-Z for the vertex. Alternativally, " << endl;
+      cout << "if you no longer want to add an edge to the graph, " << endl;
+      cout << "please enter 0 to quit." << endl;
+      cout << endl;
+    }
+  }
+
+  //set everything up for the first vertex
+  currentVertex = vertex1;
+  if(continueFind) {
+    for(int i = 0; i < 20; i++) {
+      if(currentVertex == vertices[i]) {
+	shortestDistance[i] = 0;
+	previousVertex[i] = '-';
+      }
+    }
+  }
 
   //Go through unvisited list and run through dijkstra's algorithm
-  for(int i = 0; i < 20; i++) {
-    if(unvisited[i] != '-') {
-      //if the vertex exists
+  while(currentVertex != '-' && continueFind) {
+    //take current vertex off of the unvisited vertices list and add it to the
+    //visited vertices list, and mark the index of the current vertex
+    int indexCurrent = 20;
+    
+    for(int i = 0; i < 20; i++) {
+      if(currentVertex == vertices[i]) {
+	indexCurrent = i;
+	visited[i] = currentVertex;
+	unvisited[i] = '-';
+      }
+    }
+
+    //look at all unvisited neighbors and add their path distance from the
+    //current node to the current node's distance from the start node
+    for(int j = 0; j < 20; j++) {
+      if(adjacencyTable[indexCurrent][j] != 0 && unvisited[j] != '-') {
+	int distance = shortestDistance[indexCurrent] + adjacencyTable[indexCurrent][j];
+
+	//if this distance is the shortest distance traced from that node
+	//to the start node as of yet, make it the new shortest distance
+	if(distance < shortestDistance[j]) {
+	  shortestDistance[j] = distance;
+	  previousVertex[j] = currentVertex;
+	}
+      }
+    }
+
+    //visit unvisited vertex with smallest known distance from start vertex
+    //and make it the next current vertex (if none have known distance it
+    //means there is no connection to them and loop will end)
+    int indexNext = 20;
+    int shortestDistanceNext = 100000;
+    for(int i = 0; i < 20; i++) {
+      if(unvisited[i] != '-') {
+	if(shortestDistance[i] < shortestDistanceNext) {
+	  indexNext = i;
+	  shortestDistanceNext = shortestDistance[i];
+	}
+      }
+    }
+    
+    if(indexNext != 20) {
+      currentVertex = unvisited[indexNext]; //new iteration case
+    } else {
+      currentVertex = '-'; //ending case
+    }
+  }
+
+  //return shortest path or say that it doesn't exist
+  if(currentVertex == '-' && continueFind) {
+    for(int i = 0; i < 20; i++) {
+      if(vertices[i] == vertex2) {
+	if(shortestDistance[i] < 100000) {
+	  //shortest path exists, so name what it is and what it's total
+	  //distance is
+	  cout << "The shortest path from " << vertex1 << " to " << endl;
+	  cout << vertex2 << " is: " << endl;
+
+	  //make the path
+	  char path[20];
+	  for(int j = 0; j < 20; j++) {
+	    path[j] = '-';
+	  }
+	  char pathVertex = vertex2;
+	  int pathIndex = 0;
+	  bool once = true;
+	  
+	  while(pathVertex != vertex1) {
+	    once = true;
+	    for(int j = 0; j < 20; j++) {
+	      if(vertices[j] == pathVertex && once) {
+		path[pathIndex] = previousVertex[j];
+		pathIndex++;
+		pathVertex = previousVertex[j];
+		once = false;
+	      }
+	    }
+	  }
+
+	  //name the path
+	  cout << vertex1 << "->";
+	  for(int j = 19; j >= 0; j--) {
+	    if(path[j] != '-' && path[j] != vertex1) {
+	      cout << path[j] << "->";
+	    }
+	  }
+	  cout << vertex2 << endl;
+
+	  //name the total distance of the path
+	  cout << "The total of the path is: " << shortestDistance[i] << endl;
+	  
+	  cout << endl;
+	  
+	} else {
+	  //shortest path doesn't exist, so report that
+	  cout << "There isn't a possible path from " << vertex1 << endl;
+	  cout << "to " << vertex2 << " in the graph." << endl;
+	  cout << endl;
+	}
+      }
     }
   }
 }
